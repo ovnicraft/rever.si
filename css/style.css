@@ -1,6 +1,7 @@
 body {
 	background-color: #000;
 	background-image: url('../img/bg.jpg');
+	background-position: center;
 	font-family: 'Futura', 'Menlo', 'Monaco', 'Helvetica', 'Arial';
 	margin: 0;
 }
