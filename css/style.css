@@ -18,6 +18,8 @@ body {
 .square {
 	width: 70px;
 	height: 70px;
+	min-width: 70px;
+	min-height: 70px;
 	text-align: center;
 }
 
