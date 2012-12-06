@@ -3,7 +3,7 @@ body {
 	background-image: url('../img/bg.jpg');
 	background-position: center;
 	font-family: 'Futura', 'Menlo', 'Monaco', 'Helvetica', 'Arial';
-	margin: 1.8% auto 0 auto;
+	margin: 1.4% auto 0 auto;
 }
 
 #board {
@@ -16,10 +16,10 @@ body {
 }
 
 .square {
-	width: 72px;
-	height: 72px;
-	min-width: 72px;
-	min-height: 72px;
+	width: 66px;
+	height: 66px;
+	min-width: 66px;
+	min-height: 66px;
 	text-align: center;
 	padding: 0;
 	border: 1px solid rgba(0, 0, 0, 0.32);
@@ -46,7 +46,6 @@ body {
 img.black, img.white {
 	position: relative;
 	top: 3px;
-	left: 1px;
-	width: 67px;
-	height: 67px;
+	width: 60px;
+	height: 60px;
 }
