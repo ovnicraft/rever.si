@@ -3,17 +3,21 @@ var othello = function() {};
 $(window).load(function() {
 
 function black(square) {
-	$('<img />',{
-		'class': 'black',
-		'src': 'img/black.png'
-	}).appendTo('#' + square);
+	$('#' + square).html(
+		$('<img />',{
+			'class': 'black',
+			'src': 'img/black.png'
+		})
+	);
 }
 
 function white(square) {
-	$('<img />',{
-		'class': 'white',
-		'src': 'img/white.png'
-	}).appendTo('#' + square);
+	$('#' + square).html(
+		$('<img />',{
+			'class': 'white',
+			'src': 'img/white.png'
+		})
+	);
 }
 	
 othello.newGame = function() {
@@ -24,5 +28,5 @@ othello.newGame = function() {
 }
 
 othello.newGame();
-	
+
 });
