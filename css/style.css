@@ -3,7 +3,7 @@ body {
 	background-image: url('../img/bg.jpg');
 	background-position: center;
 	font-family: 'Futura', 'Menlo', 'Monaco', 'Helvetica', 'Arial';
-	margin: 0;
+	margin: 1.8% auto 0 auto;
 }
 
 #board {
@@ -21,6 +21,7 @@ body {
 	min-width: 70px;
 	min-height: 70px;
 	text-align: center;
+	padding: 0;
 }
 
 #a1, #c1, #e1, #g1, #b2, #d2, #f2, #h2,
@@ -47,6 +48,8 @@ body {
 }
 
 img.black, img.white {
-	width: 70px;
-	height: 70px;
+	position: relative;
+	top: 3px;
+	width: 65px;
+	height: 65px;
 }
