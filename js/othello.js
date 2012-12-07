@@ -133,7 +133,6 @@ function getMoves(color) {
 						break;
 					}
 				}
-
 			}
 			// Scan down
 			if (r <= 6) {
@@ -261,7 +260,7 @@ function flipDiscs(discs) {
 			var opposite = getOpposite(color);
 			$('#' + discs[i][o]).css('background-image', 'url("img/' + opposite + '.png")');
 			$('#' + discs[i][o]).find('img').fadeOut(800, function() {
-				$(this).attr('src', 'img/' + opposite + '.png');
+				takeSquare(discs[i][o], opposite);
 				$(this).fadeIn(0);
 				$('#' + discs[i][o]).css('background', '');
 			});
