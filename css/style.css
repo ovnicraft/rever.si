@@ -31,7 +31,7 @@ body {
 	height: 525px;
 	display: inline-block;
 	margin: 5px 0 0 50px;
-	position: fixed;
+	position: absolute;
 	font-size: 11px;
 	line-height: 20px;
 	text-align: justify;
@@ -106,8 +106,11 @@ h1 {
 	width: auto;
 }
 
-#choice {
+.choice {
 	font-weight: bold;
+	cursor: pointer;
+	font-variant: small-caps;
+	font-size: 14px;
 }
 
 #choice:hover {

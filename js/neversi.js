@@ -6,7 +6,7 @@ var domain = 'crypto.cat';
 var conference = 'conference.crypto.cat';
 var bosh = 'https://crypto.cat/http-bind';
 
-var myNickname, inGame;
+var myNickname, gameState, inviting;
 var loginCredentials = [];
 
 var neversi = function() {};
@@ -336,20 +336,29 @@ function showMessage(message) {
 
 // Handle getting an invitation
 function getInvitation(player) {
-	if (!inGame) {
+	if (gameState !== 'inGame') {
 		var invitation = '<strong>' + player + '</strong>'
-			+ 'challenges you to a game. Accept?'
-			+ '<div class="choice">Yes</div>'
-			+ '<div class="choice">No</div>'
+			+ ' challenges you to a game. Accept?<br />'
+			+ '<span class="choice" id="yes">yes</span> &nbsp;&nbsp;'
+			+ '<span class="choice">no</span>'
 		showMessage(invitation);
-		$('.choice').click(function() {
-			if ($(this).text() === 'Yes') {
-				sendMessage('accept', player);
-			}
-			else {
-				sendMessage('decline', player);
-			}
-		});
+		// Delay necessary to avoid race condition
+		window.setTimeout(function() {
+			$('.choice').click(function() {
+				if ($(this).attr('id') === 'yes') {
+					sendMessage('accept', player);
+					gameState = 'inGame';
+				}
+				else {
+					sendMessage('decline', player);
+					showMessage('You have declined the invitation.');
+					gameState = 'lobby';
+				}
+			});
+		}, 2000);
+	}
+	else {
+		sendMessage('inGame', player);
 	}
 }
 
@@ -416,8 +425,25 @@ function handleMessage(message) {
 	// Handle messages from other players
 	if (type !== 'groupchat') {
 		console.log(nickname + ': ' + body);
-		if (body === invite) {
+		if (body === 'invite') {
 			getInvitation(nickname);
+			gameState = 'invited';
+		}
+		else if (inviting === nickname) {
+			if (body === 'accept') {
+				
+			}
+			else if (body === 'decline') {
+				showMessage('<strong>' + nickname + '</strong> has refused your invitation.');
+				$('.player').mouseout();
+				gameState = 'lobby';
+				inviting = null;
+			}
+			else if (body === 'inGame') {
+				showMessage('<strong>' + nickname + '</strong> is currently playing a game.');
+				gameState = 'lobby';
+				inviting = null;
+			}
 		}
 	}
 	return true;
@@ -444,7 +470,7 @@ function handlePresence(presence) {
 	}
 	// Detect player going offline
 	if ($(presence).attr('type') === 'unavailable') {
-		
+		$('#player-' + nickname).slideUp().remove();
 	}
 	// Create player element if player is new
 	else if (!$('#player-' + nickname).length) {
@@ -473,19 +499,28 @@ function addPlayer(nickname) {
 // Bind properties to player entry in lobby
 function bindPlayerClick(player) {
 	$('#player-' + player).mouseover(function() {
-		$(this).animate({
-			'background-color': '#FFF',
-			'color': '#000'
-		}, 'fast');
+		if (gameState === 'lobby') {
+			$(this).animate({
+				'background-color': '#FFF',
+				'color': '#000'
+			}, 'fast');
+		}
 	});
 	$('#player-' + player).mouseout(function() {
-		$(this).animate({
-			'background-color': '#000',
-			'color': '#FFF'
-		}, 'fast');
+		if (gameState === 'lobby') {
+			$(this).animate({
+					'background-color': '#000',
+					'color': '#FFF'
+			}, 'fast');
+		}
 	});
 	$('#player-' + player).click(function() {
-		sendMessage('invite', player);
+		if (gameState == 'lobby') {
+			gameState = 'inviting';	
+			showMessage('Waiting for <strong>' + player + '</strong> to respond...');
+			sendMessage('invite', player);
+			inviting = player;
+		}
 	});
 }
 
@@ -570,6 +605,7 @@ function login(username, password) {
 			$('#login').fadeOut('fast', function() {
 				$('#logout').fadeIn('fast');
 				$('#lobby').fadeIn('fast');
+				gameState = 'lobby';
 			});
 		}
 		else if ((status === Strophe.Status.DISCONNECTED) || (status === Strophe.Status.AUTHFAIL)) {
