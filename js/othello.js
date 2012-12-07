@@ -46,8 +46,7 @@ function getColor(square) {
 function getMoves(color) {
 	var moves = {};
 	var enemy = getOpposite(color);
-	for (var c in abc) {
-		c = parseInt(c);
+	for (var c = 0; c < abc.length; c++) {
 		for (var r = 1; r < 8; r++) {
 			if (getColor(abc[c] + r)) { continue }
 			moves[abc[c] + r] = [];
