@@ -12,6 +12,11 @@ var loginCredentials = [];
 var neversi = function() {};
 
 //$(window).load(function() {
+	
+// -----------------------------------------------
+// XMPP LOGIC
+// -----------------------------------------------
+
 var abc = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 var turn = 'black';
 
@@ -278,6 +283,79 @@ function flipDiscs(discs) {
 	}
 }
 
+// Handle a square being clicked (play a move)
+$('.square').click(function() {
+	if ($(this).css('cursor') !== 'pointer') {
+		return;
+	}
+	clearHighlights();
+	var square = $(this).attr('id');
+	var discs = getMoves(turn)[square];
+	takeSquare(square, turn);
+	flipDiscs(discs);
+	if (turn === 'black') {
+		turn = 'white';
+	}
+	else {
+		turn = 'black';
+	}
+});
+
+// -----------------------------------------------
+// END BOARD LOGIC
+// -----------------------------------------------
+
+// -----------------------------------------------
+// PLAYER UI LOGIC
+// -----------------------------------------------
+
+// Form logic for fields and buttons
+$('input[type=text]').click(function() {
+	$(this).select();
+});
+$('#play').mouseover(function() {
+	$(this).animate({
+		'background-color': '#FFF',
+		'color': '#000'
+	}, 'fast');
+});
+$('#play').mouseout(function() {
+	$(this).animate({
+		'background-color': '#000',
+		'color': '#CCC'
+	}, 'fast');
+});
+
+// Display a message in the message area
+function showMessage(message) {
+	$('#message').find('span').fadeOut('fast', function() {
+		$(this).html(message);
+		$(this).fadeIn('fast');
+	});
+}
+
+
+// -----------------------------------------------
+// END PLAYER UI LOGIC
+// -----------------------------------------------
+
+// -----------------------------------------------
+// XMPP LOGIC
+// -----------------------------------------------
+
+// Generates a random string of length `size` characters.
+// If `alpha = 1`, random string will contain alpha characters, and so on.
+function randomString(size, alpha, uppercase, numeric) {
+	var keyspace = result = '';
+	if (alpha) { keyspace += 'abcdefghijklmnopqrstuvwxyz' }
+	if (uppercase) { keyspace += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' }
+	if (numeric) { keyspace += '0123456789' }
+	for (var i = 0; i !== size; i++) {
+		result += keyspace[Math.floor(Math.random()*keyspace.length)];
+	}
+	return result;
+}
+
 // Clean nickname so that it's safe to use.
 function cleanNickname(nickname) {
 	var clean;
@@ -329,7 +407,7 @@ function handlePresence(presence) {
 	}
 	// Ignore if presence status is coming from myself
 	if (nickname === myNickname) {
-		
+		return true;
 	}
 	// Detect player going offline
 	if ($(presence).attr('type') === 'unavailable') {
@@ -352,52 +430,26 @@ function addPlayer(nickname) {
 		var buddyTemplate = '<div class="player" title="' + nickname + '" id="player-' 
 			+ nickname + '" status="online"><span>' + nickname + '</span></div>'
 		$(buddyTemplate).appendTo('#lobby').slideDown(100, function() {
-			$('player-' + nickname).unbind('click');
+			$('#player-' + nickname).unbind('click');
+			bindPlayerClick(nickname);
 		});
 	});
 	$('#lobby').dequeue();
 }
 
-// Handle a square being clicked (play a move)
-$('.square').click(function() {
-	if ($(this).css('cursor') !== 'pointer') {
-		return;
-	}
-	clearHighlights();
-	var square = $(this).attr('id');
-	var discs = getMoves(turn)[square];
-	takeSquare(square, turn);
-	flipDiscs(discs);
-	if (turn === 'black') {
-		turn = 'white';
-	}
-	else {
-		turn = 'black';
-	}
-});
-
-// Login form logic for fields and buttons
-$('input[type=text]').click(function() {
-	$(this).select();
-});
-$('#play').mouseover(function() {
-	$(this).animate({
-		'background-color': '#FFF',
-		'color': '#000'
-	}, 'fast');
-});
-$('#play').mouseout(function() {
-	$(this).animate({
-		'background-color': '#000',
-		'color': '#CCC'
-	}, 'fast');
-});
-
-// Display a message in the message area
-function showMessage(message) {
-	$('#message').find('span').fadeOut('fast', function() {
-		$(this).text(message);
-		$(this).fadeIn('fast');
+// Bind properties to player entry in lobby
+function bindPlayerClick(player) {
+	$('#player-' + player).mouseover(function() {
+		$(this).animate({
+			'background-color': '#FFF',
+			'color': '#000'
+		}, 'fast');
+	});
+	$('#player-' + player).mouseout(function() {
+		$(this).animate({
+			'background-color': '#000',
+			'color': '#CCC'
+		}, 'fast');
 	});
 }
 
@@ -465,7 +517,7 @@ function login(username, password) {
 			showMessage('Connection error.');
 		}
 		else if (status === Strophe.Status.CONNECTED) {
-			showMessage('Click on a person to invite them to play.');
+			showMessage('Welcome, <strong>' + myNickname + '</strong>. Click on a person to invite them to play.');
 			conn.muc.join(
 				'lobby@' + conference, myNickname, 
 				function(message) {
@@ -507,18 +559,9 @@ $(window).unload(function() {
 	logout();
 });
 
-// Generates a random string of length `size` characters.
-// If `alpha = 1`, random string will contain alpha characters, and so on.
-function randomString(size, alpha, uppercase, numeric) {
-	var keyspace = result = '';
-	if (alpha) { keyspace += 'abcdefghijklmnopqrstuvwxyz' }
-	if (uppercase) { keyspace += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' }
-	if (numeric) { keyspace += '0123456789' }
-	for (var i = 0; i !== size; i++) {
-		result += keyspace[Math.floor(Math.random()*keyspace.length)];
-	}
-	return result;
-}
+// -----------------------------------------------
+// END XMPP LOGIC
+// -----------------------------------------------
 
 $('#nickname').select();
 
