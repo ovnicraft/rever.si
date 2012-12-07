@@ -18,7 +18,7 @@ function takeSquare(square, color) {
 	$('#' + square).html(
 		$('<img />',{
 			'class': color,
-			'src': 'img/' + color + '.png'
+			'src': 'img/' + color + '.png',
 		})
 	);
 }
@@ -47,7 +47,7 @@ function getMoves(color) {
 	var moves = {};
 	var enemy = getOpposite(color);
 	for (var c = 0; c < abc.length; c++) {
-		for (var r = 1; r < 8; r++) {
+		for (var r = 1; r < 9; r++) {
 			if (getColor(abc[c] + r)) { continue }
 			moves[abc[c] + r] = [];
 			// Scan up
@@ -60,8 +60,6 @@ function getMoves(color) {
 					else if (getColor(abc[c] + i) === color) {
 						if (possibleMove.length) {
 							moves[abc[c] + r].push(possibleMove);
-							console.log(possibleMove);
-							console.log('added by up for' + (abc[c] + r));
 						}
 						break;
 					}
@@ -75,15 +73,13 @@ function getMoves(color) {
 				var possibleMove = [];
 				var o = c;
 				for (var i = (r - 1); i > 1; i--) {
-					o++;
+					if (o < 7) { o++ }
 					if (getColor(abc[o] + i) === enemy) {
 						possibleMove.push(abc[o] + i);
 					}
 					else if (getColor(abc[o] + i) === color) {
 						if (possibleMove.length) {
 							moves[abc[c] + r].push(possibleMove);
-							console.log(possibleMove);
-							console.log('added by up-right for' + (abc[c] + r));
 						}
 						break;
 						}
@@ -102,8 +98,6 @@ function getMoves(color) {
 					else if (getColor(abc[o] + r) === color) {
 						if (possibleMove.length) {
 							moves[abc[c] + r].push(possibleMove);
-							console.log(possibleMove);
-							console.log('added by right for' + (abc[c] + r));
 						}
 						break;
 					}
@@ -117,15 +111,13 @@ function getMoves(color) {
 				var possibleMove = [];
 				var o = c;
 				for (var i = (r + 1); i < 8; i++) {
-					o++;
+					if (o < 7) { o++ }
 					if (getColor(abc[o] + i) === enemy) {
 						possibleMove.push(abc[o] + i);
 					}
 					else if (getColor(abc[o] + i) === color) {
 						if (possibleMove.length) {
 							moves[abc[c] + r].push(possibleMove);
-							console.log(possibleMove);
-							console.log('added by down-right for' + (abc[c] + r));
 						}
 						break;
 						}
@@ -144,8 +136,6 @@ function getMoves(color) {
 					else if (getColor(abc[c] + i) === color) {
 						if (possibleMove.length) {
 							moves[abc[c] + r].push(possibleMove);
-							console.log(possibleMove);
-							console.log('added by down for' + (abc[c] + r));
 						}
 						break;
 					}
@@ -159,15 +149,13 @@ function getMoves(color) {
 				var possibleMove = [];
 				var o = c;
 				for (var i = (r + 1); i < 8; i++) {
-					o--;
+					if (o > 0) { o-- }
 					if (getColor(abc[o] + i) === enemy) {
 						possibleMove.push(abc[o] + i);
 					}
 					else if (getColor(abc[o] + i) === color) {
 						if (possibleMove.length) {
 							moves[abc[c] + r].push(possibleMove);
-							console.log(possibleMove);
-							console.log('added by down-left for' + (abc[c] + r));
 						}
 						break;
 						}
@@ -186,8 +174,6 @@ function getMoves(color) {
 					else if (getColor(abc[o] + r) === color) {
 						if (possibleMove.length) {
 							moves[abc[c] + r].push(possibleMove);
-							console.log(possibleMove);
-							console.log('added by left for' + (abc[c] + r));
 						}
 						break;
 					}
@@ -201,15 +187,14 @@ function getMoves(color) {
 				var possibleMove = [];
 				var o = c;
 				for (var i = (r - 1); i > 1; i--) {
-					o--;
+					if (o > 0) { o-- }
 					if (getColor(abc[o] + i) === enemy) {
 						possibleMove.push(abc[o] + i);
 					}
 					else if (getColor(abc[o] + i) === color) {
 						if (possibleMove.length) {
 							moves[abc[c] + r].push(possibleMove);
-							console.log(possibleMove);
-							console.log('added by up-left for' + (abc[c] + r));
+
 						}
 						break;
 						}
@@ -226,7 +211,6 @@ function getMoves(color) {
 			delete moves[i];
 		}
 	}
-	console.log(moves);
 	return moves;
 }
 
@@ -254,16 +238,13 @@ function highlightMoves(color) {
 // Flip discs with animation
 // 'discs' must be getMoves(color)[square]
 function flipDiscs(discs) {
+	var flipped = [];
 	for (var i in discs) {
 		for (var o in discs[i]) {
 			var color = getColor(discs[i][o]);
 			var opposite = getOpposite(color);
 			$('#' + discs[i][o]).css('background-image', 'url("img/' + opposite + '.png")');
-			$('#' + discs[i][o]).find('img').fadeOut(800, function() {
-				takeSquare(discs[i][o], opposite);
-				$(this).fadeIn(0);
-				$('#' + discs[i][o]).css('background', '');
-			});
+			takeSquare(discs[i][o], opposite);
 		}
 	}
 }
@@ -271,7 +252,7 @@ function flipDiscs(discs) {
 // Handle a square being clicked (play a move)
 $('.square').click(function() {
 	if ($(this).css('cursor') !== 'pointer') {
-		return false;
+		return;
 	}
 	var square = $(this).attr('id');
 	var discs = getMoves(turn)[square];
@@ -285,7 +266,7 @@ $('.square').click(function() {
 	}
 	window.setTimeout(function() {
 		highlightMoves(turn);
-	}, 1000);
+	}, 500);
 });
 
 othello.newGame();
