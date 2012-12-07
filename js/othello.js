@@ -246,23 +246,23 @@ function clearHighlights() {
 // 'discs' must be getMoves(color)[square]
 function flipDiscs(discs) {
 	var highlight = null;;
-	var t = 250;
+	var t = 225;
 	for (var i in discs) {
 		$.each(discs[i], function(o, val) {
 			var opposite = getOpposite(getColor(val));
 			window.setTimeout(function() {
 				$('#' + val).css('background-image', 'url("img/' + opposite + '.png")');
-				$('#' + val).find('img').fadeOut('slow', function() {
+				$('#' + val).find('img').fadeOut(450, function() {
 					takeSquare(val, opposite);
 					$('#' + val).css('background-image', '');
 				});
 				if (!highlight) {
 					highlight = window.setTimeout(function() {
 						highlightMoves(turn);
-					}, t + (250 * discs[i].length));
+					}, t + 225);
 				}
 			}, t);
-			t += 250;
+			t += 225;
 		});
 	}
 }
