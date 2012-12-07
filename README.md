@@ -1,3 +1,3 @@
-#### Othello
+#### Neversi
 
-Browser-based Othello for multiplayer online play.
+Browser-based Reversi for multiplayer online play.
