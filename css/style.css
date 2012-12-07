@@ -74,6 +74,23 @@ h1 {
 	display: inline;
 }
 
+#lobby {
+	border-radius: 10px;
+	background-color: rgba(0, 0, 0, 0.5);
+	width: 220px;
+	height: 300px;
+	padding: 10px;
+	margin: 10px 0;
+	display: none;
+}
+
+#lobby .player {
+	cursor: pointer;
+	display: none;
+	margin-bottom: 10px;
+	font-size: 14px;
+}
+
 #board {
 	border: 5px solid #111;
 	border-radius: 10px;

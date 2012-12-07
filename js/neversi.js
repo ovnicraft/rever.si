@@ -278,6 +278,86 @@ function flipDiscs(discs) {
 	}
 }
 
+// Clean nickname so that it's safe to use.
+function cleanNickname(nickname) {
+	var clean;
+	if (clean = nickname.match(/\/([\s\S]+)/)) {
+		clean = Strophe.xmlescape(clean[1]);
+	}
+	else {
+		return false;
+	}
+	if (clean.match(/\W/)) {
+		return false;
+	}
+	return clean;
+}
+
+// Handle incoming messages from the XMPP server.
+function handleMessage(message) {
+	var nickname = cleanNickname($(message).attr('from'));
+	var body = $(message).find('body').text().replace(/\&quot;/g, '"');
+	var type = $(message).attr('type');
+	// If archived message, ignore.
+	if ($(message).find('delay').length !== 0) {
+		return true;
+	}
+	// If message is from me, ignore.
+	if (nickname === myNickname) {
+		return true;
+	}
+	if (type === 'groupchat') {
+		console.log(nickname + ': ' + body);
+	}
+	return true;
+}
+
+// Handle incoming presence updates from the XMPP server.
+function handlePresence(presence) {
+	// console.log(presence);
+	var nickname = cleanNickname($(presence).attr('from'));
+	// If invalid nickname, do not process
+	if ($(presence).attr('type') === 'error') {
+		if ($(presence).find('error').attr('code') === '409') {
+			logout();
+			window.setTimeout(function() {
+				showMessage('Nickname in use. Please choose another nickname.');
+			}, 1000);
+			return false;
+		}
+		return true;
+	}
+	// Ignore if presence status is coming from myself
+	if (nickname === myNickname) {
+		
+	}
+	// Detect player going offline
+	if ($(presence).attr('type') === 'unavailable') {
+		
+	}
+	// Create player element if player is new
+	else if (!$('#player-' + nickname).length) {
+		addPlayer(nickname);
+	}
+	// Handle player status change to 'available'
+	if ($(presence).find('show').text() === '' || $(presence).find('show').text() === 'chat') {
+		
+	}
+	return true;
+}
+
+// Add new player to lobby
+function addPlayer(nickname) {
+	$('#lobby').queue(function() {
+		var buddyTemplate = '<div class="player" title="' + nickname + '" id="player-' 
+			+ nickname + '" status="online"><span>' + nickname + '</span></div>'
+		$(buddyTemplate).appendTo('#lobby').slideDown(100, function() {
+			$('player-' + nickname).unbind('click');
+		});
+	});
+	$('#lobby').dequeue();
+}
+
 // Handle a square being clicked (play a move)
 $('.square').click(function() {
 	if ($(this).css('cursor') !== 'pointer') {
@@ -315,9 +395,9 @@ $('#play').mouseout(function() {
 
 // Display a message in the message area
 function showMessage(message) {
-	$('#message').find('span').fadeOut(function() {
+	$('#message').find('span').fadeOut('fast', function() {
 		$(this).text(message);
-		$(this).fadeIn();
+		$(this).fadeIn('fast');
 	});
 }
 
@@ -385,7 +465,7 @@ function login(username, password) {
 			showMessage('Connection error.');
 		}
 		else if (status === Strophe.Status.CONNECTED) {
-			showMessage('Connected.');
+			showMessage('Click on a person to invite them to play.');
 			conn.muc.join(
 				'lobby@' + conference, myNickname, 
 				function(message) {
@@ -399,9 +479,15 @@ function login(username, password) {
 					}
 				}
 			);
+			$('#login').fadeOut('fast', function() {
+				$('#lobby').fadeIn('fast');
+			});
 		}
 		else if ((status === Strophe.Status.DISCONNECTED) || (status === Strophe.Status.AUTHFAIL)) {
-			$('#nickname').val('Your nickname');
+			$('#lobby').fadeOut('fast', function() {
+				$('#login').fadeIn('fast');
+				$('#nickname').val('Your nickname').select();
+			});
 			myNickname = null;
 			loginCredentials = [];
 			conn = null;
