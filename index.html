@@ -6,6 +6,9 @@
 	<link rel="icon" type="image/png" href="img/favicon.png" />
 	<script type="application/javascript" src="js/jquery.js"></script>
 	<script type="application/javascript" src="js/jquery.color.js"></script>
+	<script type="application/javascript" src="js/strophe.js"></script>
+	<script type="application/javascript" src="js/strophe.register.js"></script>
+	<script type="application/javascript" src="js/strophe.muc.js"></script>
 </head>
 <body>
 	<div id="main">
@@ -94,13 +97,12 @@
 		<div id="info">
 			<h1>Neversi</h1>
 			<p id="message">
-				Neversi is an open online neversi service that provides neversi play with friends.
+				<span>Neversi is an open online Reversi service that provides Reversi play with friends.</span>
 			</p>
-			<div id="login">
-				<input type="text" id="nickname" value="Your nickname" />
-				<input type="text" id="gameID" value="Game ID" />
-				<input type="button" id="play" value="➤" />
-			</div>
+			<form id="login">
+				<input type="text" id="nickname" value="Your nickname" maxlength="16" autocomplete="off" />
+				<input type="submit" id="play" value="➤" />
+			</form>
 		</div>
 	</div>
 	<script type="application/javascript" src="js/neversi.js"></script>
