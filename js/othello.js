@@ -73,7 +73,7 @@ function getMoves(color) {
 				var possibleMove = [];
 				var o = c;
 				for (var i = (r - 1); i > 1; i--) {
-					if (o < 7) { o++ }
+					if (o < 8) { o++ }
 					if (getColor(abc[o] + i) === enemy) {
 						possibleMove.push(abc[o] + i);
 					}
@@ -91,7 +91,7 @@ function getMoves(color) {
 			// Scan right
 			if (c <= 5) {
 				var possibleMove = [];
-				for (var o = (c + 1); o < 7; o++) {
+				for (var o = (c + 1); o < 8; o++) {
 					if (getColor(abc[o] + r) === enemy) {
 						possibleMove.push(abc[o] + r);
 					}
@@ -111,7 +111,7 @@ function getMoves(color) {
 				var possibleMove = [];
 				var o = c;
 				for (var i = (r + 1); i < 8; i++) {
-					if (o < 7) { o++ }
+					if (o < 8) { o++ }
 					if (getColor(abc[o] + i) === enemy) {
 						possibleMove.push(abc[o] + i);
 					}
@@ -217,18 +217,6 @@ function getMoves(color) {
 // Highlight possible moves
 function highlightMoves(color, clearOnly) {
 	var moves = getMoves(color);
-	$('.square').each(function(index) {
-		$(this).css('cursor', 'auto');
-		if (!getColor($(this).attr('id'))) {
-			$(this).find('span').fadeOut('slow', function() {
-				$(this).html('');
-			});
-			
-		}
-	});
-	if (clearOnly) {
-		return;
-	}
 	for (var i in moves) {
 		$('#' + i).html('<span style="display: none">&#8226;</span>');
 		if (color === 'black') {
@@ -242,10 +230,23 @@ function highlightMoves(color, clearOnly) {
 	}
 }
 
+// Clear highlighted moves
+function clearHighlights() {
+	$('.square').each(function(index) {
+		$(this).css('cursor', 'auto');
+		if (!getColor($(this).attr('id'))) {
+			$(this).find('span').fadeOut('slow', function() {
+				$(this).html('');
+			});
+		}
+	});
+}
+
 // Flip discs with animation
 // 'discs' must be getMoves(color)[square]
 function flipDiscs(discs) {
-	var t = 300;
+	var highlight = null;;
+	var t = 250;
 	for (var i in discs) {
 		$.each(discs[i], function(o, val) {
 			var opposite = getOpposite(getColor(val));
@@ -255,13 +256,13 @@ function flipDiscs(discs) {
 					takeSquare(val, opposite);
 					$('#' + val).css('background-image', '');
 				});
-				if (o === (discs[i].length - 1)) {
-					window.setTimeout(function() {
+				if (!highlight) {
+					highlight = window.setTimeout(function() {
 						highlightMoves(turn);
-					}, t + 300);
+					}, t + (250 * discs[i].length));
 				}
 			}, t);
-			t += 300;
+			t += 250;
 		});
 	}
 }
@@ -271,7 +272,7 @@ $('.square').click(function() {
 	if ($(this).css('cursor') !== 'pointer') {
 		return;
 	}
-	highlightMoves(turn, 1);
+	clearHighlights();
 	var square = $(this).attr('id');
 	var discs = getMoves(turn)[square];
 	takeSquare(square, turn);
