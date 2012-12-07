@@ -6,7 +6,7 @@ var domain = 'crypto.cat';
 var conference = 'conference.crypto.cat';
 var bosh = 'https://crypto.cat/http-bind';
 
-var myNickname;
+var myNickname, inGame;
 var loginCredentials = [];
 
 var neversi = function() {};
@@ -334,6 +334,30 @@ function showMessage(message) {
 	});
 }
 
+// Handle getting an invitation
+function getInvitation(player) {
+	if (!inGame) {
+		var invitation = '<strong>' + player + '</strong>'
+			+ 'challenges you to a game. Accept?'
+			+ '<div class="choice">Yes</div>'
+			+ '<div class="choice">No</div>'
+		showMessage(invitation);
+		$('.choice').click(function() {
+			if ($(this).text() === 'Yes') {
+				sendMessage('accept', player);
+			}
+			else {
+				sendMessage('decline', player);
+			}
+		});
+	}
+}
+
+// Bind logout button
+$('#logout').click(function() {
+	logout();
+});
+
 
 // -----------------------------------------------
 // END PLAYER UI LOGIC
@@ -354,6 +378,11 @@ function randomString(size, alpha, uppercase, numeric) {
 		result += keyspace[Math.floor(Math.random()*keyspace.length)];
 	}
 	return result;
+}
+
+// Send XMPP message to player
+function sendMessage(message, player) {
+	conn.muc.message('lobby@' + conference, player, message, null);
 }
 
 // Clean nickname so that it's safe to use.
@@ -384,8 +413,12 @@ function handleMessage(message) {
 	if (nickname === myNickname) {
 		return true;
 	}
-	if (type === 'groupchat') {
+	// Handle messages from other players
+	if (type !== 'groupchat') {
 		console.log(nickname + ': ' + body);
+		if (body === invite) {
+			getInvitation(nickname);
+		}
 	}
 	return true;
 }
@@ -448,8 +481,11 @@ function bindPlayerClick(player) {
 	$('#player-' + player).mouseout(function() {
 		$(this).animate({
 			'background-color': '#000',
-			'color': '#CCC'
+			'color': '#FFF'
 		}, 'fast');
+	});
+	$('#player-' + player).click(function() {
+		sendMessage('invite', player);
 	});
 }
 
@@ -532,10 +568,13 @@ function login(username, password) {
 				}
 			);
 			$('#login').fadeOut('fast', function() {
+				$('#logout').fadeIn('fast');
 				$('#lobby').fadeIn('fast');
 			});
 		}
 		else if ((status === Strophe.Status.DISCONNECTED) || (status === Strophe.Status.AUTHFAIL)) {
+			showMessage('Thank you for playing with Neversi. You have been logged out.');
+			$('#logout').fadeOut('fast');
 			$('#lobby').fadeOut('fast', function() {
 				$('#login').fadeIn('fast');
 				$('#nickname').val('Your nickname').select();

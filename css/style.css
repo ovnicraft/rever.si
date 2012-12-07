@@ -13,6 +13,17 @@ body {
 	margin: 0 auto;
 	border-radius: 10px;
 	background-color: rgba(0, 0, 0, 0.5);
+	position: relative;
+}
+
+#logout {
+	position: absolute;
+	right: 10px;
+	top: 2px;
+	font-size: 10px;
+	font-variant: small-caps;
+	cursor: pointer;
+	display: none;
 }
 
 #info {
@@ -93,6 +104,14 @@ h1 {
 	border-radius: 10px;
 	padding: 5px;
 	width: auto;
+}
+
+#choice {
+	font-weight: bold;
+}
+
+#choice:hover {
+	text-decoration: underline;
 }
 
 #board {
