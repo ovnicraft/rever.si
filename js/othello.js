@@ -215,16 +215,22 @@ function getMoves(color) {
 }
 
 // Highlight possible moves
-function highlightMoves(color) {
+function highlightMoves(color, clearOnly) {
 	var moves = getMoves(color);
 	$('.square').each(function(index) {
 		$(this).css('cursor', 'auto');
 		if (!getColor($(this).attr('id'))) {
-			$(this).html('');
+			$(this).find('span').fadeOut('slow', function() {
+				$(this).html('');
+			});
+			
 		}
 	});
+	if (clearOnly) {
+		return;
+	}
 	for (var i in moves) {
-		$('#' + i).html('&#8226;');
+		$('#' + i).html('<span style="display: none">&#8226;</span>');
 		if (color === 'black') {
 			$('#' + i).css('color', '#000');
 		}
@@ -232,20 +238,32 @@ function highlightMoves(color) {
 			$('#' + i).css('color', '#FFF');
 		}
 		$('#' + i).css('cursor', 'pointer');
+		$('#' + i).find('span').fadeIn('slow');
 	}
 }
 
 // Flip discs with animation
 // 'discs' must be getMoves(color)[square]
 function flipDiscs(discs) {
-	var flipped = [];
+	var t = 300;
 	for (var i in discs) {
-		for (var o in discs[i]) {
-			var color = getColor(discs[i][o]);
-			var opposite = getOpposite(color);
-			$('#' + discs[i][o]).css('background-image', 'url("img/' + opposite + '.png")');
-			takeSquare(discs[i][o], opposite);
-		}
+		$.each(discs[i], function(o, val) {
+			var opposite = getOpposite(getColor(val));
+			window.setTimeout(function() {
+				$('#' + val).css('background-image', 'url("img/' + opposite + '.png")');
+				$('#' + val).find('img').fadeOut('slow', function() {
+					takeSquare(val, opposite);
+					$('#' + val).css('background-image', '');
+				});
+				if (o === (discs[i].length - 1)) {
+					window.setTimeout(function() {
+						highlightMoves(turn);
+					}, t + 300);
+				}
+			}, t);
+			t += 300;
+		});
+		
 	}
 }
 
@@ -254,6 +272,7 @@ $('.square').click(function() {
 	if ($(this).css('cursor') !== 'pointer') {
 		return;
 	}
+	highlightMoves(turn, 1);
 	var square = $(this).attr('id');
 	var discs = getMoves(turn)[square];
 	takeSquare(square, turn);
@@ -264,9 +283,6 @@ $('.square').click(function() {
 	else {
 		turn = 'black';
 	}
-	window.setTimeout(function() {
-		highlightMoves(turn);
-	}, 500);
 });
 
 othello.newGame();
