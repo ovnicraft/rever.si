@@ -263,7 +263,6 @@ function flipDiscs(discs) {
 			}, t);
 			t += 300;
 		});
-		
 	}
 }
 
