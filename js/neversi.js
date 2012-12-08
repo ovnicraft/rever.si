@@ -8,7 +8,7 @@ var domain = 'crypto.cat';
 var conference = 'conference.crypto.cat';
 var bosh = 'https://crypto.cat/http-bind';
 
-var myNickname, gameState, inviting;
+var myNickname, gameState, inviting, myTurn;
 var myDice, myColor, opponent, loginError;
 var loginCredentials = [];
 
@@ -75,7 +75,7 @@ function getMoves(color) {
 			// Scan up
 			if (r >= 3) {
 				var possibleMove = [];
-				for (var i = (r - 1); i > 1; i--) {
+				for (var i = (r - 1); i >= 1; i--) {
 					if (getColor(abc[c] + i) === enemy) {
 						possibleMove.push(abc[c] + i);
 					}
@@ -94,8 +94,8 @@ function getMoves(color) {
 			if ((r >= 3) && (c <= 5)) {
 				var possibleMove = [];
 				var o = c;
-				for (var i = (r - 1); i > 1; i--) {
-					if (o < 8) { o++ }
+				for (var i = (r - 1); i >= 1; i--) {
+					if (o < 7) { o++ }
 					if (getColor(abc[o] + i) === enemy) {
 						possibleMove.push(abc[o] + i);
 					}
@@ -113,7 +113,7 @@ function getMoves(color) {
 			// Scan right
 			if (c <= 5) {
 				var possibleMove = [];
-				for (var o = (c + 1); o < 8; o++) {
+				for (var o = (c + 1); o <= 7; o++) {
 					if (getColor(abc[o] + r) === enemy) {
 						possibleMove.push(abc[o] + r);
 					}
@@ -132,8 +132,8 @@ function getMoves(color) {
 			if ((r <= 6) && (c <= 5)) {
 				var possibleMove = [];
 				var o = c;
-				for (var i = (r + 1); i < 8; i++) {
-					if (o < 8) { o++ }
+				for (var i = (r + 1); i <= 8; i++) {
+					if (o < 7) { o++ }
 					if (getColor(abc[o] + i) === enemy) {
 						possibleMove.push(abc[o] + i);
 					}
@@ -151,7 +151,7 @@ function getMoves(color) {
 			// Scan down
 			if (r <= 6) {
 				var possibleMove = [];
-				for (var i = (r + 1); i < 8; i++) {
+				for (var i = (r + 1); i <= 8; i++) {
 					if (getColor(abc[c] + i) === enemy) {
 						possibleMove.push(abc[c] + i);
 					}
@@ -170,7 +170,7 @@ function getMoves(color) {
 			if ((r <= 6) && (c >= 2)) {
 				var possibleMove = [];
 				var o = c;
-				for (var i = (r + 1); i < 8; i++) {
+				for (var i = (r + 1); i <= 8; i++) {
 					if (o > 0) { o-- }
 					if (getColor(abc[o] + i) === enemy) {
 						possibleMove.push(abc[o] + i);
@@ -189,7 +189,7 @@ function getMoves(color) {
 			// Scan left
 			if (c >= 2) {
 				var possibleMove = [];
-				for (var o = (c - 1); o > 0; o--) {
+				for (var o = (c - 1); o >= 0; o--) {
 					if (getColor(abc[o] + r) === enemy) {
 						possibleMove.push(abc[o] + r);
 					}
@@ -208,7 +208,7 @@ function getMoves(color) {
 			if ((r >= 3) && (c >= 2)) {
 				var possibleMove = [];
 				var o = c;
-				for (var i = (r - 1); i > 1; i--) {
+				for (var i = (r - 1); i >= 1; i--) {
 					if (o > 0) { o-- }
 					if (getColor(abc[o] + i) === enemy) {
 						possibleMove.push(abc[o] + i);
@@ -303,6 +303,7 @@ $('.square').click(function() {
 	var discs = getMoves(myColor)[square];
 	takeSquare(square, myColor, 1);
 	flipDiscs(discs, 0);
+	myTurn = 0;
 	showMessage('Playing against <strong>' + opponent + '</strong>. It\'s their turn.');
 });
 
@@ -343,7 +344,7 @@ function showMessage(message) {
 function getInvitation(player, theirDice) {
 	if (gameState !== 'inGame') {
 		var invitation = '<strong>' + player + '</strong>'
-			+ ' challenges you to a game. Accept?<br />'
+			+ ' challenges you. Accept?<br />'
 			+ '<span class="choice">yes</span> &nbsp;&nbsp;'
 			+ '<span class="choice">no</span>'
 		showMessage(invitation);
@@ -380,9 +381,11 @@ function enterGame(player, myDice, theirDice) {
 		neversi.newGame();
 		if (myColor === 'black') {
 			highlightMoves(myColor);
+			myTurn = 1;
 			showMessage('Playing against <strong>' + opponent + '</strong>. It\'s your turn.');
 		}
 		else {
+			myTurn = 0;
 			showMessage('Playing against <strong>' + opponent + '</strong>. It\'s their turn.');
 		}
 	});
@@ -392,6 +395,7 @@ function enterGame(player, myDice, theirDice) {
 function leaveGame() {
 	gameState = 'lobby';
 	opponent = null;
+	myTurn = null;
 	$('#inGame').fadeOut(function() {
 		$('#lobby').fadeIn();
 		neversi.newGame();
@@ -522,9 +526,12 @@ function handleMessage(message) {
 	// Detect gameplay moves/chat
 	else if (opponent === nickname) {
 		if (move = body.match(/^[a-h][1-8]$/)) {
-			var discs = getMoves(getOpposite(myColor))[move[0]];
-			takeSquare(move[0], getOpposite(myColor), 0);
-			flipDiscs(discs, 1);
+			if (!myTurn) {
+				myTurn = 1;
+				var discs = getMoves(getOpposite(myColor))[move[0]];
+				takeSquare(move[0], getOpposite(myColor), 0);
+				flipDiscs(discs, 1);
+			}
 		}
 		else if (chat = body.match(/^chat/)) {
 			chat = '<div><strong>' + nickname + '</strong>: ' + body.substring(5) + '</div>';
