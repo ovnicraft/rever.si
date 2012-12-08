@@ -2,7 +2,7 @@ body {
 	background-color: #000;
 	background-image: url('../img/bg.jpg');
 	background-position: center;
-	font-family: 'Helvetica', 'Arial' 'Verdana';
+	font-family: 'Helvetica', 'Arial', 'Verdana';
 	margin: 1.4% auto 0 auto;
 	color: #FFF;
 }
