@@ -417,9 +417,29 @@ function leaveGame() {
 	opponent = null;
 	myTurn = null;
 	$('#inGame').fadeOut(function() {
+		$('#chat').html('');
+		$('#chatInput').val('');
 		$('#lobby').fadeIn();
 		neversi.newGame();
 	});
+}
+
+// Convert message URLs to links.
+function addLinks(message) {
+	if ((URLs = message.match(/((mailto\:|(news|(ht|f)tp(s?))\:\/\/){1}\S+)/gi))) {
+		for (var i in URLs) {
+			var sanitize = URLs[i].split('');
+			for (var l in sanitize) {
+				if (!sanitize[l].match(/\w|\d|\:|\/|\?|\=|\#|\+|\,|\.|\&|\;|\%/)) {
+					sanitize[l] = encodeURIComponent(sanitize[l]);
+				}
+			}
+			sanitize = sanitize.join('');
+			var processed = sanitize.replace(':','&colon;');
+			message = message.replace(sanitize, '<a target="_blank" href="' + processed + '">' + processed + '</a>');		
+		}
+	}
+	return message;
 }
 
 // Scrolls down the chat window to the bottom in a smooth animation.
@@ -506,7 +526,7 @@ $('#chatInput').keyup(function(e) {
 	if (e.keyCode === 13) {
 		var chat = $(this).val().replace(/</g, '&lt;').replace(/>/g, '&gt;');
 		sendMessage('chat ' + $(this).val(), opponent);
-		$('#chat').append('<div><strong>' + myNickname + '</strong>: ' + chat + '</div>');
+		$('#chat').append('<div><strong>' + myNickname + '</strong>: ' + addLinks(chat) + '</div>');
 		scrollDown(600);
 		$(this).val('');
 	}
@@ -593,7 +613,7 @@ function handleMessage(message) {
 		}
 		else if (chat = body.match(/^chat/)) {
 			chat = '<div><strong>' + nickname + '</strong>: ' + body.substring(5) + '</div>';
-			$('#chat').append(chat);
+			$('#chat').append(addLinks(chat));
 			scrollDown(600);
 		}
 	}

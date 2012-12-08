@@ -11,6 +11,14 @@ body {
 	color: #FFF;
 }
 
+a {
+	color: #54895C;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
 #main {
 	width: 850px;
 	padding: 20px;
