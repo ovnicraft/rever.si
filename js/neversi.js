@@ -424,6 +424,12 @@ function leaveGame() {
 	});
 }
 
+// Display chat message
+function addToChat(message, nickname) {
+	$('#chat').append('<div><strong>' + nickname + '</strong>: ' + addLinks(message) + '</div>');
+	scrollDown(600);
+}
+
 // Convert message URLs to links.
 function addLinks(message) {
 	if ((URLs = message.match(/((mailto\:|(news|(ht|f)tp(s?))\:\/\/){1}\S+)/gi))) {
@@ -525,9 +531,8 @@ function sendMessage(message, player) {
 $('#chatInput').keyup(function(e) {
 	if (e.keyCode === 13) {
 		var chat = $(this).val().replace(/</g, '&lt;').replace(/>/g, '&gt;');
+		addToChat(chat, myNickname);
 		sendMessage('chat ' + $(this).val(), opponent);
-		$('#chat').append('<div><strong>' + myNickname + '</strong>: ' + addLinks(chat) + '</div>');
-		scrollDown(600);
 		$(this).val('');
 	}
 });
@@ -612,9 +617,7 @@ function handleMessage(message) {
 			}
 		}
 		else if (chat = body.match(/^chat/)) {
-			chat = '<div><strong>' + nickname + '</strong>: ' + addLinks(body.substring(5)) + '</div>';
-			$('#chat').append(chat);
-			scrollDown(600);
+			addToChat(body.substring(5), nickname);
 		}
 	}
 	return true;
