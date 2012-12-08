@@ -612,8 +612,8 @@ function handleMessage(message) {
 			}
 		}
 		else if (chat = body.match(/^chat/)) {
-			chat = '<div><strong>' + nickname + '</strong>: ' + body.substring(5) + '</div>';
-			$('#chat').append(addLinks(chat));
+			chat = '<div><strong>' + nickname + '</strong>: ' + addLinks(body.substring(5)) + '</div>';
+			$('#chat').append(chat);
 			scrollDown(600);
 		}
 	}
