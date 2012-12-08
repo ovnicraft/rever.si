@@ -23,6 +23,7 @@ var neversi = function() {};
 // Start a new game	
 neversi.newGame = function() {
 	$('.square').html('');
+	resetCounters();
 	takeSquare('d5', 'black', 0);
 	takeSquare('e4', 'black', 0);
 	takeSquare('e5', 'white', 0);
@@ -38,6 +39,7 @@ function takeSquare(square, color, network) {
 			'src': 'img/' + color + '.png',
 		})
 	);
+	incrementCounter(color, 1);
 	if (network && opponent) {
 		sendMessage(square, opponent);
 	}
@@ -268,13 +270,15 @@ function clearHighlights() {
 function flipDiscs(discs, highlight) {
 	var h = null;
 	var t = 225;
+	var color = getColor(discs[0][0]);
+	var opposite = getOpposite(color);
 	for (var i in discs) {
 		$.each(discs[i], function(o, val) {
-			var opposite = getOpposite(getColor(val));
 			window.setTimeout(function() {
 				$('#' + val).css('background-image', 'url("img/' + opposite + '.png")');
 				$('#' + val).find('img').fadeOut(function() {
 					takeSquare(val, opposite, 0);
+					incrementCounter(color, -1);
 					$('#' + val).css('background-image', '');
 				});
 				if (highlight && !h) {
@@ -394,11 +398,31 @@ function leaveGame() {
 	});
 }
 
+// Scrolls down the chat window to the bottom in a smooth animation.
+// 'speed' is animation speed in milliseconds.
+function scrollDown(speed) {
+	$('#chat').animate({
+		scrollTop: $('#chat')[0].scrollHeight + 20
+	}, speed);
+}
+
+// Increment disc counter for color by amount (negative amounts allowed)
+function incrementCounter(color, amount) {
+	var counter = parseInt($('#' + color + 'Counter').text());
+	counter += amount;
+	$('#' + color + 'Counter').text(counter);
+}
+
+// Reset disc counters
+function resetCounters() {
+	$('#blackCounter').text('0');
+	$('#whiteCounter').text('0');
+}
+
 // Bind logout button
 $('#logout').click(function() {
 	logout();
 });
-
 
 // -----------------------------------------------
 // END PLAYER UI LOGIC
@@ -432,6 +456,7 @@ $('#chatInput').keyup(function(e) {
 		var chat = $(this).val().replace(/</g, '&lt;').replace(/>/g, '&gt;');
 		sendMessage('chat ' + $(this).val(), opponent);
 		$('#chat').append('<div><strong>' + myNickname + '</strong>: ' + chat + '</div>');
+		scrollDown(600);
 		$(this).val('');
 	}
 });
@@ -504,6 +529,7 @@ function handleMessage(message) {
 		else if (chat = body.match(/^chat/)) {
 			chat = '<div><strong>' + nickname + '</strong>: ' + body.substring(5) + '</div>';
 			$('#chat').append(chat);
+			scrollDown(600);
 		}
 	}
 	return true;
