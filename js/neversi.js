@@ -280,7 +280,8 @@ function flipDiscs(discs, highlight) {
 				if (highlight && !h) {
 					h = window.setTimeout(function() {
 						highlightMoves(myColor);
-					}, t + 400);
+						showMessage('Playing against <strong>' + opponent + '</strong>. It\'s your turn.');
+					}, t + 600);
 				}
 			}, t);
 			t += 225;
@@ -298,6 +299,7 @@ $('.square').click(function() {
 	var discs = getMoves(myColor)[square];
 	takeSquare(square, myColor, 1);
 	flipDiscs(discs, 0);
+	showMessage('Playing against <strong>' + opponent + '</strong>. It\'s their turn.');
 });
 
 // -----------------------------------------------
@@ -374,8 +376,11 @@ function enterGame(player, myDice, theirDice) {
 		neversi.newGame();
 		if (myColor === 'black') {
 			highlightMoves(myColor);
+			showMessage('Playing against <strong>' + opponent + '</strong>. It\'s your turn.');
 		}
-		showMessage('Playing against <strong>' + player + '</strong>.');
+		else {
+			showMessage('Playing against <strong>' + opponent + '</strong>. It\'s their turn.');
+		}
 	});
 }
 
@@ -420,6 +425,16 @@ function randomString(size, alpha, uppercase, numeric) {
 function sendMessage(message, player) {
 	conn.muc.message('lobby@' + conference, player, message, null);
 }
+
+// Handle chat form submission
+$('#chatInput').keyup(function(e) {
+	if (e.keyCode === 13) {
+		var chat = $(this).val().replace(/</g, '&lt;').replace(/>/g, '&gt;');
+		sendMessage('chat ' + $(this).val(), opponent);
+		$('#chat').append('<div><strong>' + myNickname + '</strong>: ' + chat + '</div>');
+		$(this).val('');
+	}
+});
 
 // Clean nickname so that it's safe to use.
 function cleanNickname(nickname) {
@@ -485,6 +500,10 @@ function handleMessage(message) {
 			var discs = getMoves(getOpposite(myColor))[move[0]];
 			takeSquare(move[0], getOpposite(myColor), 0);
 			flipDiscs(discs, 1);
+		}
+		else if (chat = body.match(/^chat/)) {
+			chat = '<div><strong>' + nickname + '</strong>: ' + body.substring(5) + '</div>';
+			$('#chat').append(chat);
 		}
 	}
 	return true;
@@ -661,7 +680,7 @@ function login(username, password) {
 			}
 			neversi.newGame();
 			$('#logout').fadeOut('fast');
-			$('#lobby').fadeOut('fast', function() {
+			$('#' + gameState).fadeOut('fast', function() {
 				$('#login').fadeIn('fast');
 				$('#nickname').val('Your nickname').select();
 			});

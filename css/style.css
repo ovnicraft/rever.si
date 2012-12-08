@@ -50,7 +50,7 @@ h1 {
 	font-family: 'Futura', 'Menlo', 'Monaco', 'Helvetica', 'Arial';
 }
 
-#login input[type=text] {
+input[type=text] {
 	border-radius: 10px;
 	background-color: rgba(0, 0, 0, 0.5);
 	border: none;
@@ -119,6 +119,20 @@ h1 {
 
 #inGame {
 	display: none;
+}
+
+#inGame #chat {
+	border-radius: 10px;
+	background-color: rgba(0, 0, 0, 0.5);
+	width: 220px;
+	height: 300px;
+	padding: 10px;
+	margin: 10px 0;
+}
+
+#inGame #chatInput {
+	width: 220px;
+	padding: 10px;
 }
 
 #board {
