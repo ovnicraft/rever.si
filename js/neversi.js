@@ -1,7 +1,9 @@
 // Neversi
 // Copyright Nadim Kobeissi, all rights reserved
 
-//$(window).load(function() {
+var neversi = function() {};
+
+$(window).load(function() {
 
 // Configuration
 var domain = 'crypto.cat';
@@ -13,8 +15,6 @@ var myDice, myColor, opponent, loginError;
 var loginCredentials = [];
 
 var abc = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-
-var neversi = function() {};
 	
 // -----------------------------------------------
 // BOARD LOGIC
@@ -803,4 +803,4 @@ $('#nickname').select();
 
 neversi.newGame();
 
-//});
+});
