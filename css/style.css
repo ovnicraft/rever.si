@@ -126,7 +126,8 @@ input[type=text] {
 	font-size: 64px;
 	font-family: 'Futura', 'Helvetica', 'Arial', 'Verdana';
 	text-align: center;
-	margin: 25px 0;
+	margin: 30px 0;
+	text-shadow: 0 0 5px #111;
 }
 
 #inGame #blackCounter {
@@ -134,12 +135,12 @@ input[type=text] {
 }
 
 #inGame #chat {
+	margin: 30px 0;
 	border-radius: 10px;
 	background-color: rgba(0, 0, 0, 0.5);
 	width: 220px;
 	height: 260px;
 	padding: 10px;
-	margin: 25px 0;
 	overflow: scroll;
 }
 

@@ -362,7 +362,7 @@ function showMessage(message) {
 
 // Handle getting an invitation
 function getInvitation(player, theirDice) {
-	if (gameState !== 'inGame') {
+	if (gameState === 'lobby') {
 		var invitation = '<strong>' + player + '</strong>'
 			+ ' challenges you. Accept?<br />'
 			+ '<span class="choice">yes</span> &nbsp;&nbsp;'
