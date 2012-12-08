@@ -273,14 +273,14 @@ function flipDiscs(discs, highlight) {
 			var opposite = getOpposite(getColor(val));
 			window.setTimeout(function() {
 				$('#' + val).css('background-image', 'url("img/' + opposite + '.png")');
-				$('#' + val).find('img').fadeOut(450, function() {
+				$('#' + val).find('img').fadeOut(function() {
 					takeSquare(val, opposite, 0);
 					$('#' + val).css('background-image', '');
 				});
 				if (highlight && !h) {
 					h = window.setTimeout(function() {
 						highlightMoves(myColor);
-					}, t + 1250);
+					}, t + 400);
 				}
 			}, t);
 			t += 225;
@@ -376,6 +376,16 @@ function enterGame(player, myDice, theirDice) {
 			highlightMoves(myColor);
 		}
 		showMessage('Playing against <strong>' + player + '</strong>.');
+	});
+}
+
+// Leave game
+function leaveGame() {
+	gameState = 'lobby';
+	opponent = null;
+	$('#inGame').fadeOut(function() {
+		$('#lobby').fadeIn();
+		neversi.newGame();
 	});
 }
 
@@ -503,6 +513,10 @@ function handlePresence(presence) {
 	// Detect player going offline
 	if ($(presence).attr('type') === 'unavailable') {
 		$('#player-' + nickname).slideUp().remove();
+		if (opponent === nickname) {
+			showMessage('Your opponent has disconnected.');
+			leaveGame();
+		}
 	}
 	// Create player element if player is new
 	else if (!$('#player-' + nickname).length) {
@@ -547,7 +561,7 @@ function bindPlayerClick(player) {
 		}
 	});
 	$('#player-' + player).click(function() {
-		if (gameState == 'lobby') {
+		if (gameState === 'lobby') {
 			myDice = Math.floor(Math.random()*99999999);
 			gameState = 'inviting';	
 			inviting = player;
