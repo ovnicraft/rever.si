@@ -372,7 +372,7 @@ function getInvitation(player, theirDice) {
 		window.setTimeout(function() {
 			$('.choice').click(function() {
 				if ($(this).html() == 'yes') {
-					myDice = Math.floor(Math.random()*99999999);
+					myDice = Math.floor(Math.random()*9999999999);
 					sendMessage('accept ' + myDice, player);
 					enterGame(player, myDice, theirDice);
 				}
@@ -672,7 +672,7 @@ function bindPlayerClick(player) {
 	});
 	$('#player-' + player).click(function() {
 		if (gameState === 'lobby') {
-			myDice = Math.floor(Math.random()*99999999);
+			myDice = Math.floor(Math.random()*9999999999);
 			gameState = 'inviting';	
 			inviting = player;
 			sendMessage('invite ' + myDice, player);
