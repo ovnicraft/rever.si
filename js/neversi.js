@@ -1,42 +1,46 @@
 // Neversi
 // Copyright Nadim Kobeissi, all rights reserved
 
+//$(window).load(function() {
+
 // Configuration
 var domain = 'crypto.cat';
 var conference = 'conference.crypto.cat';
 var bosh = 'https://crypto.cat/http-bind';
 
 var myNickname, gameState, inviting;
+var myDice, myColor, opponent, loginError;
 var loginCredentials = [];
 
-var neversi = function() {};
+var abc = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 
-//$(window).load(function() {
+var neversi = function() {};
 	
 // -----------------------------------------------
 // BOARD LOGIC
 // -----------------------------------------------
 
-var abc = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-var turn = 'black';
-
 // Start a new game	
 neversi.newGame = function() {
-	takeSquare('d5', 'black');
-	takeSquare('e4', 'black');
-	takeSquare('e5', 'white');
-	takeSquare('d4', 'white');
-	highlightMoves('black');
+	$('.square').html('');
+	takeSquare('d5', 'black', 0);
+	takeSquare('e4', 'black', 0);
+	takeSquare('e5', 'white', 0);
+	takeSquare('d4', 'white', 0);
 }
 
 // Take square with color
-function takeSquare(square, color) {
+// If network = 1, broadcasts move to opponent
+function takeSquare(square, color, network) {
 	$('#' + square).html(
 		$('<img />',{
 			'class': color,
 			'src': 'img/' + color + '.png',
 		})
 	);
+	if (network && opponent) {
+		sendMessage(square, opponent);
+	}
 }
 
 // Get the opposite of color
@@ -231,7 +235,7 @@ function getMoves(color) {
 }
 
 // Highlight possible moves
-function highlightMoves(color, clearOnly) {
+function highlightMoves(color) {
 	var moves = getMoves(color);
 	for (var i in moves) {
 		$('#' + i).html('<span style="display: none">&#8226;</span>');
@@ -269,14 +273,9 @@ function flipDiscs(discs) {
 			window.setTimeout(function() {
 				$('#' + val).css('background-image', 'url("img/' + opposite + '.png")');
 				$('#' + val).find('img').fadeOut(450, function() {
-					takeSquare(val, opposite);
+					takeSquare(val, opposite, 0);
 					$('#' + val).css('background-image', '');
 				});
-				if (!highlight) {
-					highlight = window.setTimeout(function() {
-						highlightMoves(turn);
-					}, t + 225);
-				}
 			}, t);
 			t += 225;
 		});
@@ -290,15 +289,9 @@ $('.square').click(function() {
 	}
 	clearHighlights();
 	var square = $(this).attr('id');
-	var discs = getMoves(turn)[square];
-	takeSquare(square, turn);
+	var discs = getMoves(myColor)[square];
+	takeSquare(square, myColor, 1);
 	flipDiscs(discs);
-	if (turn === 'black') {
-		turn = 'white';
-	}
-	else {
-		turn = 'black';
-	}
 });
 
 // -----------------------------------------------
@@ -335,23 +328,24 @@ function showMessage(message) {
 }
 
 // Handle getting an invitation
-function getInvitation(player) {
+function getInvitation(player, theirDice) {
 	if (gameState !== 'inGame') {
 		var invitation = '<strong>' + player + '</strong>'
 			+ ' challenges you to a game. Accept?<br />'
-			+ '<span class="choice" id="yes">yes</span> &nbsp;&nbsp;'
+			+ '<span class="choice">yes</span> &nbsp;&nbsp;'
 			+ '<span class="choice">no</span>'
 		showMessage(invitation);
 		// Delay necessary to avoid race condition
 		window.setTimeout(function() {
 			$('.choice').click(function() {
-				if ($(this).attr('id') === 'yes') {
-					sendMessage('accept', player);
-					gameState = 'inGame';
+				if ($(this).html() == 'yes') {
+					myDice = Math.floor(Math.random()*99999999);
+					sendMessage('accept ' + myDice, player);
+					enterGame(player, myDice, theirDice);
 				}
 				else {
-					sendMessage('decline', player);
-					showMessage('You have declined the invitation.');
+					sendMessage('refuse', player);
+					showMessage('You have refused the invitation.');
 					gameState = 'lobby';
 				}
 			});
@@ -360,6 +354,24 @@ function getInvitation(player) {
 	else {
 		sendMessage('inGame', player);
 	}
+}
+
+// Enter a game after successful invitation
+function enterGame(player, myDice, theirDice) {
+	gameState = 'inGame';
+	opponent = player;
+	inviting = null;
+	if (myDice > theirDice) { myColor = 'black' }
+	else { myColor = 'white' }
+	$('.player').mouseout();
+	$('#lobby').fadeOut(function() {
+		$('#inGame').fadeIn();
+		neversi.newGame();
+		if (myColor === 'black') {
+			highlightMoves(myColor);
+		}
+		showMessage('Playing against <strong>' + player + '</strong>.');
+	});
 }
 
 // Bind logout button
@@ -422,28 +434,43 @@ function handleMessage(message) {
 	if (nickname === myNickname) {
 		return true;
 	}
-	// Handle messages from other players
-	if (type !== 'groupchat') {
-		console.log(nickname + ': ' + body);
-		if (body === 'invite') {
-			getInvitation(nickname);
-			gameState = 'invited';
+	// If this is a group message, ignore.
+	if (type === 'groupchat') {
+		return true;
+	}
+	console.log(nickname + ': ' + body);
+	// Detect incoming invitation
+	if (body.match(/^invite/)) {
+		var theirDice = parseInt(body.match(/[0-9]+$/)[0]);
+		getInvitation(nickname, theirDice);
+		gameState = 'invited';
+	}
+	// Detect invitation response
+	else if (inviting === nickname) {
+		if (body.match(/^accept/)) {
+			var theirDice = parseInt(body.match(/[0-9]+$/)[0]);
+			enterGame(nickname, myDice, theirDice);
 		}
-		else if (inviting === nickname) {
-			if (body === 'accept') {
-				
-			}
-			else if (body === 'decline') {
-				showMessage('<strong>' + nickname + '</strong> has refused your invitation.');
-				$('.player').mouseout();
-				gameState = 'lobby';
-				inviting = null;
-			}
-			else if (body === 'inGame') {
-				showMessage('<strong>' + nickname + '</strong> is currently playing a game.');
-				gameState = 'lobby';
-				inviting = null;
-			}
+		else if (body === 'refuse') {
+			showMessage('<strong>' + nickname + '</strong> has refused your invitation.');
+			$('.player').mouseout();
+			gameState = 'lobby';
+			inviting = null;
+		}
+		else if (body === 'inGame') {
+			showMessage('<strong>' + nickname + '</strong> is currently playing a game.');
+			$('.player').mouseout();
+			gameState = 'lobby';
+			inviting = null;
+		}
+	}
+	// Detect gameplay moves/chat
+	else if (opponent === nickname) {
+		if (move = body.match(/^[a-h][1-8]$/)) {
+			var discs = getMoves(getOpposite(myColor))[move[0]];
+			takeSquare(move[0], getOpposite(myColor), 0);
+			flipDiscs(discs);
+			highlightMoves(myColor);
 		}
 	}
 	return true;
@@ -459,6 +486,7 @@ function handlePresence(presence) {
 			logout();
 			window.setTimeout(function() {
 				showMessage('Nickname in use. Please choose another nickname.');
+				loginError = 1;
 			}, 1000);
 			return false;
 		}
@@ -516,10 +544,11 @@ function bindPlayerClick(player) {
 	});
 	$('#player-' + player).click(function() {
 		if (gameState == 'lobby') {
+			myDice = Math.floor(Math.random()*99999999);
 			gameState = 'inviting';	
-			showMessage('Waiting for <strong>' + player + '</strong> to respond...');
-			sendMessage('invite', player);
 			inviting = player;
+			sendMessage('invite ' + myDice, player);
+			showMessage('Waiting for <strong>' + player + '</strong> to respond...');
 		}
 	});
 }
@@ -609,7 +638,10 @@ function login(username, password) {
 			});
 		}
 		else if ((status === Strophe.Status.DISCONNECTED) || (status === Strophe.Status.AUTHFAIL)) {
-			showMessage('Thank you for playing with Neversi. You have been logged out.');
+			if (!loginError) {
+				showMessage('Thank you for playing with Neversi. You have been logged out.');
+			}
+			neversi.newGame();
 			$('#logout').fadeOut('fast');
 			$('#lobby').fadeOut('fast', function() {
 				$('#login').fadeIn('fast');
@@ -618,6 +650,7 @@ function login(username, password) {
 			myNickname = null;
 			loginCredentials = [];
 			conn = null;
+			loginError = 0;
 			$('#play').removeAttr('readonly');
 		}
 	});

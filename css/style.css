@@ -117,6 +117,10 @@ h1 {
 	text-decoration: underline;
 }
 
+#inGame {
+	display: none;
+}
+
 #board {
 	border: 5px solid #111;
 	border-radius: 10px;
