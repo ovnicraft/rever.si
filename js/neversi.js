@@ -264,8 +264,9 @@ function clearHighlights() {
 
 // Flip discs with animation
 // 'discs' must be getMoves(color)[square]
-function flipDiscs(discs) {
-	var highlight = null;;
+// If 'highlight', highlights moves after flipping discs
+function flipDiscs(discs, highlight) {
+	var h = null;
 	var t = 225;
 	for (var i in discs) {
 		$.each(discs[i], function(o, val) {
@@ -276,6 +277,11 @@ function flipDiscs(discs) {
 					takeSquare(val, opposite, 0);
 					$('#' + val).css('background-image', '');
 				});
+				if (highlight && !h) {
+					h = window.setTimeout(function() {
+						highlightMoves(myColor);
+					}, t + 1250);
+				}
 			}, t);
 			t += 225;
 		});
@@ -291,7 +297,7 @@ $('.square').click(function() {
 	var square = $(this).attr('id');
 	var discs = getMoves(myColor)[square];
 	takeSquare(square, myColor, 1);
-	flipDiscs(discs);
+	flipDiscs(discs, 0);
 });
 
 // -----------------------------------------------
@@ -363,7 +369,6 @@ function enterGame(player, myDice, theirDice) {
 	inviting = null;
 	if (myDice > theirDice) { myColor = 'black' }
 	else { myColor = 'white' }
-	$('.player').mouseout();
 	$('#lobby').fadeOut(function() {
 		$('#inGame').fadeIn();
 		neversi.newGame();
@@ -453,15 +458,15 @@ function handleMessage(message) {
 		}
 		else if (body === 'refuse') {
 			showMessage('<strong>' + nickname + '</strong> has refused your invitation.');
-			$('.player').mouseout();
 			gameState = 'lobby';
 			inviting = null;
+			$('.player').mouseout();
 		}
 		else if (body === 'inGame') {
 			showMessage('<strong>' + nickname + '</strong> is currently playing a game.');
-			$('.player').mouseout();
 			gameState = 'lobby';
 			inviting = null;
+			$('.player').mouseout();
 		}
 	}
 	// Detect gameplay moves/chat
@@ -469,8 +474,7 @@ function handleMessage(message) {
 		if (move = body.match(/^[a-h][1-8]$/)) {
 			var discs = getMoves(getOpposite(myColor))[move[0]];
 			takeSquare(move[0], getOpposite(myColor), 0);
-			flipDiscs(discs);
-			highlightMoves(myColor);
+			flipDiscs(discs, 1);
 		}
 	}
 	return true;
