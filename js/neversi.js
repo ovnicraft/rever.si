@@ -104,7 +104,7 @@ function getMoves(color) {
 							moves[abc[c] + r].push(possibleMove);
 						}
 						break;
-						}
+					}
 					else {
 						break;
 					}
@@ -142,7 +142,7 @@ function getMoves(color) {
 							moves[abc[c] + r].push(possibleMove);
 						}
 						break;
-						}
+					}
 					else {
 						break;
 					}
@@ -180,7 +180,7 @@ function getMoves(color) {
 							moves[abc[c] + r].push(possibleMove);
 						}
 						break;
-						}
+					}
 					else {
 						break;
 					}
@@ -216,10 +216,9 @@ function getMoves(color) {
 					else if (getColor(abc[o] + i) === color) {
 						if (possibleMove.length) {
 							moves[abc[c] + r].push(possibleMove);
-
 						}
 						break;
-						}
+					}
 					else {
 						break;
 					}
@@ -240,6 +239,9 @@ function getMoves(color) {
 function highlightMoves(color) {
 	var moves = getMoves(color);
 	if (Object.keys(moves).length === 0) {
+		if (getDiscCount() === 64) {
+			endGame();
+		}
 		return false;
 	}
 	for (var i in moves) {
@@ -253,6 +255,7 @@ function highlightMoves(color) {
 		$('#' + i).css('cursor', 'pointer');
 		$('#' + i).find('span').fadeIn('slow');
 	}
+	return true;
 }
 
 // Clear highlighted moves
@@ -421,12 +424,13 @@ function scrollDown(speed) {
 // Increment disc counter for color by amount (negative amounts allowed)
 function incrementCounter(color, amount) {
 	var counter = parseInt($('#' + color + 'Counter').text());
-	var opposite = parseInt($('#' + getOpposite(color) + 'Counter').text());
 	counter += amount;
 	$('#' + color + 'Counter').text(counter);
-	if ((counter + opposite) === 64) {
-		endGame();
-	}
+}
+
+// Get total disc count
+function getDiscCount() {
+	return parseInt($('#blackCounter').text()) + parseInt($('#whiteCounter').text());
 }
 
 // End game
