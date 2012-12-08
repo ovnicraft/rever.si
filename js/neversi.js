@@ -239,6 +239,9 @@ function getMoves(color) {
 // Highlight possible moves
 function highlightMoves(color) {
 	var moves = getMoves(color);
+	if (Object.keys(moves).length === 0) {
+		return false;
+	}
 	for (var i in moves) {
 		$('#' + i).html('<span style="display: none">&#8226;</span>');
 		if (color === 'black') {
@@ -283,8 +286,13 @@ function flipDiscs(discs, highlight) {
 				});
 				if (highlight && !h) {
 					h = window.setTimeout(function() {
-						highlightMoves(myColor);
-						showMessage('Playing against <strong>' + opponent + '</strong>. It\'s your turn.');
+						if(highlightMoves(myColor)) {
+							showMessage('Playing against <strong>' + opponent + '</strong>. It\'s your turn.');
+						}
+						else {
+							sendMessage('pass', opponent);
+							myTurn = 0;
+						}
 					}, t + 600);
 				}
 			}, t);
@@ -413,8 +421,34 @@ function scrollDown(speed) {
 // Increment disc counter for color by amount (negative amounts allowed)
 function incrementCounter(color, amount) {
 	var counter = parseInt($('#' + color + 'Counter').text());
+	var opposite = parseInt($('#' + getOpposite(color) + 'Counter').text());
 	counter += amount;
 	$('#' + color + 'Counter').text(counter);
+	if ((counter + opposite) === 64) {
+		endGame();
+	}
+}
+
+// End game
+function endGame() {
+	var blackCount = parseInt($('#blackCounter').text());
+	var whiteCount = parseInt($('#whiteCounter').text());
+	if (blackCount > whiteCount) {
+		var winner = 'black';
+	}
+	else if (whiteCount > blackCount) {
+		var winner = 'white';
+	}
+	else {
+		showMessage('It\'s a draw!');
+		return;
+	}
+	if (myColor === winner) {
+		showMessage('You have won!');
+	}
+	else {
+		showMessage('You have lost.');
+	}
 }
 
 // Reset disc counters
@@ -531,6 +565,17 @@ function handleMessage(message) {
 				var discs = getMoves(getOpposite(myColor))[move[0]];
 				takeSquare(move[0], getOpposite(myColor), 0);
 				flipDiscs(discs, 1);
+			}
+		}
+		else if (body === 'pass') {
+			if (!myTurn) {
+				myTurn = 1;
+				if (highlightMoves(myColor)) {
+					showMessage('<strong>' + opponent + '</strong> has no moves. It\'s your turn.');
+				}
+				else {
+					endGame();
+				}
 			}
 		}
 		else if (chat = body.match(/^chat/)) {
