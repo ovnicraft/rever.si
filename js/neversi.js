@@ -96,6 +96,7 @@ function getMoves(color) {
 				var o = c;
 				for (var i = (r - 1); i >= 1; i--) {
 					if (o < 7) { o++ }
+					else { break }
 					if (getColor(abc[o] + i) === enemy) {
 						possibleMove.push(abc[o] + i);
 					}
@@ -134,6 +135,7 @@ function getMoves(color) {
 				var o = c;
 				for (var i = (r + 1); i <= 8; i++) {
 					if (o < 7) { o++ }
+					else { break }
 					if (getColor(abc[o] + i) === enemy) {
 						possibleMove.push(abc[o] + i);
 					}
@@ -172,6 +174,7 @@ function getMoves(color) {
 				var o = c;
 				for (var i = (r + 1); i <= 8; i++) {
 					if (o > 0) { o-- }
+					else { break }
 					if (getColor(abc[o] + i) === enemy) {
 						possibleMove.push(abc[o] + i);
 					}
@@ -210,6 +213,7 @@ function getMoves(color) {
 				var o = c;
 				for (var i = (r - 1); i >= 1; i--) {
 					if (o > 0) { o-- }
+					else { break }
 					if (getColor(abc[o] + i) === enemy) {
 						possibleMove.push(abc[o] + i);
 					}
@@ -228,6 +232,11 @@ function getMoves(color) {
 	}
 	// Clean up
 	for (var i in moves) {
+		for (o in moves[i]) {
+			if (!moves[i][o].length) {
+				delete moves[i][o];
+			}
+		}
 		if (!moves[i].length) {
 			delete moves[i];
 		}
