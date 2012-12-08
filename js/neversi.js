@@ -792,6 +792,8 @@ function login(username, password) {
 			neversi.newGame();
 			$('#logout').fadeOut('fast');
 			$('#' + gameState).fadeOut('fast', function() {
+				$('#chat').html('');
+				$('#chatInput').val('');
 				$('#login').fadeIn('fast');
 				$('#nickname').val('Your nickname').select();
 			});
