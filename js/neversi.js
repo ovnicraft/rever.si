@@ -6,9 +6,9 @@ var neversi = function() {};
 $(window).load(function() {
 
 // Configuration
-var domain = 'crypto.cat';
-var conference = 'conference.crypto.cat';
-var bosh = 'https://crypto.cat/http-bind';
+var domain = 'never.si';
+var conference = 'conference.never.si';
+var bosh = 'http://151.236.217.53/http-bind';
 
 var myNickname, gameState, inviting, myTurn;
 var myDice, myColor, opponent, loginError, inviter;
