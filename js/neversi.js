@@ -685,7 +685,7 @@ function handlePresence(presence) {
 	if ($(presence).attr('type') === 'unavailable') {
 		$('#player-' + nickname).slideUp().remove();
 		if (opponent === nickname) {
-			showMessage('Your opponent has disconnected.');
+			showMessage('Your opponent has logged out.');
 			leaveGame();
 		}
 		else if (inviting === nickname) {
