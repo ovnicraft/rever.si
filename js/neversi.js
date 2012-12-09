@@ -852,8 +852,8 @@ function login(username, password) {
 				$('#login').fadeIn('fast');
 				$('#nickname').val('Your nickname').select();
 			});
-			myNickname = opponent = inviting = null;
-			inviter = conn = gameState = loginError = null;
+			myNickname = opponent = inviting = myTurn = null;
+			inviter = conn = gameState = loginError = myColor = null;
 			loginCredentials = [];
 			$('#play').removeAttr('readonly');
 		}
