@@ -633,7 +633,7 @@ function handleMessage(message) {
 	else if (opponent === nickname) {
 		if (move = body.match(/^[a-h][1-8]$/)) {
 			var discs = getMoves(getOpposite(myColor));
-			if (!myTurn && discs) {
+			if (!myTurn && discs[move[0]]) {
 				myTurn = 1;
 				takeSquare(move[0], getOpposite(myColor), 0);
 				flipDiscs(discs[move[0]], 1);
