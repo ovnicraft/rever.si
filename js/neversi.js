@@ -11,7 +11,7 @@ var conference = 'conference.crypto.cat';
 var bosh = 'https://crypto.cat/http-bind';
 
 var myNickname, gameState, inviting, myTurn;
-var myDice, myColor, opponent, loginError;
+var myDice, myColor, opponent, loginError, inviter;
 var loginCredentials = [];
 
 var abc = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
@@ -299,7 +299,7 @@ function flipDiscs(discs, highlight) {
 				if (highlight && !h) {
 					h = window.setTimeout(function() {
 						if(highlightMoves(myColor)) {
-							showMessage('Playing against <strong>' + opponent + '</strong>. It\'s your turn.');
+							showMessage('Playing against ' + strong(opponent) + '. It\'s your turn.');
 						}
 						else {
 							sendMessage('pass', opponent);
@@ -324,7 +324,7 @@ $('.square').click(function() {
 	takeSquare(square, myColor, 1);
 	flipDiscs(discs, 0);
 	myTurn = 0;
-	showMessage('Playing against <strong>' + opponent + '</strong>. It\'s their turn.');
+	showMessage('Playing against ' + strong(opponent) + '. It\'s their turn.');
 });
 
 // -----------------------------------------------
@@ -360,33 +360,33 @@ function showMessage(message) {
 	});
 }
 
+// Make input HTML bold
+function strong(text) {
+	return '<strong>' + text + '</strong>';
+}
+
 // Handle getting an invitation
 function getInvitation(player, theirDice) {
-	if (gameState === 'lobby') {
-		var invitation = '<strong>' + player + '</strong>'
-			+ ' challenges you. Accept?<br />'
-			+ '<span class="choice">yes</span> &nbsp;&nbsp;'
-			+ '<span class="choice">no</span>'
-		showMessage(invitation);
-		// Delay necessary to avoid race condition
-		window.setTimeout(function() {
-			$('.choice').click(function() {
-				if ($(this).html() == 'yes') {
-					myDice = Math.floor(Math.random()*9999999999);
-					sendMessage('accept ' + myDice, player);
-					enterGame(player, myDice, theirDice);
-				}
-				else {
-					sendMessage('refuse', player);
-					showMessage('You have refused the invitation.');
-					gameState = 'lobby';
-				}
-			});
-		}, 2000);
-	}
-	else {
-		sendMessage('inGame', player);
-	}
+	var invitation = strong(player)
+		+ ' challenges you. Accept?<br />'
+		+ '<span class="choice">yes</span> &nbsp;&nbsp;'
+		+ '<span class="choice">no</span>'
+	showMessage(invitation);
+	// Delay necessary to avoid race condition
+	window.setTimeout(function() {
+		$('.choice').click(function() {
+			if ($(this).html() == 'yes') {
+				myDice = Math.floor(Math.random()*9999999999);
+				sendMessage('accept ' + myDice, player);
+				enterGame(player, myDice, theirDice);
+			}
+			else {
+				sendMessage('refuse', player);
+				showMessage('You have refused the invitation.');
+				gameState = 'lobby';
+			}
+		});
+	}, 1000);
 }
 
 // Enter a game after successful invitation
@@ -394,6 +394,7 @@ function enterGame(player, myDice, theirDice) {
 	gameState = 'inGame';
 	opponent = player;
 	inviting = null;
+	inviter = null;
 	if (myDice > theirDice) { myColor = 'black' }
 	else { myColor = 'white' }
 	$('#lobby').fadeOut(function() {
@@ -402,11 +403,11 @@ function enterGame(player, myDice, theirDice) {
 		if (myColor === 'black') {
 			highlightMoves(myColor);
 			myTurn = 1;
-			showMessage('Playing against <strong>' + opponent + '</strong>. It\'s your turn.');
+			showMessage('Playing against ' + strong(opponent) + '. It\'s your turn.');
 		}
 		else {
 			myTurn = 0;
-			showMessage('Playing against <strong>' + opponent + '</strong>. It\'s their turn.');
+			showMessage('Playing against ' + strong(opponent) + '. It\'s their turn.');
 		}
 	});
 }
@@ -426,7 +427,7 @@ function leaveGame() {
 
 // Display chat message
 function addToChat(message, nickname) {
-	$('#chat').append('<div><strong>' + nickname + '</strong>: ' + addLinks(message) + '</div>');
+	$('#chat').append('<div>' + strong(nickname) + ': ' + addLinks(message) + '</div>');
 	scrollDown(600);
 }
 
@@ -530,10 +531,12 @@ function sendMessage(message, player) {
 // Handle chat form submission
 $('#chatInput').keyup(function(e) {
 	if (e.keyCode === 13) {
-		var chat = $(this).val().replace(/</g, '&lt;').replace(/>/g, '&gt;');
-		addToChat(chat, myNickname);
-		sendMessage('chat ' + $(this).val(), opponent);
-		$(this).val('');
+		var chat = $.trim($(this).val().replace(/</g, '&lt;').replace(/>/g, '&gt;'));
+		if (chat !== '') {
+			addToChat(chat, myNickname);
+			sendMessage('chat ' + $(this).val(), opponent);
+			$(this).val('');
+		}
 	}
 });
 
@@ -571,29 +574,44 @@ function handleMessage(message) {
 	}
 	console.log(nickname + ': ' + body);
 	// Detect incoming invitation
-	if (body.match(/^invite/)) {
-		var theirDice = parseInt(body.match(/[0-9]+$/)[0]);
-		getInvitation(nickname, theirDice);
-		gameState = 'invited';
+	if (body.match(/^invite\s[0-9]+$/)) {
+		if (gameState === 'lobby') {
+			var theirDice = parseInt(body.match(/[0-9]+$/)[0]);
+			getInvitation(nickname, theirDice);
+			gameState = 'invited';
+			inviter = nickname;
+		}
+		else {
+			sendMessage(gameState, player);
+		}
+	}
+	// Detect canceled invitations
+	if (body === 'cancel') {
+		if (inviter === nickname) {
+			showMessage(strong(nickname) + ' have canceled their invitation.');
+			inviter = null;
+			gameState = 'lobby';
+		}
 	}
 	// Detect invitation response
 	else if (inviting === nickname) {
-		if (body.match(/^accept/)) {
+		if (body.match(/^accept\s[0-9]+$/)) {
 			var theirDice = parseInt(body.match(/[0-9]+$/)[0]);
 			enterGame(nickname, myDice, theirDice);
+			return true;
 		}
 		else if (body === 'refuse') {
-			showMessage('<strong>' + nickname + '</strong> has refused your invitation.');
-			gameState = 'lobby';
-			inviting = null;
-			$('.player').mouseout();
+			showMessage(strong(nickname) + ' has refused your invitation.');
 		}
 		else if (body === 'inGame') {
-			showMessage('<strong>' + nickname + '</strong> is currently playing a game.');
-			gameState = 'lobby';
-			inviting = null;
-			$('.player').mouseout();
+			showMessage(strong(nickname) + ' is currently playing a game.');
 		}
+		else if ((body === 'invited') || (body === 'inviting')) {
+			showMessage(strong(nickname) + ' is already handling another invitation. Try again shortly.');
+		}
+		gameState = 'lobby';
+		inviting = null;
+		$('.player').mouseout();
 	}
 	// Detect gameplay moves/chat
 	else if (opponent === nickname) {
@@ -609,7 +627,7 @@ function handleMessage(message) {
 			if (!myTurn) {
 				myTurn = 1;
 				if (highlightMoves(myColor)) {
-					showMessage('<strong>' + opponent + '</strong> has no moves. It\'s your turn.');
+					showMessage(strong(nickname) + ' has no moves. It\'s your turn.');
 				}
 				else {
 					endGame();
@@ -649,6 +667,11 @@ function handlePresence(presence) {
 		if (opponent === nickname) {
 			showMessage('Your opponent has disconnected.');
 			leaveGame();
+		}
+		else if (inviting === nickname) {
+			showMessage(strong(nickname) + ' has logged out.');
+			inviting = null;
+			gameState = 'lobby';
 		}
 	}
 	// Create player element if player is new
@@ -699,7 +722,18 @@ function bindPlayerClick(player) {
 			gameState = 'inviting';	
 			inviting = player;
 			sendMessage('invite ' + myDice, player);
-			showMessage('Waiting for <strong>' + player + '</strong> to respond...');
+			showMessage(
+				'Waiting for ' + strong(player) + ' to respond...'
+				+ '<br /><span class="choice">cancel</span>'
+			);
+			window.setTimeout(function() {
+				$('.choice').click(function() {
+					sendMessage('cancel', player);
+					showMessage('Welcome, ' + strong(myNickname) + '. Click on a person to invite them to play.');
+					gameState = 'lobby';
+					inviting = null;
+				});
+			}, 1000);
 		}
 	});
 }
@@ -768,7 +802,7 @@ function login(username, password) {
 			showMessage('Connection error.');
 		}
 		else if (status === Strophe.Status.CONNECTED) {
-			showMessage('Welcome, <strong>' + myNickname + '</strong>. Click on a person to invite them to play.');
+			showMessage('Welcome, ' + strong(myNickname) + '. Click on a person to invite them to play.');
 			conn.muc.join(
 				'lobby@' + conference, myNickname, 
 				function(message) {
@@ -800,10 +834,9 @@ function login(username, password) {
 				$('#login').fadeIn('fast');
 				$('#nickname').val('Your nickname').select();
 			});
-			myNickname = null;
+			myNickname = opponent = inviting = null;
+			inviter = conn = gameState = loginError = null;
 			loginCredentials = [];
-			conn = null;
-			loginError = 0;
 			$('#play').removeAttr('readonly');
 		}
 	});
