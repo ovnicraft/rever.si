@@ -241,13 +241,16 @@ function getMoves(color) {
 			delete moves[i];
 		}
 	}
+	if (Object.keys(moves).length === 0) {
+		return false;
+	}
 	return moves;
 }
 
 // Highlight possible moves
 function highlightMoves(color) {
 	var moves = getMoves(color);
-	if (Object.keys(moves).length === 0) {
+	if (!moves) {
 		if (getDiscCount() === 64) {
 			endGame();
 		}
@@ -629,11 +632,11 @@ function handleMessage(message) {
 	// Detect gameplay moves/chat
 	else if (opponent === nickname) {
 		if (move = body.match(/^[a-h][1-8]$/)) {
-			if (!myTurn) {
+			var discs = getMoves(getOpposite(myColor));
+			if (!myTurn && discs) {
 				myTurn = 1;
-				var discs = getMoves(getOpposite(myColor))[move[0]];
 				takeSquare(move[0], getOpposite(myColor), 0);
-				flipDiscs(discs, 1);
+				flipDiscs(discs[move[0]], 1);
 			}
 		}
 		else if (body === 'pass') {
