@@ -399,6 +399,9 @@ function enterGame(player, myDice, theirDice) {
 	else { myColor = 'white' }
 	$('#lobby').fadeOut(function() {
 		$('#inGame').fadeIn();
+		$('#logout').fadeOut('fast', function() {
+			$('#resign').fadeIn('fast');
+		});
 		neversi.newGame();
 		if (myColor === 'black') {
 			highlightMoves(myColor);
@@ -421,6 +424,9 @@ function leaveGame() {
 		$('#chat').html('');
 		$('#chatInput').val('');
 		$('#lobby').fadeIn();
+		$('#resign').fadeOut('fast', function() {
+			$('#logout').fadeIn('fast');
+		});
 		neversi.newGame();
 	});
 }
@@ -500,6 +506,13 @@ function resetCounters() {
 // Bind logout button
 $('#logout').click(function() {
 	logout();
+});
+
+// Bind resign button
+$('#resign').click(function() {
+	sendMessage('resign', opponent);
+	showMessage('You have resigned.');
+	leaveGame();
 });
 
 // -----------------------------------------------
@@ -633,6 +646,10 @@ function handleMessage(message) {
 					endGame();
 				}
 			}
+		}
+		else if (body === 'resign') {
+			showMessage('Your opponent has resigned.');
+			leaveGame();
 		}
 		else if (chat = body.match(/^chat/)) {
 			addToChat(body.substring(5), nickname);
@@ -828,6 +845,7 @@ function login(username, password) {
 			}
 			neversi.newGame();
 			$('#logout').fadeOut('fast');
+			$('#resign').fadeOut('fast');
 			$('#' + gameState).fadeOut('fast', function() {
 				$('#chat').html('');
 				$('#chatInput').val('');

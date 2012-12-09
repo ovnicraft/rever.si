@@ -29,13 +29,16 @@ a:hover {
 	position: relative;
 }
 
-#logout {
+#options {
 	position: absolute;
 	right: 10px;
 	top: 2px;
 	font-size: 10px;
 	font-variant: small-caps;
 	cursor: pointer;
+}
+
+#resign, #logout {
 	display: none;
 }
 
