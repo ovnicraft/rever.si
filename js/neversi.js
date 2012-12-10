@@ -436,7 +436,10 @@ function leaveGame() {
 
 // Display chat message
 function addToChat(message, nickname) {
-	$('#chat').append('<div>' + strong(nickname) + ': ' + addLinks(message) + '</div>');
+	$('<div />',{
+		'class': 'chatLine',
+		'html': strong(nickname) + ': ' + addLinks(message),
+	}).appendTo('#chat').fadeIn();
 	scrollDown(600);
 }
 

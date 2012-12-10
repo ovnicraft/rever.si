@@ -162,6 +162,10 @@ input[type=text] {
 	word-wrap: break-word;
 }
 
+#inGame #chat .chatLine {
+	display: none;
+}
+
 #inGame #chatInput {
 	width: 220px;
 	padding: 10px;
