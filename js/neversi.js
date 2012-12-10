@@ -711,8 +711,8 @@ function handlePresence(presence) {
 // Add new player to lobby
 function addPlayer(nickname) {
 	$('#lobby').queue(function() {
-		var buddyTemplate = '<div class="player" title="' + nickname + '" id="player-' 
-			+ nickname + '" status="online"><span>' + nickname + '</span></div>'
+		var buddyTemplate = '<div class="player" id="player-' 
+			+ nickname + '"><span>' + nickname + '</span></div>'
 		$(buddyTemplate).appendTo('#lobby').slideDown(100, function() {
 			$('#player-' + nickname).unbind('click');
 			bindPlayerClick(nickname);
@@ -769,19 +769,19 @@ $('#login').submit(function() {
 	}
 	$('#play').mouseover().mouseout();
 	//Check validity of nickname and game ID
-	$('#nickname').val($.trim($('#nickname').val()));
+	$('#nickname').val($.trim($('#nickname').val()).toLowerCase());
 	if (($('#nickname').val() === '')
 		|| ($('#nickname').val() === 'Your nickname')) {
 		showMessage('Please enter a nickname.');
 		$('#nickname').select();
 	}
-	else if (!$('#nickname').val().match(/^\w{1,16}$/)) {
+	else if (!$('#nickname').val().match(/^\w{1,18}$/)) {
 		showMessage('Your nickname can only contain alphanumeric characters.');
 		$('#nickname').select();
 	}
 	// If everything is okay, then register a randomly generated throwaway XMPP ID and log in.
 	else {
-		myNickname = Strophe.xmlescape($('#nickname').val().toLowerCase());
+		myNickname = Strophe.xmlescape($('#nickname').val());
 		loginCredentials[0] = randomString(64, 1, 1, 1);
 		loginCredentials[1] = randomString(64, 1, 1, 1);
 		registerXMPPUser(loginCredentials[0], loginCredentials[1]);
@@ -852,7 +852,7 @@ function login(username, password) {
 			neversi.newGame();
 			$('#logout').fadeOut('fast');
 			$('#resign').fadeOut('fast');
-			$('#' + gameState).fadeOut('fast', function() {
+			$('#lobby,#inGame').fadeOut('fast', function() {
 				$('#chat').html('');
 				$('#chatInput').val('');
 				$('#login').fadeIn('fast');
