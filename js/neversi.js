@@ -601,7 +601,7 @@ function handleMessage(message) {
 			inviter = nickname;
 		}
 		else {
-			sendMessage(gameState, player);
+			sendMessage(gameState, nickname);
 		}
 	}
 	// Detect canceled invitations
