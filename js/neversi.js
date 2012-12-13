@@ -389,7 +389,7 @@ function getInvitation(player, theirDice) {
 				gameState = 'lobby';
 			}
 		});
-	}, 1000);
+	}, 1250);
 }
 
 // Enter a game after successful invitation
@@ -756,7 +756,7 @@ function bindPlayerClick(player) {
 					gameState = 'lobby';
 					inviting = null;
 				});
-			}, 1000);
+			}, 1250);
 		}
 	});
 }
