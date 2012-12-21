@@ -297,12 +297,8 @@ function flipDiscs(discs, highlight) {
 	for (var i in discs) {
 		$.each(discs[i], function(o, val) {
 			window.setTimeout(function() {
-				$('#' + val).css('background-image', 'url("img/' + opposite + '.png")');
-				$('#' + val).find('img').fadeOut(function() {
-					takeSquare(val, opposite, 0);
-					incrementCounter(color, -1);
-					$('#' + val).css('background-image', '');
-				});
+				takeSquare(val, opposite, 0);
+				incrementCounter(color, -1);
 				if (highlight && !h) {
 					h = window.setTimeout(function() {
 						if(highlightMoves(myColor)) {
@@ -445,7 +441,7 @@ function addToChat(id, message, nickname) {
 	$('<div />',{
 		'class': 'chatLine',
 		'html': strong(nickname) + ': ' + addLinks(message),
-	}).appendTo('#' + id).fadeIn();
+	}).appendTo('#' + id).fadeIn('fast');
 	scrollDown(id, 600);
 }
 
