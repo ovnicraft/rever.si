@@ -399,6 +399,7 @@ function enterGame(player, myDice, theirDice) {
 		$('#inGame').fadeIn();
 		$('#logout').fadeOut('fast', function() {
 			$('#resign').fadeIn('fast');
+			$('#chatInput').select();
 		});
 		neversi.newGame();
 		if (myColor === 'black') {
@@ -425,6 +426,7 @@ function leaveGame() {
 		$('#lobby').fadeIn();
 		$('#resign').fadeOut('fast', function() {
 			$('#logout').fadeIn('fast');
+			$('#lobbyChatInput').select();
 		});
 		neversi.newGame();
 	});
@@ -848,7 +850,9 @@ function login(username, password) {
 			);
 			$('#login').fadeOut('fast', function() {
 				$('#logout').fadeIn('fast');
-				$('#lobby').fadeIn('fast');
+				$('#lobby').fadeIn('fast', function() {
+					$('#lobbyChatInput').select();
+				});
 				gameState = 'lobby';
 			});
 		}
