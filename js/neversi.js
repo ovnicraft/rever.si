@@ -261,7 +261,7 @@ function highlightMoves(color) {
 		return false;
 	}
 	for (var i in moves) {
-		$('#' + i).html('<span style="display: none">&#8226;</span>');
+		$('#' + i).html('<span class="highlight" style="display: none">&#8226;</span>');
 		if (color === 'black') {
 			$('#' + i).css('color', '#000');
 		}
@@ -276,14 +276,8 @@ function highlightMoves(color) {
 
 // Clear highlighted moves
 function clearHighlights() {
-	$('.square').each(function(index) {
-		$(this).css('cursor', 'auto');
-		if (!getColor($(this).attr('id'))) {
-			$(this).find('span').fadeOut('slow', function() {
-				$(this).html('');
-			});
-		}
-	});
+	$('.square').css('cursor', 'auto');
+	$('.highlight').fadeOut('slow').remove();
 }
 
 // Flip discs with animation
