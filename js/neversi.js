@@ -425,6 +425,7 @@ function leaveGame() {
 	opponent = null;
 	myTurn = null;
 	$('#inGame').fadeOut(function() {
+		scrollDown('lobbyChat', 600);
 		$('#chat').html('');
 		$('#chatInput').val('');
 		$('#lobby').fadeIn();
