@@ -8,7 +8,7 @@ $(window).load(function() {
 // Configuration
 var domain = 'never.si';
 var conference = 'conference.never.si';
-var bosh = 'http://151.236.217.53/http-bind';
+var bosh = 'http://never.si/http-bind';
 
 var myNickname, gameState, inviting, myTurn;
 var myDice, myColor, opponent, loginError, inviter;
@@ -435,12 +435,12 @@ function leaveGame() {
 }
 
 // Display chat message
-function addToChat(message, nickname) {
+function addToChat(id, message, nickname) {
 	$('<div />',{
 		'class': 'chatLine',
 		'html': strong(nickname) + ': ' + addLinks(message),
-	}).appendTo('#chat').fadeIn();
-	scrollDown(600);
+	}).appendTo('#' + id).fadeIn();
+	scrollDown(id, 600);
 }
 
 // Convert message URLs to links.
@@ -462,10 +462,11 @@ function addLinks(message) {
 }
 
 // Scrolls down the chat window to the bottom in a smooth animation.
+// 'id' is element ID
 // 'speed' is animation speed in milliseconds.
-function scrollDown(speed) {
-	$('#chat').animate({
-		scrollTop: $('#chat')[0].scrollHeight + 20
+function scrollDown(id, speed) {
+	$('#' + id).animate({
+		scrollTop: $('#' + id)[0].scrollHeight + 20
 	}, speed);
 }
 
@@ -542,17 +543,25 @@ function randomString(size, alpha, uppercase, numeric) {
 	return result;
 }
 
-// Send XMPP message to player
+// Send XMPP message
+// If 'player === null', send message to lobby
 function sendMessage(message, player) {
-	conn.muc.message('lobby@' + conference, player, message, null);
+	if (player) {
+		
+		conn.muc.message('lobby@' + conference, player, message, null);
+	}
+	else {
+		conn.muc.message('lobby@' + conference, null, message, null);
+	}	
 }
 
 // Handle chat form submission
-$('#chatInput').keyup(function(e) {
+$('#chatInput,#lobbyChatInput').keyup(function(e) {
 	if (e.keyCode === 13) {
 		var chat = $.trim($(this).val().replace(/</g, '&lt;').replace(/>/g, '&gt;'));
 		if (chat !== '') {
-			addToChat(chat, myNickname);
+			var chatID = $(this).attr('id').substring(0, $(this).attr('id').length - 5);
+			addToChat(chatID, chat, myNickname);
 			sendMessage('chat ' + $(this).val(), opponent);
 			$(this).val('');
 		}
@@ -587,8 +596,11 @@ function handleMessage(message) {
 	if (nickname === myNickname) {
 		return true;
 	}
-	// If this is a group message, ignore.
+	// If this is a group message...
 	if (type === 'groupchat') {
+		if (chat = body.match(/^chat/)) {
+			addToChat('lobbyChat', body.substring(5), nickname);
+		}
 		return true;
 	}
 	console.log(nickname + ': ' + body);
@@ -658,7 +670,7 @@ function handleMessage(message) {
 			leaveGame();
 		}
 		else if (chat = body.match(/^chat/)) {
-			addToChat(body.substring(5), nickname);
+			addToChat('chat', body.substring(5), nickname);
 		}
 	}
 	return true;
@@ -708,17 +720,17 @@ function handlePresence(presence) {
 	return true;
 }
 
-// Add new player to lobby
+// Add new player to player list
 function addPlayer(nickname) {
-	$('#lobby').queue(function() {
+	$('#playerList').queue(function() {
 		var buddyTemplate = '<div class="player" id="player-' 
 			+ nickname + '"><span>' + nickname + '</span></div>'
-		$(buddyTemplate).appendTo('#lobby').slideDown(100, function() {
+		$(buddyTemplate).appendTo('#playerList').slideDown(100, function() {
 			$('#player-' + nickname).unbind('click');
 			bindPlayerClick(nickname);
 		});
 	});
-	$('#lobby').dequeue();
+	$('#playerList').dequeue();
 }
 
 // Bind properties to player entry in lobby
@@ -853,8 +865,8 @@ function login(username, password) {
 			$('#logout').fadeOut('fast');
 			$('#resign').fadeOut('fast');
 			$('#lobby,#inGame').fadeOut('fast', function() {
-				$('#chat').html('');
-				$('#chatInput').val('');
+				$('#chat,#lobbyChat').html('');
+				$('#chatInput,#lobbyChatInput').val('');
 				$('#login').fadeIn('fast');
 				$('#nickname').val('Your nickname').select();
 			});

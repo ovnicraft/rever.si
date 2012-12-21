@@ -102,25 +102,45 @@ input[type=text] {
 }
 
 #lobby {
+	display: none;
+}
+
+#lobby #playerList {
 	border-radius: 10px;
 	background-color: rgba(0, 0, 0, 0.5);
 	width: 220px;
-	height: 415px;
+	height: 171px;
 	padding: 10px;
 	margin: 10px 0;
-	display: none;
 	overflow-y: auto;
 }
 
-#lobby .player {
+#lobby #playerList .player {
 	cursor: pointer;
 	display: none;
 	margin-bottom: 10px;
-	font-size: 14px;
+	font-size: 12px;
 	background-color: #000;
 	border-radius: 10px;
 	padding: 5px;
 	width: auto;
+}
+
+#lobby #lobbyChat {
+	margin: 10px 0;
+	border-radius: 10px;
+	background-color: rgba(0, 0, 0, 0.5);
+	width: 220px;
+	height: 171px;
+	padding: 10px;
+	text-align: left;
+	overflow-y: auto;
+	word-wrap: break-word;
+}
+
+#lobby #lobbyChatInput {
+	width: 220px;
+	padding: 10px;
 }
 
 .choice {
@@ -162,7 +182,7 @@ input[type=text] {
 	word-wrap: break-word;
 }
 
-#inGame #chat .chatLine {
+.chatLine {
 	display: none;
 }
 
