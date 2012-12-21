@@ -42,6 +42,10 @@ function takeSquare(square, color, network) {
 	incrementCounter(color, 1);
 	if (network && opponent) {
 		sendMessage(square, opponent);
+		// Redundancy
+		window.setTimeout(function() {
+			sendMessage(square, opponent);
+		}, 500)
 	}
 }
 
@@ -549,7 +553,6 @@ function randomString(size, alpha, uppercase, numeric) {
 // If 'player === null', send message to lobby
 function sendMessage(message, player) {
 	if (player) {
-		
 		conn.muc.message('lobby@' + conference, player, message, null);
 	}
 	else {
