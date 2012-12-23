@@ -45,7 +45,7 @@ function takeSquare(square, color, network) {
 		// Redundancy
 		window.setTimeout(function() {
 			sendMessage(square, opponent);
-		}, 500)
+		}, 500);
 	}
 }
 
