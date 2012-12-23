@@ -273,7 +273,7 @@ function highlightMoves(color) {
 function clearHighlights() {
 	$('.square').css('cursor', 'auto');
 	$('.highlight').fadeOut('slow', function() {
-		$(this).remove();
+		$('.highlight').remove();
 	});
 }
 
