@@ -33,12 +33,7 @@ neversi.newGame = function() {
 // Take square with color
 // If network = 1, broadcasts move to opponent
 function takeSquare(square, color, network) {
-	$('#' + square).html(
-		$('<img />',{
-			'class': color,
-			'src': 'img/' + color + '.png',
-		})
-	);
+	$('#' + square).css('background-image', 'url("img/' + color + '.png")');
 	incrementCounter(color, 1);
 	if (network && opponent) {
 		sendMessage(square, opponent);
@@ -59,10 +54,10 @@ function getOpposite(color) {
 
 // Get a square's current color
 function getColor(square) {
-	if ($('#' + square).html().match('black')) {
+	if ($('#' + square).css('background-image').match('black')) {
 		return 'black';
 	}
-	if ($('#' + square).html().match('white')) {
+	if ($('#' + square).css('background-image').match('white')) {
 		return 'white';
 	}
 	return null;
