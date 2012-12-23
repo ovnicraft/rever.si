@@ -22,7 +22,7 @@ var abc = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 
 // Start a new game	
 neversi.newGame = function() {
-	$('.square').html('');
+	$('.square').css('background-image', 'none');
 	resetCounters();
 	takeSquare('d5', 'black', 0);
 	takeSquare('e4', 'black', 0);
