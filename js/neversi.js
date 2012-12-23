@@ -37,7 +37,7 @@ function takeSquare(square, color, network, mark) {
 	$('#' + square).css('background-image', 'url("img/' + color + '.png")');
 	if (mark) {
 		$('#' + square).css('color', mark);
-		$('#' + square).html('<span class="highlight">&diams;</span>');
+		$('#' + square).html('<span class="highlight mark">&diams;</span>');
 	}
 	incrementCounter(color, 1);
 	if (network && opponent) {
@@ -271,7 +271,9 @@ function highlightMoves(color) {
 // Clear highlighted moves
 function clearHighlights() {
 	$('.square').css('cursor', 'auto');
-	$('.highlight').fadeOut('slow').remove();
+	$('.highlight').fadeOut('slow', function() {
+		$(this).remove();
+	});
 }
 
 // Flip discs with animation

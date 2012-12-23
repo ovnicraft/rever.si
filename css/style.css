@@ -241,3 +241,7 @@ img.black, img.white {
 	display: none;
 	color: black;
 }
+
+.mark {
+	font-size: 12px;
+}
