@@ -37,7 +37,7 @@ function takeSquare(square, color, network, mark) {
 	$('#' + square).css('background-image', 'url("img/' + color + '.png")');
 	if (mark) {
 		$('#' + square).css('color', mark);
-		$('#' + square).html('<span class="highlight">&loz;</span>');
+		$('#' + square).html('<span class="highlight">&diams;</span>');
 	}
 	incrementCounter(color, 1);
 	if (network && opponent) {
