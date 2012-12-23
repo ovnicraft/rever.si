@@ -195,6 +195,7 @@ input[type=text] {
 	border: 5px solid #111;
 	border-radius: 10px;
 	box-shadow: 0 0 60px #000;
+	background-size: 80px 80px;
 	border-spacing: 0;
 	background-image: url('../img/board.png');
 	display: inline-block;
@@ -208,7 +209,7 @@ input[type=text] {
 	text-align: center;
 	padding: 0;
 	color: #000;
-	border: 1px solid rgba(0, 0, 0, 0.32);
+	border: 1px solid rgba(0, 0, 0, 0.4);
 	background-position: center;
 	background-size: 60px 60px;
 	background-repeat: no-repeat;
