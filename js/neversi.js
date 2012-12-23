@@ -262,15 +262,9 @@ function highlightMoves(color) {
 	}
 	for (var i in moves) {
 		$('#' + i).html('<span class="highlight" style="display: none">&#8226;</span>');
-		if (color === 'black') {
-			$('#' + i).css('color', '#000');
-		}
-		else {
-			$('#' + i).css('color', '#FFF');
-		}
 		$('#' + i).css('cursor', 'pointer');
-		$('#' + i).find('span').fadeIn('slow');
 	}
+	$('.highlight').css('color', color).fadeIn('slow');
 	return true;
 }
 
@@ -319,6 +313,7 @@ $('.square').click(function() {
 	var square = $(this).attr('id');
 	var discs = getMoves(myColor)[square];
 	takeSquare(square, myColor, 1);
+	(new Audio('snd/iPlay.webm')).play();
 	flipDiscs(discs, 0);
 	myTurn = 0;
 	$('#chatInput').select();
@@ -370,6 +365,7 @@ function getInvitation(player, theirDice) {
 		+ '<span class="choice">yes</span> &nbsp;&nbsp;'
 		+ '<span class="choice">no</span>'
 	showMessage(invitation);
+	(new Audio('snd/getInvitation.webm')).play();
 	// Delay necessary to avoid race condition
 	window.setTimeout(function() {
 		$('.choice').click(function() {
@@ -649,6 +645,7 @@ function handleMessage(message) {
 				myTurn = 1;
 				takeSquare(move[0], getOpposite(myColor), 0);
 				flipDiscs(discs[move[0]], 1);
+				(new Audio('snd/theyPlay.webm')).play();
 			}
 		}
 		else if (body === 'pass') {
