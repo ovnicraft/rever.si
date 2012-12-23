@@ -32,8 +32,13 @@ neversi.newGame = function() {
 
 // Take square with color
 // If network = 1, broadcasts move to opponent
-function takeSquare(square, color, network) {
+// If mark = 'color', marks square with 'color'.
+function takeSquare(square, color, network, mark) {
 	$('#' + square).css('background-image', 'url("img/' + color + '.png")');
+	if (mark) {
+		$('#' + square).css('color', mark);
+		$('#' + square).html('<span class="highlight">&loz;</span>');
+	}
 	incrementCounter(color, 1);
 	if (network && opponent) {
 		sendMessage(square, opponent);
@@ -256,7 +261,7 @@ function highlightMoves(color) {
 		return false;
 	}
 	for (var i in moves) {
-		$('#' + i).html('<span class="highlight">&#8226;</span>');
+		$('#' + i).html('<span class="highlight">&bull;</span>');
 		$('#' + i).css('cursor', 'pointer');
 	}
 	$('.highlight').css('color', color).fadeIn('slow');
@@ -638,7 +643,7 @@ function handleMessage(message) {
 			var discs = getMoves(getOpposite(myColor));
 			if (!myTurn && discs[move[0]]) {
 				myTurn = 1;
-				takeSquare(move[0], getOpposite(myColor), 0);
+				takeSquare(move[0], getOpposite(myColor), 0, myColor);
 				flipDiscs(discs[move[0]], 1);
 				(new Audio('snd/theyPlay.webm')).play();
 			}
