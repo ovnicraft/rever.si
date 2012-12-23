@@ -261,7 +261,7 @@ function highlightMoves(color) {
 		return false;
 	}
 	for (var i in moves) {
-		$('#' + i).html('<span class="highlight" style="display: none">&#8226;</span>');
+		$('#' + i).html('<span class="highlight">&#8226;</span>');
 		$('#' + i).css('cursor', 'pointer');
 	}
 	$('.highlight').css('color', color).fadeIn('slow');

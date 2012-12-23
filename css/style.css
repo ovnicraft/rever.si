@@ -236,3 +236,8 @@ img.black, img.white {
 	width: 60px;
 	height: 60px;
 }
+
+.highlight {
+	display: none;
+	color: black;
+}
