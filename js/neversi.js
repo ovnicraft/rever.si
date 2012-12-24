@@ -15,16 +15,32 @@ var myDice, myColor, opponent, loginError, inviter;
 var loginCredentials = [];
 
 var abc = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+var boardMatrix = {};
 	
 // -----------------------------------------------
 // BOARD LOGIC
 // -----------------------------------------------
 
+// Reinitialize board
+function resetBoard() {
+	boardMatrix = {
+		'a1': 0, 'b1': 0, 'c1': 0, 'd1': 0, 'e1': 0, 'f1': 0, 'g1': 0, 'h1': 0,
+		'a2': 0, 'b2': 0, 'c2': 0, 'd2': 0, 'e2': 0, 'f2': 0, 'g2': 0, 'h2': 0,
+		'a3': 0, 'b3': 0, 'c3': 0, 'd3': 0, 'e3': 0, 'f3': 0, 'g3': 0, 'h3': 0,
+		'a4': 0, 'b4': 0, 'c4': 0, 'd4': 0, 'e4': 0, 'f4': 0, 'g4': 0, 'h4': 0,
+		'a5': 0, 'b5': 0, 'c5': 0, 'd5': 0, 'e5': 0, 'f5': 0, 'g5': 0, 'h5': 0,
+		'a6': 0, 'b6': 0, 'c6': 0, 'd6': 0, 'e6': 0, 'f6': 0, 'g6': 0, 'h6': 0,
+		'a7': 0, 'b7': 0, 'c7': 0, 'd7': 0, 'e7': 0, 'f7': 0, 'g7': 0, 'h7': 0,
+		'a8': 0, 'b8': 0, 'c8': 0, 'd8': 0, 'e8': 0, 'f8': 0, 'g8': 0, 'h8': 0
+	};
+	$('.square').css('background-image', 'none');
+}
+
 // Start a new game	
 neversi.newGame = function() {
-	$('.square').css('background-image', 'none');
 	resetCounters();
 	clearHighlights();
+	resetBoard();
 	takeSquare('d5', 'black', 0);
 	takeSquare('e4', 'black', 0);
 	takeSquare('e5', 'white', 0);
@@ -35,6 +51,7 @@ neversi.newGame = function() {
 // If network = 1, broadcasts move to opponent
 // If mark = 'color', marks square with 'color'.
 function takeSquare(square, color, network, mark) {
+	boardMatrix[square] = color;
 	$('#' + square).css('background-image', 'url("img/' + color + '.png")');
 	if (mark) {
 		$('#' + square).css('color', mark);
@@ -52,21 +69,8 @@ function takeSquare(square, color, network, mark) {
 
 // Get the opposite of color
 function getOpposite(color) {
-	if (color === 'black') {
-		return 'white';
-	}
+	if (color === 'black') { return 'white' }
 	return 'black';
-}
-
-// Get a square's current color
-function getColor(square) {
-	if ($('#' + square).css('background-image').match('black')) {
-		return 'black';
-	}
-	if ($('#' + square).css('background-image').match('white')) {
-		return 'white';
-	}
-	return null;
 }
 
 // Get possible moves
@@ -75,16 +79,16 @@ function getMoves(color) {
 	var enemy = getOpposite(color);
 	for (var c = 0; c < abc.length; c++) {
 		for (var r = 1; r < 9; r++) {
-			if (getColor(abc[c] + r)) { continue }
+			if (boardMatrix[abc[c] + r]) { continue }
 			moves[abc[c] + r] = [];
 			// Scan up
 			if (r >= 3) {
 				var possibleMove = [];
 				for (var i = (r - 1); i >= 1; i--) {
-					if (getColor(abc[c] + i) === enemy) {
+					if (boardMatrix[abc[c] + i] === enemy) {
 						possibleMove.push(abc[c] + i);
 					}
-					else if (getColor(abc[c] + i) === color) {
+					else if (boardMatrix[abc[c] + i] === color) {
 						if (possibleMove.length) {
 							moves[abc[c] + r].push(possibleMove);
 						}
@@ -102,10 +106,10 @@ function getMoves(color) {
 				for (var i = (r - 1); i >= 1; i--) {
 					if (o < 7) { o++ }
 					else { break }
-					if (getColor(abc[o] + i) === enemy) {
+					if (boardMatrix[abc[o] + i] === enemy) {
 						possibleMove.push(abc[o] + i);
 					}
-					else if (getColor(abc[o] + i) === color) {
+					else if (boardMatrix[abc[o] + i] === color) {
 						if (possibleMove.length) {
 							moves[abc[c] + r].push(possibleMove);
 						}
@@ -120,10 +124,10 @@ function getMoves(color) {
 			if (c <= 5) {
 				var possibleMove = [];
 				for (var o = (c + 1); o <= 7; o++) {
-					if (getColor(abc[o] + r) === enemy) {
+					if (boardMatrix[abc[o] + r] === enemy) {
 						possibleMove.push(abc[o] + r);
 					}
-					else if (getColor(abc[o] + r) === color) {
+					else if (boardMatrix[abc[o] + r] === color) {
 						if (possibleMove.length) {
 							moves[abc[c] + r].push(possibleMove);
 						}
@@ -141,10 +145,10 @@ function getMoves(color) {
 				for (var i = (r + 1); i <= 8; i++) {
 					if (o < 7) { o++ }
 					else { break }
-					if (getColor(abc[o] + i) === enemy) {
+					if (boardMatrix[abc[o] + i] === enemy) {
 						possibleMove.push(abc[o] + i);
 					}
-					else if (getColor(abc[o] + i) === color) {
+					else if (boardMatrix[abc[o] + i] === color) {
 						if (possibleMove.length) {
 							moves[abc[c] + r].push(possibleMove);
 						}
@@ -159,10 +163,10 @@ function getMoves(color) {
 			if (r <= 6) {
 				var possibleMove = [];
 				for (var i = (r + 1); i <= 8; i++) {
-					if (getColor(abc[c] + i) === enemy) {
+					if (boardMatrix[abc[c] + i] === enemy) {
 						possibleMove.push(abc[c] + i);
 					}
-					else if (getColor(abc[c] + i) === color) {
+					else if (boardMatrix[abc[c] + i] === color) {
 						if (possibleMove.length) {
 							moves[abc[c] + r].push(possibleMove);
 						}
@@ -180,10 +184,10 @@ function getMoves(color) {
 				for (var i = (r + 1); i <= 8; i++) {
 					if (o > 0) { o-- }
 					else { break }
-					if (getColor(abc[o] + i) === enemy) {
+					if (boardMatrix[abc[o] + i] === enemy) {
 						possibleMove.push(abc[o] + i);
 					}
-					else if (getColor(abc[o] + i) === color) {
+					else if (boardMatrix[abc[o] + i] === color) {
 						if (possibleMove.length) {
 							moves[abc[c] + r].push(possibleMove);
 						}
@@ -198,10 +202,10 @@ function getMoves(color) {
 			if (c >= 2) {
 				var possibleMove = [];
 				for (var o = (c - 1); o >= 0; o--) {
-					if (getColor(abc[o] + r) === enemy) {
+					if (boardMatrix[abc[o] + r] === enemy) {
 						possibleMove.push(abc[o] + r);
 					}
-					else if (getColor(abc[o] + r) === color) {
+					else if (boardMatrix[abc[o] + r] === color) {
 						if (possibleMove.length) {
 							moves[abc[c] + r].push(possibleMove);
 						}
@@ -219,10 +223,10 @@ function getMoves(color) {
 				for (var i = (r - 1); i >= 1; i--) {
 					if (o > 0) { o-- }
 					else { break }
-					if (getColor(abc[o] + i) === enemy) {
+					if (boardMatrix[abc[o] + i] === enemy) {
 						possibleMove.push(abc[o] + i);
 					}
-					else if (getColor(abc[o] + i) === color) {
+					else if (boardMatrix[abc[o] + i] === color) {
 						if (possibleMove.length) {
 							moves[abc[c] + r].push(possibleMove);
 						}
@@ -283,7 +287,7 @@ function clearHighlights() {
 function flipDiscs(discs, highlight) {
 	var h = null;
 	var t = 225;
-	var color = getColor(discs[0][0]);
+	var color = boardMatrix[discs[0][0]];
 	var opposite = getOpposite(color);
 	for (var i in discs) {
 		$.each(discs[i], function(o, val) {
@@ -893,7 +897,6 @@ $(window).unload(function() {
 // -----------------------------------------------
 
 $('#nickname').select();
-
 neversi.newGame();
 
 });

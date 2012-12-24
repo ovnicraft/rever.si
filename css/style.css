@@ -231,10 +231,11 @@ input[type=text] {
 	border-radius: 0 0 0 5px;
 }
 
-img.black, img.white {
+.square img {
 	position: relative;
 	top: 2px;
 	width: 60px;
+	display: none;
 	height: 60px;
 }
 
