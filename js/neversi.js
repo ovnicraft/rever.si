@@ -13,6 +13,7 @@ var bosh = 'http://never.si/http-bind';
 var myNickname, gameState, inviting, myTurn;
 var myDice, myColor, opponent, loginError, inviter;
 var loginCredentials = [];
+var webNotifications;
 
 var abc = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 var boardMatrix = {};
@@ -24,14 +25,22 @@ var boardMatrix = {};
 // Reinitialize board
 function resetBoard() {
 	boardMatrix = {
-		'a1': 0, 'b1': 0, 'c1': 0, 'd1': 0, 'e1': 0, 'f1': 0, 'g1': 0, 'h1': 0,
-		'a2': 0, 'b2': 0, 'c2': 0, 'd2': 0, 'e2': 0, 'f2': 0, 'g2': 0, 'h2': 0,
-		'a3': 0, 'b3': 0, 'c3': 0, 'd3': 0, 'e3': 0, 'f3': 0, 'g3': 0, 'h3': 0,
-		'a4': 0, 'b4': 0, 'c4': 0, 'd4': 0, 'e4': 0, 'f4': 0, 'g4': 0, 'h4': 0,
-		'a5': 0, 'b5': 0, 'c5': 0, 'd5': 0, 'e5': 0, 'f5': 0, 'g5': 0, 'h5': 0,
-		'a6': 0, 'b6': 0, 'c6': 0, 'd6': 0, 'e6': 0, 'f6': 0, 'g6': 0, 'h6': 0,
-		'a7': 0, 'b7': 0, 'c7': 0, 'd7': 0, 'e7': 0, 'f7': 0, 'g7': 0, 'h7': 0,
-		'a8': 0, 'b8': 0, 'c8': 0, 'd8': 0, 'e8': 0, 'f8': 0, 'g8': 0, 'h8': 0
+		'a1': 0, 'b1': 0, 'c1': 0, 'd1': 0,
+		'e1': 0, 'f1': 0, 'g1': 0, 'h1': 0,
+		'a2': 0, 'b2': 0, 'c2': 0, 'd2': 0,
+		'e2': 0, 'f2': 0, 'g2': 0, 'h2': 0,
+		'a3': 0, 'b3': 0, 'c3': 0, 'd3': 0,
+		'e3': 0, 'f3': 0, 'g3': 0, 'h3': 0,
+		'a4': 0, 'b4': 0, 'c4': 0, 'd4': 0,
+		'e4': 0, 'f4': 0, 'g4': 0, 'h4': 0,
+		'a5': 0, 'b5': 0, 'c5': 0, 'd5': 0,
+		'e5': 0, 'f5': 0, 'g5': 0, 'h5': 0,
+		'a6': 0, 'b6': 0, 'c6': 0, 'd6': 0,
+		'e6': 0, 'f6': 0, 'g6': 0, 'h6': 0,
+		'a7': 0, 'b7': 0, 'c7': 0, 'd7': 0,
+		'e7': 0, 'f7': 0, 'g7': 0, 'h7': 0,
+		'a8': 0, 'b8': 0, 'c8': 0, 'd8': 0,
+		'e8': 0, 'f8': 0, 'g8': 0, 'h8': 0
 	};
 	$('.square').css('background-image', 'none');
 }
@@ -373,6 +382,11 @@ function getInvitation(player, theirDice) {
 		+ '<span class="choice">no</span>'
 	showMessage(invitation);
 	(new Audio('snd/getInvitation.webm')).play();
+	webNotification(
+		'img/favicon.png',
+		'Neversi',
+		'You have received an invitation from ' + player + '.'
+	);
 	// Delay necessary to avoid race condition
 	window.setTimeout(function() {
 		$('.choice').click(function() {
@@ -469,6 +483,18 @@ function scrollDown(id, speed) {
 	$('#' + id).animate({
 		scrollTop: $('#' + id)[0].scrollHeight + 20
 	}, speed);
+}
+
+// Enable web notifications if API is present
+if (window.webkitNotifications) {
+	webNotifications = 1;
+}
+
+// Show a web notification
+function webNotification(image, title, body) {
+	if (webNotifications && !document.hasFocus()) {
+		(window.webkitNotifications.createNotification(image, title, body)).show();
+	}
 }
 
 // Increment disc counter for color by amount (negative amounts allowed)
@@ -653,6 +679,11 @@ function handleMessage(message) {
 				takeSquare(move[0], getOpposite(myColor), 0, myColor);
 				flipDiscs(discs[move[0]], 1);
 				(new Audio('snd/theyPlay.webm')).play();
+				webNotification(
+					'img/favicon.png',
+					'Neversi',
+					'Your opponent has played on square ' + move[0] + '.'
+				);
 			}
 		}
 		else if (body === 'pass') {
@@ -800,6 +831,10 @@ $('#login').submit(function() {
 		registerXMPPUser(loginCredentials[0], loginCredentials[1]);
 		$('#play').attr('readonly', 'readonly');
 		showMessage('Connecting...');
+	}
+	// Get notification permissions
+	if (webNotifications && window.webkitNotifications.checkPermission()) {
+		window.webkitNotifications.requestPermission(function() {});
 	}
 	return false;
 });
