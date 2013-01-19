@@ -332,7 +332,7 @@ $('.square').click(function() {
 	(new Audio('snd/iPlay.webm')).play();
 	flipDiscs(discs, 0);
 	myTurn = 0;
-	$('#chatInput').select();
+	//$('#chatInput').select();
 	showMessage('Playing against ' + strong(opponent) + '. It\'s their turn.');
 });
 
