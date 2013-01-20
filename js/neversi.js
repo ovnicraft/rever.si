@@ -455,8 +455,10 @@ function enterGame(player, myDice, theirDice) {
 	if (myDice > theirDice) { myColor = 'black' }
 	else { myColor = 'white' }
 	$('#lobby').fadeOut(function() {
+		$('#moveHistory,#displayChat').fadeOut('fast');
 		$('#inGame').fadeIn();
 		$('#logout').fadeOut('fast', function() {
+			$('#resign,#displayHistory,#chat,#chatInput').fadeIn('fast');
 			$('#resign,#displayHistory').fadeIn('fast');
 			$('#chatInput').select();
 		});
@@ -802,6 +804,11 @@ function handlePresence(presence) {
 		else if (inviting === nickname) {
 			showMessage(strong(nickname) + ' has logged out.');
 			inviting = null;
+			gameState = 'lobby';
+		}
+		else if (inviter === nickname) {
+			showMessage(strong(nickname) + ' has logged out.');
+			inviter = null;
 			gameState = 'lobby';
 		}
 	}
