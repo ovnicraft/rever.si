@@ -319,7 +319,6 @@ function clearHighlights() {
 // 'move' is the move that was played
 // If 'highlight', highlights moves after flipping discs
 function flipDiscs(discs, move, highlight) {
-	var h = null;
 	var t = 225;
 	var color = boardMatrix[discs[0][0]];
 	var opposite = getOpposite(color);
@@ -332,7 +331,6 @@ function flipDiscs(discs, move, highlight) {
 			t += 225;
 		});
 	}
-	
 	window.setTimeout(function() {
 		if (highlight) {
 			if (highlightMoves(myColor)) {
@@ -376,8 +374,8 @@ function setBoardSize() {
 	if ($(window).width() >= 1920 && $(window).height() >= 1080) {
 		window.parent.document.body.style.zoom = 1.5;
 	}
-	if ($(window).width() >= 1170 && $(window).height() >= 480) {
-		window.parent.document.body.style.zoom = 1.2;
+	if ($(window).width() >= 1170 && $(window).height() >= 650) {
+		window.parent.document.body.style.zoom = 1.25;
 	}
 	else {
 		window.parent.document.body.style.zoom = 1;
