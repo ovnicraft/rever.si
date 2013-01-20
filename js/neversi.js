@@ -77,14 +77,18 @@ function addToMoveHistory(move) {
 // If mark = 'color', marks square with 'color'.
 function takeSquare(square, color, altBoard, network, mark) {
 	boardMatrix[square] = color;
-	if (!altBoard) { altBoard = '' }
-	else { altBoard += '_' }
+	if (!altBoard) { 
+		altBoard = '';
+		incrementCounter(color, 1);
+	}
+	else {
+		altBoard += '_';
+	}
 	$('#' + altBoard + square).css('background-image', 'url("img/' + color + '.png")');
 	if (mark) {
 		$('#' + altBoard + square).css('color', mark);
 		$('#' + altBoard + square).html('<span class="highlight mark">&diams;</span>');
 	}
-	incrementCounter(color, 1);
 	if (network && opponent) {
 		sendMessage(square, opponent);
 		// Redundancy
@@ -322,24 +326,23 @@ function flipDiscs(discs, move, highlight) {
 			window.setTimeout(function() {
 				takeSquare(val, opposite, null, 0);
 				incrementCounter(color, -1);
-				if (highlight && !h) {
-					h = window.setTimeout(function() {
-						if(highlightMoves(myColor)) {
-							showMessage('Playing against ' + strong(opponent) + '. It\'s your turn.');
-						}
-						else {
-							sendMessage('pass', opponent);
-							myTurn = 0;
-						}
-					}, t + 600);
-				}
-				window.setTimeout(function() {
-					addToMoveHistory(move);
-				}, t + 600);
 			}, t);
 			t += 225;
 		});
 	}
+	
+	window.setTimeout(function() {
+		if (highlight) {
+			if (highlightMoves(myColor)) {
+				showMessage('Playing against ' + strong(opponent) + '. It\'s your turn.');
+			}
+			else {
+				sendMessage('pass', opponent);
+				myTurn = 0;
+			}
+		}
+		addToMoveHistory(move);
+	}, (t * discs.length) + 600);
 }
 
 // Handle a square being clicked (play a move)
@@ -458,6 +461,7 @@ function enterGame(player, myDice, theirDice) {
 			$('#chatInput').select();
 		});
 		neversi.newGame();
+		addToMoveHistory('start');
 		if (myColor === 'black') {
 			highlightMoves(myColor);
 			myTurn = 1;
