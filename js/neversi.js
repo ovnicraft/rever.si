@@ -68,13 +68,7 @@ function addToMoveHistory(move) {
 	for (var i in boardMatrix) {
 		takeSquare(i, boardMatrix[i], move, 0, 0);
 	}
-}
-
-// Draws board according to a board matrix
-function drawBoard(matrix) {
-	for (var i in matrix) {
-		takeSquare(i, matrix[i], null, 0, 0);
-	}
+	scrollDown('moveHistory', 600);
 }
 
 // Take square with color
