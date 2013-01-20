@@ -84,7 +84,9 @@ function takeSquare(square, color, altBoard, network, mark) {
 	else {
 		altBoard += '_';
 	}
-	$('#' + altBoard + square).css('background-image', 'url("img/' + color + '.png")');
+	if (color) {
+		$('#' + altBoard + square).css('background-image', 'url("img/' + color + '.png")');
+	}
 	if (mark) {
 		$('#' + altBoard + square).css('color', mark);
 		$('#' + altBoard + square).html('<span class="highlight mark">&diams;</span>');
@@ -375,7 +377,7 @@ function setBoardSize() {
 		window.parent.document.body.style.zoom = 1.5;
 	}
 	if ($(window).width() >= 1170 && $(window).height() >= 480) {
-		window.parent.document.body.style.zoom = 1.25;
+		window.parent.document.body.style.zoom = 1.2;
 	}
 	else {
 		window.parent.document.body.style.zoom = 1;
