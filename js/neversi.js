@@ -17,7 +17,8 @@ var webNotifications;
 
 var abc = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 var boardMatrix = {};
-	
+var boardSlate = $('#board').html();
+
 // -----------------------------------------------
 // BOARD LOGIC
 // -----------------------------------------------
@@ -50,21 +51,44 @@ neversi.newGame = function() {
 	resetCounters();
 	clearHighlights();
 	resetBoard();
-	takeSquare('d5', 'black', 0);
-	takeSquare('e4', 'black', 0);
-	takeSquare('e5', 'white', 0);
-	takeSquare('d4', 'white', 0);
+	takeSquare('d5', 'black', null, 0);
+	takeSquare('e4', 'black', null, 0);
+	takeSquare('e5', 'white', null, 0);
+	takeSquare('d4', 'white', null, 0);
+}
+
+// Add current board to move history with 'move' as the last move
+function addToMoveHistory(move) {
+	$('#moveHistory ol').append(
+		'<li><table id="table_' + move + '">' + boardSlate + '</table></li>'
+	);
+	$('#table_' + move + ' td').each(function(index) {
+		$(this).attr('id', move + '_' + $(this).attr('id'));
+	});
+	for (var i in boardMatrix) {
+		takeSquare(i, boardMatrix[i], move, 0, 0);
+	}
+}
+
+// Draws board according to a board matrix
+function drawBoard(matrix) {
+	for (var i in matrix) {
+		takeSquare(i, matrix[i], null, 0, 0);
+	}
 }
 
 // Take square with color
+// If altBoard, draws on an alternate board table
 // If network = 1, broadcasts move to opponent
 // If mark = 'color', marks square with 'color'.
-function takeSquare(square, color, network, mark) {
+function takeSquare(square, color, altBoard, network, mark) {
 	boardMatrix[square] = color;
-	$('#' + square).css('background-image', 'url("img/' + color + '.png")');
+	if (!altBoard) { altBoard = '' }
+	else { altBoard += '_' }
+	$('#' + altBoard + square).css('background-image', 'url("img/' + color + '.png")');
 	if (mark) {
-		$('#' + square).css('color', mark);
-		$('#' + square).html('<span class="highlight mark">&diams;</span>');
+		$('#' + altBoard + square).css('color', mark);
+		$('#' + altBoard + square).html('<span class="highlight mark">&diams;</span>');
 	}
 	incrementCounter(color, 1);
 	if (network && opponent) {
@@ -292,8 +316,9 @@ function clearHighlights() {
 
 // Flip discs with animation
 // 'discs' must be getMoves(color)[square]
+// 'move' is the move that was played
 // If 'highlight', highlights moves after flipping discs
-function flipDiscs(discs, highlight) {
+function flipDiscs(discs, move, highlight) {
 	var h = null;
 	var t = 225;
 	var color = boardMatrix[discs[0][0]];
@@ -301,7 +326,7 @@ function flipDiscs(discs, highlight) {
 	for (var i in discs) {
 		$.each(discs[i], function(o, val) {
 			window.setTimeout(function() {
-				takeSquare(val, opposite, 0);
+				takeSquare(val, opposite, null, 0);
 				incrementCounter(color, -1);
 				if (highlight && !h) {
 					h = window.setTimeout(function() {
@@ -314,6 +339,9 @@ function flipDiscs(discs, highlight) {
 						}
 					}, t + 600);
 				}
+				window.setTimeout(function() {
+					addToMoveHistory(move);
+				}, t + 600);
 			}, t);
 			t += 225;
 		});
@@ -328,9 +356,9 @@ $('.square').click(function() {
 	clearHighlights();
 	var square = $(this).attr('id');
 	var discs = getMoves(myColor)[square];
-	takeSquare(square, myColor, 1);
+	takeSquare(square, myColor, null, 1);
 	(new Audio('snd/iPlay.webm')).play();
-	flipDiscs(discs, 0);
+	flipDiscs(discs, square, 0);
 	myTurn = 0;
 	//$('#chatInput').select();
 	showMessage('Playing against ' + strong(opponent) + '. It\'s their turn.');
@@ -343,6 +371,23 @@ $('.square').click(function() {
 // -----------------------------------------------
 // PLAYER UI LOGIC
 // -----------------------------------------------
+
+// Set board (and entire page) size in accordance with window size
+function setBoardSize() {
+	if ($(window).width() >= 1920 && $(window).height() >= 1080) {
+		window.parent.document.body.style.zoom = 1.5;
+	}
+	if ($(window).width() >= 1170 && $(window).height() >= 480) {
+		window.parent.document.body.style.zoom = 1.25;
+	}
+	else {
+		window.parent.document.body.style.zoom = 1;
+	}
+}
+$(window).resize(function() {
+	setBoardSize();
+});
+setBoardSize();
 
 // Form logic for fields and buttons
 $('input[type=text]').click(function() {
@@ -415,7 +460,7 @@ function enterGame(player, myDice, theirDice) {
 	$('#lobby').fadeOut(function() {
 		$('#inGame').fadeIn();
 		$('#logout').fadeOut('fast', function() {
-			$('#resign').fadeIn('fast');
+			$('#resign,#displayHistory').fadeIn('fast');
 			$('#chatInput').select();
 		});
 		neversi.newGame();
@@ -439,9 +484,10 @@ function leaveGame() {
 	$('#inGame').fadeOut(function() {
 		scrollDown('lobbyChat', 600);
 		$('#chat').html('');
+		$('#moveHistory ol').html('');
 		$('#chatInput').val('');
 		$('#lobby').fadeIn();
-		$('#resign').fadeOut('fast', function() {
+		$('#resign,#displayHistory').fadeOut('fast', function() {
 			$('#logout').fadeIn('fast');
 			$('#lobbyChatInput').select();
 		});
@@ -547,6 +593,26 @@ $('#resign').click(function() {
 	sendMessage('resign', opponent);
 	showMessage('You have resigned.');
 	leaveGame();
+});
+
+// Bind move history display button
+$('#displayHistory').click(function() {
+	$('#chat,#chatInput').fadeOut(function() {
+		$('#moveHistory').fadeIn();
+	});
+	$(this).fadeOut(function() {
+		$('#displayChat').fadeIn();
+	});
+});
+
+// Bind chat display button
+$('#displayChat').click(function() {
+	$('#moveHistory').fadeOut(function() {
+		$('#chat,#chatInput').fadeIn();
+	});
+	$(this).fadeOut(function() {
+		$('#displayHistory').fadeIn();
+	});
 });
 
 // -----------------------------------------------
@@ -676,8 +742,8 @@ function handleMessage(message) {
 			var discs = getMoves(getOpposite(myColor));
 			if (!myTurn && discs[move[0]]) {
 				myTurn = 1;
-				takeSquare(move[0], getOpposite(myColor), 0, myColor);
-				flipDiscs(discs[move[0]], 1);
+				takeSquare(move[0], getOpposite(myColor), null, 0, myColor);
+				flipDiscs(discs[move[0]], move[0], 1);
 				(new Audio('snd/theyPlay.webm')).play();
 				webNotification(
 					'img/favicon.png',
@@ -904,6 +970,7 @@ function login(username, password) {
 			$('#resign').fadeOut('fast');
 			$('#lobby,#inGame').fadeOut('fast', function() {
 				$('#chat,#lobbyChat').html('');
+				$('#moveHistory ol').html('');
 				$('#chatInput,#lobbyChatInput').val('');
 				$('#login').fadeIn('fast');
 				$('#nickname').val('Your nickname').select();

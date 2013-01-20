@@ -38,8 +38,9 @@ a:hover {
 	cursor: pointer;
 }
 
-#resign, #logout {
+#displayChat, #displayHistory, #resign, #logout {
 	display: none;
+	margin-right: 10px;
 }
 
 #info {
@@ -171,7 +172,7 @@ input[type=text] {
 }
 
 #inGame #chat {
-	margin: 35px 0;
+	margin: 35px 0 15px 0;
 	border-radius: 10px;
 	background-color: rgba(0, 0, 0, 0.5);
 	width: 220px;
@@ -191,6 +192,46 @@ input[type=text] {
 	padding: 10px;
 }
 
+#inGame #moveHistory {
+	display: none;
+	margin: 35px 0 15px 0;
+	border-radius: 10px;
+	background-color: rgba(0, 0, 0, 0.5);
+	width: 220px;
+	height: 320px;
+	padding: 10px;
+	text-align: left;
+	overflow-y: auto;
+}
+
+#inGame #moveHistory ol {
+	margin-left: 20px;
+}
+
+table {
+	border: 2px solid #111;
+	border-radius: 10px;
+	box-shadow: 0 0 10px #000;
+	background-size: 20px 20px;
+	border-spacing: 0;
+	background-image: url('../img/board.png');
+	display: inline-block;
+}
+
+.square {
+	width: 10px;
+	height: 10px;
+	min-width: 10px;
+	min-height: 10px;
+	text-align: center;
+	padding: 0;
+	color: #000;
+	border: 1px solid rgba(0, 0, 0, 0.4);
+	background-position: center;
+	background-size: 5px 5px;
+	background-repeat: no-repeat;
+}
+
 #board {
 	border: 5px solid #111;
 	border-radius: 10px;
@@ -201,7 +242,7 @@ input[type=text] {
 	display: inline-block;
 }
 
-.square {
+#board .square {
 	width: 66px;
 	height: 66px;
 	min-width: 66px;
