@@ -375,7 +375,7 @@ function setBoardSize() {
 		window.parent.document.body.style.zoom = 1.5;
 	}
 	if ($(window).width() >= 1170 && $(window).height() >= 650) {
-		window.parent.document.body.style.zoom = 1.25;
+		window.parent.document.body.style.zoom = 1.15;
 	}
 	else {
 		window.parent.document.body.style.zoom = 1;
@@ -539,7 +539,11 @@ if (window.webkitNotifications) {
 // Show a web notification
 function webNotification(image, title, body) {
 	if (webNotifications && !document.hasFocus()) {
-		(window.webkitNotifications.createNotification(image, title, body)).show();
+		var notice = window.webkitNotifications.createNotification(image, title, body);
+		notice.show();
+		window.setTimeout(function() {
+			notice.cancel();
+		}, 5000);
 	}
 }
 
