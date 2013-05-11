@@ -994,6 +994,7 @@ function login(username, password) {
 
 // Logout function
 function logout() {
+	showMessage('Logging out...');
 	conn.muc.leave('lobby@' + conference);
 	conn.disconnect();
 }
