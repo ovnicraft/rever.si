@@ -975,7 +975,7 @@ function login(username, password) {
 		}
 		else if ((status === Strophe.Status.DISCONNECTED) || (status === Strophe.Status.AUTHFAIL)) {
 			if (!loginError) {
-				showMessage('Thank you for playing with Neversi. You have been logged out.')
+				showMessage('Thank you for playing with Neversi.')
 			}
 			neversi.newGame()
 			$('#logout').fadeOut('fast')
