@@ -89,14 +89,14 @@ function takeSquare(square, color, altBoard, network, mark) {
 	}
 	if (mark) {
 		$('#' + altBoard + square).css('color', mark)
-		$('#' + altBoard + square).html('<span class="highlight mark">&diams</span>')
+		$('#' + altBoard + square).html('<span class="highlight mark">&diams;</span>')
 	}
 	if (network && opponent) {
 		sendMessage(square, opponent)
 		// Redundancy
 		window.setTimeout(function() {
 			sendMessage(square, opponent)
-		}, 500)
+		}, 600)
 	}
 }
 
@@ -299,7 +299,7 @@ function highlightMoves(color) {
 		return false
 	}
 	for (var i in moves) {
-		$('#' + i).html('<span class="highlight">&bull</span>')
+		$('#' + i).html('<span class="highlight">&bull;</span>')
 		$('#' + i).css('cursor', 'pointer')
 	}
 	$('.highlight').css('color', color).fadeIn('slow')
@@ -404,10 +404,14 @@ $('#play').mouseout(function() {
 })
 
 // Display a message in the message area
-function showMessage(message) {
+function showMessage(message, callback) {
 	$('#message').find('span').fadeOut('fast', function() {
 		$(this).html(message)
-		$(this).fadeIn('fast')
+		$(this).fadeIn('fast', function() {
+			if (callback) {
+				callback()
+			}
+		})
 	})
 }
 
@@ -420,17 +424,9 @@ function strong(text) {
 function getInvitation(player, theirDice) {
 	var invitation = strong(player)
 		+ ' challenges you. Accept?<br />'
-		+ '<span class="choice">yes</span> &nbsp&nbsp'
+		+ '<span class="choice">yes</span> &nbsp; &nbsp; '
 		+ '<span class="choice">no</span>'
-	showMessage(invitation)
-	(new Audio('snd/getInvitation.webm')).play()
-	webNotification(
-		'img/favicon.png',
-		'Neversi',
-		'You have received an invitation from ' + player + '.'
-	)
-	// Delay necessary to avoid race condition
-	window.setTimeout(function() {
+	showMessage(invitation, function() {
 		$('.choice').click(function() {
 			if ($(this).html() == 'yes') {
 				myDice = Math.floor(Math.random()*9999999999)
@@ -443,7 +439,13 @@ function getInvitation(player, theirDice) {
 				gameState = 'lobby'
 			}
 		})
-	}, 1250)
+	})
+	(new Audio('snd/getInvitation.webm')).play()
+	webNotification(
+		'img/favicon.png',
+		'Neversi',
+		'You have received an invitation from ' + player + '.'
+	)
 }
 
 // Enter a game after successful invitation
@@ -515,7 +517,7 @@ function addLinks(message) {
 				}
 			}
 			sanitize = sanitize.join('')
-			var processed = sanitize.replace(':','&colon')
+			var processed = sanitize.replace(':','&colon;')
 			message = message.replace(sanitize, '<a target="_blank" href="' + processed + '">' + processed + '</a>')		
 		}
 	}
@@ -661,7 +663,7 @@ function sendMessage(message, player) {
 // Handle chat form submission
 $('#chatInput,#lobbyChatInput').keyup(function(e) {
 	if (e.keyCode === 13) {
-		var chat = $.trim($(this).val().replace(/</g, '&lt').replace(/>/g, '&gt'))
+		var chat = $.trim($(this).val().replace(/</g, '&lt;').replace(/>/g, '&gt;'))
 		if (chat !== '') {
 			var chatID = $(this).attr('id').substring(0, $(this).attr('id').length - 5)
 			addToChat(chatID, chat, myNickname)
@@ -689,7 +691,7 @@ function cleanNickname(nickname) {
 // Handle incoming messages from the XMPP server.
 function handleMessage(message) {
 	var nickname = cleanNickname($(message).attr('from'))
-	var body = $(message).find('body').text().replace(/\&quot/g, '"')
+	var body = $(message).find('body').text().replace(/\&quot;/g, '"')
 	var type = $(message).attr('type')
 	// If archived message, ignore.
 	if ($(message).find('delay').length !== 0) {
@@ -873,16 +875,16 @@ function bindPlayerClick(player) {
 			sendMessage('invite ' + myDice, player)
 			showMessage(
 				'Waiting for ' + strong(player) + ' to respond...'
-				+ '<br /><span class="choice">cancel</span>'
+				+ '<br /><span class="choice">cancel</span>',
+				function() {
+					$('.choice').click(function() {
+						sendMessage('cancel', player)
+						showMessage('Welcome, ' + strong(myNickname) + '. Click on a person to invite them to play.')
+						gameState = 'lobby'
+						inviting = null
+					})
+				}
 			)
-			window.setTimeout(function() {
-				$('.choice').click(function() {
-					sendMessage('cancel', player)
-					showMessage('Welcome, ' + strong(myNickname) + '. Click on a person to invite them to play.')
-					gameState = 'lobby'
-					inviting = null
-				})
-			}, 1250)
 		}
 	})
 }
@@ -921,7 +923,7 @@ $('#login').submit(function() {
 	return false
 })
 
-// Registers a new user on the XMPP server.
+// Registers a new user on the XMPP server.&
 function registerXMPPUser(username, password) {
 	var registrationConnection = new Strophe.Connection(bosh)
 	registrationConnection.register.connect(domain, function(status) {
