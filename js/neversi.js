@@ -19,6 +19,8 @@ var abc = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 var boardMatrix = {}
 var boardSlate = $('#board').html()
 
+var graphData = { black: [{x: 0, y: 2}], white: [{x: 0, y: 2}] }
+
 // -----------------------------------------------
 // BOARD LOGIC
 // -----------------------------------------------
@@ -342,7 +344,10 @@ function flipDiscs(discs, move, highlight) {
 			}
 		}
 		addToMoveHistory(move)
-	}, (t * discs.length) + 600)
+		graphData.black.push({x: graphData.black.length, y: parseInt($('#blackCounter').text())})
+		graphData.white.push({x: graphData.white.length, y: parseInt($('#whiteCounter').text())})
+		drawDiscGraph()
+	}, (t * discs.length) + 500)
 }
 
 // Handle a square being clicked (play a move)
@@ -457,6 +462,7 @@ function enterGame(player, myDice, theirDice) {
 		})
 		neversi.newGame()
 		addToMoveHistory('start')
+		drawDiscGraph()
 		if (myColor === 'black') {
 			highlightMoves(myColor)
 			myTurn = 1
@@ -555,6 +561,30 @@ function incrementCounter(color, amount) {
 // Get total disc count
 function getDiscCount() {
 	return parseInt($('#blackCounter').text()) + parseInt($('#whiteCounter').text())
+}
+
+// Draw disc count graph
+function drawDiscGraph(blackData, whiteData) {
+	var graph = new Rickshaw.Graph({
+		element: document.querySelector('#graph'), 
+		width: 215,
+		height: 70,
+		renderer: 'line',
+		series: [
+			{
+				name: 'Black',
+				color: 'black',
+				data: graphData.black
+	    	},
+			{
+				name: 'White',
+				color: 'white',
+				data: graphData.white
+	    	}
+		]
+	})
+	$('#graph').html('')
+	graph.render()
 }
 
 // End game

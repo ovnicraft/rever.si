@@ -26,7 +26,7 @@ a:hover {
 	margin: 0 auto;
 	border-radius: 10px;
 	box-shadow: 0px 0px 10px #000;
-	background-color: rgba(0, 0, 0, 0.25);
+	background: rgba(0, 0, 0, 0.25);
 	position: relative;
 }
 
@@ -56,8 +56,8 @@ a:hover {
 }
 
 #info #message {
-	background-color: rgba(0, 0, 0, 0.5);
-	border-radius: 10px;
+	background: rgba(0, 0, 0, 0.5);
+	border-radius: 8px;
 	padding: 10px;
 	min-height: 40px;
 }
@@ -69,8 +69,8 @@ h1 {
 }
 
 input[type=text] {
-	border-radius: 10px;
-	background-color: rgba(0, 0, 0, 0.5);
+	border-radius: 8px;
+	background: rgba(0, 0, 0, 0.5);
 	border: none;
 	outline: none;
 	color: #CCC;
@@ -82,8 +82,8 @@ input[type=text] {
 }
 
 #login input[type=submit] {
-	border-radius: 10px;
-	background-color: rgba(0, 0, 0, 0.5);
+	border-radius: 8px;
+	background: rgba(0, 0, 0, 0.5);
 	border: none;
 	outline: none;
 	color: #CCC;
@@ -108,10 +108,10 @@ input[type=text] {
 }
 
 #lobby #playerList {
-	border-radius: 10px;
-	background-color: rgba(0, 0, 0, 0.5);
+	border-radius: 8px;
+	background: rgba(0, 0, 0, 0.5);
 	width: 220px;
-	height: 171px;
+	height: 160px;
 	padding: 10px;
 	margin: 10px 0;
 	overflow-y: auto;
@@ -122,16 +122,16 @@ input[type=text] {
 	display: none;
 	margin-bottom: 10px;
 	font-size: 12px;
-	background-color: #000;
-	border-radius: 10px;
+	background: #000;
+	border-radius: 8px;
 	padding: 5px;
 	width: auto;
 }
 
 #lobby #lobbyChat {
 	margin: 10px 0;
-	border-radius: 10px;
-	background-color: rgba(0, 0, 0, 0.5);
+	border-radius: 8px;
+	background: rgba(0, 0, 0, 0.5);
 	width: 220px;
 	height: 171px;
 	padding: 10px;
@@ -161,23 +161,32 @@ input[type=text] {
 }
 
 #inGame #discCount {
-	font-size: 64px;
+	font-size: 58px;
 	font-family: 'Futura', 'Helvetica', 'Arial', 'Verdana';
 	text-align: center;
 	margin: 35px 0;
-	text-shadow: 0 0 70px #FFF;
+	text-shadow: 0 0 60px #EEE;
 }
 
 #inGame #blackCounter {
 	color: #000;
 }
 
-#inGame #chat {
-	margin: 35px 0 15px 0;
-	border-radius: 10px;
-	background-color: rgba(0, 0, 0, 0.5);
+#inGame #graph {
 	width: 220px;
-	height: 268px;
+	padding: 10px;
+	height: 70px;
+	margin: 35px 0 15px 0;
+	background: rgba(85, 115, 139, 0.5);
+	border-radius: 8px;
+}
+
+#inGame #chat {
+	margin: 15px 0 15px 0;
+	border-radius: 8px;
+	background: rgba(0, 0, 0, 0.5);
+	width: 220px;
+	height: 170px;
 	padding: 10px;
 	text-align: left;
 	overflow-y: auto;
@@ -195,11 +204,11 @@ input[type=text] {
 
 #inGame #moveHistory {
 	display: none;
-	margin: 35px 0 15px 0;
-	border-radius: 10px;
-	background-color: rgba(0, 0, 0, 0.5);
+	margin: 15px 0 15px 0;
+	border-radius: 8px;
+	background: rgba(0, 0, 0, 0.5);
 	width: 220px;
-	height: 320px;
+	height: 220px;
 	padding: 10px;
 	text-align: left;
 	overflow-y: auto;
