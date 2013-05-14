@@ -111,9 +111,9 @@ input[type=text] {
 	border-radius: 8px;
 	background: rgba(0, 0, 0, 0.5);
 	width: 220px;
-	height: 160px;
+	height: 150px;
 	padding: 10px;
-	margin: 10px 0;
+	margin: 15px 0;
 	overflow-y: auto;
 }
 
@@ -129,11 +129,11 @@ input[type=text] {
 }
 
 #lobby #lobbyChat {
-	margin: 10px 0;
+	margin: 15px 0;
 	border-radius: 8px;
 	background: rgba(0, 0, 0, 0.5);
 	width: 220px;
-	height: 171px;
+	height: 160px;
 	padding: 10px;
 	text-align: left;
 	overflow-y: auto;
@@ -160,12 +160,20 @@ input[type=text] {
 	display: none;
 }
 
+#inGame #gameStatus {
+	width: 220px;
+	padding: 10px;
+	margin: 15px 0;
+	background: rgba(85, 115, 139, 0.5);
+	border-radius: 8px;
+}
+
 #inGame #discCount {
 	font-size: 58px;
 	font-family: 'Futura', 'Helvetica', 'Arial', 'Verdana';
 	text-align: center;
-	margin: 35px 0;
-	text-shadow: 0 0 60px #EEE;
+	text-shadow: 0 0 60px #AAA;
+	margin: 18px 0 45px;
 }
 
 #inGame #blackCounter {
@@ -174,19 +182,16 @@ input[type=text] {
 
 #inGame #graph {
 	width: 220px;
-	padding: 10px;
-	height: 70px;
-	margin: 35px 0 15px 0;
-	background: rgba(85, 115, 139, 0.5);
-	border-radius: 8px;
+	height: 45px;
+	margin: 0 auto;
 }
 
 #inGame #chat {
-	margin: 15px 0 15px 0;
+	margin: 15px 0;
 	border-radius: 8px;
 	background: rgba(0, 0, 0, 0.5);
 	width: 220px;
-	height: 170px;
+	height: 190px;
 	padding: 10px;
 	text-align: left;
 	overflow-y: auto;
@@ -204,11 +209,11 @@ input[type=text] {
 
 #inGame #moveHistory {
 	display: none;
-	margin: 15px 0 15px 0;
+	margin: 15px 0;
 	border-radius: 8px;
 	background: rgba(0, 0, 0, 0.5);
 	width: 220px;
-	height: 220px;
+	height: 240px;
 	padding: 10px;
 	text-align: left;
 	overflow-y: auto;

@@ -19,7 +19,7 @@ var abc = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 var boardMatrix = {}
 var boardSlate = $('#board').html()
 
-var graphData = { black: [{x: 0, y: 2}], white: [{x: 0, y: 2}] }
+var graphData = {}
 
 // -----------------------------------------------
 // BOARD LOGIC
@@ -45,6 +45,7 @@ function resetBoard() {
 		'a8': 0, 'b8': 0, 'c8': 0, 'd8': 0,
 		'e8': 0, 'f8': 0, 'g8': 0, 'h8': 0
 	}
+	graphData = { black: [{x: 0, y: 2}], white: [{x: 0, y: 2}] }
 	$('.square').css('background-image', 'none')
 }
 
@@ -564,11 +565,12 @@ function getDiscCount() {
 }
 
 // Draw disc count graph
-function drawDiscGraph(blackData, whiteData) {
+function drawDiscGraph() {
+	$('#graph').html('')
 	var graph = new Rickshaw.Graph({
 		element: document.querySelector('#graph'), 
 		width: 215,
-		height: 70,
+		height: 45,
 		renderer: 'line',
 		series: [
 			{
@@ -582,9 +584,7 @@ function drawDiscGraph(blackData, whiteData) {
 				data: graphData.white
 	    	}
 		]
-	})
-	$('#graph').html('')
-	graph.render()
+	}).render()
 }
 
 // End game
