@@ -999,6 +999,13 @@ function logout() {
 	conn.disconnect();
 }
 
+// Prevent accidental window close
+$(window).bind('beforeunload', function() {
+	if (gameState === 'inGame') {
+		return 'You are playing a game. Are you sure you wish to quit?';
+	}
+});
+
 // Logout on browser close
 $(window).unload(function() {
 	logout();
