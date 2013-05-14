@@ -347,18 +347,17 @@ function flipDiscs(discs, move, highlight) {
 
 // Handle a square being clicked (play a move)
 $('.square').click(function() {
-	if ($(this).css('cursor') !== 'pointer') {
-		return
+	if (!myTurn || ($(this).css('cursor') !== 'pointer')) {
+		return false
 	}
-	clearHighlights()
 	var square = $(this).attr('id')
 	var discs = getMoves(myColor)[square]
+	clearHighlights()
 	takeSquare(square, myColor, null, 1)
-	(new Audio('snd/iPlay.webm')).play()
 	flipDiscs(discs, square, 0)
 	myTurn = 0
-	//$('#chatInput').select()
 	showMessage('Playing against ' + strong(opponent) + '. It\'s their turn.')
+	playSound('iPlay')
 })
 
 // -----------------------------------------------
@@ -405,14 +404,7 @@ $('#play').mouseout(function() {
 
 // Display a message in the message area
 function showMessage(message, callback) {
-	$('#message').find('span').fadeOut('fast', function() {
-		$(this).html(message)
-		$(this).fadeIn('fast', function() {
-			if (callback) {
-				callback()
-			}
-		})
-	})
+	$('#message').find('span').html(message)
 }
 
 // Make input HTML bold
@@ -426,21 +418,20 @@ function getInvitation(player, theirDice) {
 		+ ' challenges you. Accept?<br />'
 		+ '<span class="choice">yes</span> &nbsp; &nbsp; '
 		+ '<span class="choice">no</span>'
-	showMessage(invitation, function() {
-		$('.choice').click(function() {
-			if ($(this).html() == 'yes') {
-				myDice = Math.floor(Math.random()*9999999999)
-				sendMessage('accept ' + myDice, player)
-				enterGame(player, myDice, theirDice)
-			}
-			else {
-				sendMessage('refuse', player)
-				showMessage('You have refused the invitation.')
-				gameState = 'lobby'
-			}
-		})
+	showMessage(invitation)
+	$('.choice').click(function() {
+		if ($(this).html() == 'yes') {
+			myDice = Math.floor(Math.random()*9999999999)
+			sendMessage('accept ' + myDice, player)
+			enterGame(player, myDice, theirDice)
+		}
+		else {
+			sendMessage('refuse', player)
+			showMessage('You have refused the invitation.')
+			gameState = 'lobby'
+		}
 	})
-	(new Audio('snd/getInvitation.webm')).play()
+	playSound('getInvitation')
 	webNotification(
 		'img/favicon.png',
 		'Neversi',
@@ -533,6 +524,11 @@ function scrollDown(id, speed) {
 	}, speed)
 }
 
+// Play a sound
+function playSound(sound) {
+	(new Audio('snd/' + sound + '.webm')).play()
+}
+
 // Enable web notifications if API is present
 if (window.webkitNotifications) {
 	webNotifications = 1
@@ -573,7 +569,7 @@ function endGame() {
 	}
 	else {
 		showMessage('It\'s a draw!')
-		return
+		return false
 	}
 	if (myColor === winner) {
 		showMessage('You have won!')
@@ -708,7 +704,7 @@ function handleMessage(message) {
 		}
 		return true
 	}
-	console.log(nickname + ': ' + body)
+	// console.log(nickname + ': ' + body)
 	// Detect incoming invitation
 	if (body.match(/^invite\s[0-9]+$/)) {
 		if (gameState === 'lobby') {
@@ -757,7 +753,7 @@ function handleMessage(message) {
 				myTurn = 1
 				takeSquare(move[0], getOpposite(myColor), null, 0, myColor)
 				flipDiscs(discs[move[0]], move[0], 1)
-				(new Audio('snd/theyPlay.webm')).play()
+				playSound('theyPlay')
 				webNotification(
 					'img/favicon.png',
 					'Neversi',
@@ -875,16 +871,14 @@ function bindPlayerClick(player) {
 			sendMessage('invite ' + myDice, player)
 			showMessage(
 				'Waiting for ' + strong(player) + ' to respond...'
-				+ '<br /><span class="choice">cancel</span>',
-				function() {
-					$('.choice').click(function() {
-						sendMessage('cancel', player)
-						showMessage('Welcome, ' + strong(myNickname) + '. Click on a person to invite them to play.')
-						gameState = 'lobby'
-						inviting = null
-					})
-				}
+				+ '<br /><span class="choice">cancel</span>'
 			)
+			$('.choice').click(function() {
+				sendMessage('cancel', player)
+				showMessage('Welcome, ' + strong(myNickname) + '. Click on a person to invite them to play.')
+				gameState = 'lobby'
+				inviting = null
+			})
 		}
 	})
 }
@@ -923,7 +917,7 @@ $('#login').submit(function() {
 	return false
 })
 
-// Registers a new user on the XMPP server.&
+// Registers a new user on the XMPP server.
 function registerXMPPUser(username, password) {
 	var registrationConnection = new Strophe.Connection(bosh)
 	registrationConnection.register.connect(domain, function(status) {
