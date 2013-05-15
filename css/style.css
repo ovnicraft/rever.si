@@ -173,7 +173,7 @@ input[type=text] {
 	font-family: 'Futura', 'Helvetica', 'Arial', 'Verdana';
 	text-align: center;
 	text-shadow: 0 0 60px #AAA;
-	margin: 18px 0 45px;
+	margin: 18px 0 25px 0;
 }
 
 #inGame #blackCounter {
@@ -191,7 +191,7 @@ input[type=text] {
 	border-radius: 8px;
 	background: rgba(0, 0, 0, 0.5);
 	width: 220px;
-	height: 190px;
+	height: 215px;
 	padding: 10px;
 	text-align: left;
 	overflow-y: auto;
@@ -213,7 +213,7 @@ input[type=text] {
 	border-radius: 8px;
 	background: rgba(0, 0, 0, 0.5);
 	width: 220px;
-	height: 240px;
+	height: 270px;
 	padding: 10px;
 	text-align: left;
 	overflow-y: auto;
