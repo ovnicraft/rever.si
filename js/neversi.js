@@ -348,7 +348,7 @@ function flipDiscs(discs, move, highlight) {
 		graphData.black.push({x: graphData.black.length, y: parseInt($('#blackCounter').text())})
 		graphData.white.push({x: graphData.white.length, y: parseInt($('#whiteCounter').text())})
 		drawDiscGraph()
-	}, (t * discs.length) + 500)
+	}, (t * (discs.length + 1)))
 }
 
 // Handle a square being clicked (play a move)
