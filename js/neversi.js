@@ -112,7 +112,7 @@ function getOpposite(color) {
 // Get possible moves
 function getMoves(color) {
 	var moves = {}
-	var enemy = getOpposite(color)
+	var opponent = getOpposite(color)
 	for (var c = 0; c < abc.length; c++) {
 		for (var r = 1; r < 9; r++) {
 			if (boardMatrix[abc[c] + r]) { continue }
@@ -121,7 +121,7 @@ function getMoves(color) {
 			if (r >= 3) {
 				var possibleMove = []
 				for (var i = (r - 1); i >= 1; i--) {
-					if (boardMatrix[abc[c] + i] === enemy) {
+					if (boardMatrix[abc[c] + i] === opponent) {
 						possibleMove.push(abc[c] + i)
 					}
 					else if (boardMatrix[abc[c] + i] === color) {
@@ -142,7 +142,7 @@ function getMoves(color) {
 				for (var i = (r - 1); i >= 1; i--) {
 					if (o < 7) { o++ }
 					else { break }
-					if (boardMatrix[abc[o] + i] === enemy) {
+					if (boardMatrix[abc[o] + i] === opponent) {
 						possibleMove.push(abc[o] + i)
 					}
 					else if (boardMatrix[abc[o] + i] === color) {
@@ -160,7 +160,7 @@ function getMoves(color) {
 			if (c <= 5) {
 				var possibleMove = []
 				for (var o = (c + 1); o <= 7; o++) {
-					if (boardMatrix[abc[o] + r] === enemy) {
+					if (boardMatrix[abc[o] + r] === opponent) {
 						possibleMove.push(abc[o] + r)
 					}
 					else if (boardMatrix[abc[o] + r] === color) {
@@ -181,7 +181,7 @@ function getMoves(color) {
 				for (var i = (r + 1); i <= 8; i++) {
 					if (o < 7) { o++ }
 					else { break }
-					if (boardMatrix[abc[o] + i] === enemy) {
+					if (boardMatrix[abc[o] + i] === opponent) {
 						possibleMove.push(abc[o] + i)
 					}
 					else if (boardMatrix[abc[o] + i] === color) {
@@ -199,7 +199,7 @@ function getMoves(color) {
 			if (r <= 6) {
 				var possibleMove = []
 				for (var i = (r + 1); i <= 8; i++) {
-					if (boardMatrix[abc[c] + i] === enemy) {
+					if (boardMatrix[abc[c] + i] === opponent) {
 						possibleMove.push(abc[c] + i)
 					}
 					else if (boardMatrix[abc[c] + i] === color) {
@@ -220,7 +220,7 @@ function getMoves(color) {
 				for (var i = (r + 1); i <= 8; i++) {
 					if (o > 0) { o-- }
 					else { break }
-					if (boardMatrix[abc[o] + i] === enemy) {
+					if (boardMatrix[abc[o] + i] === opponent) {
 						possibleMove.push(abc[o] + i)
 					}
 					else if (boardMatrix[abc[o] + i] === color) {
@@ -238,7 +238,7 @@ function getMoves(color) {
 			if (c >= 2) {
 				var possibleMove = []
 				for (var o = (c - 1); o >= 0; o--) {
-					if (boardMatrix[abc[o] + r] === enemy) {
+					if (boardMatrix[abc[o] + r] === opponent) {
 						possibleMove.push(abc[o] + r)
 					}
 					else if (boardMatrix[abc[o] + r] === color) {
@@ -259,7 +259,7 @@ function getMoves(color) {
 				for (var i = (r - 1); i >= 1; i--) {
 					if (o > 0) { o-- }
 					else { break }
-					if (boardMatrix[abc[o] + i] === enemy) {
+					if (boardMatrix[abc[o] + i] === opponent) {
 						possibleMove.push(abc[o] + i)
 					}
 					else if (boardMatrix[abc[o] + i] === color) {
