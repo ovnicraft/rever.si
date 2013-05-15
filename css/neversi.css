@@ -96,7 +96,7 @@ input[type=text] {
 	color: #000;
 }
 
-#login #nickname {
+#login #name {
 	width: 188px;
 	display: inline;
 }

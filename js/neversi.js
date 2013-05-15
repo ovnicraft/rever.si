@@ -10,7 +10,7 @@ var domain = 'never.si'
 var conference = 'conference.never.si'
 var bosh = 'http://never.si/http-bind'
 
-var myNickname, gameState, inviting, myTurn
+var myName, gameState, inviting, myTurn
 var myDice, myColor, opponent, loginError, inviter
 var loginCredentials = []
 var webNotifications
@@ -486,10 +486,10 @@ function leaveGame() {
 }
 
 // Display chat message
-function addToChat(id, message, nickname) {
+function addToChat(id, message, name) {
 	$('<div />',{
 		'class': 'chatLine',
-		'html': strong(nickname) + ': ' + addLinks(message),
+		'html': strong(name) + ': ' + addLinks(message),
 	}).appendTo('#' + id).fadeIn('fast')
 	scrollDown(id, 600)
 }
@@ -683,17 +683,17 @@ $('#chatInput,#lobbyChatInput').keyup(function(e) {
 		var chat = $.trim($(this).val().replace(/</g, '&lt;').replace(/>/g, '&gt;'))
 		if (chat !== '') {
 			var chatID = $(this).attr('id').substring(0, $(this).attr('id').length - 5)
-			addToChat(chatID, chat, myNickname)
+			addToChat(chatID, chat, myName)
 			sendMessage('chat ' + $(this).val(), opponent)
 			$(this).val('')
 		}
 	}
 })
 
-// Clean nickname so that it's safe to use.
-function cleanNickname(nickname) {
+// Clean name so that it's safe to use.
+function cleanName(name) {
 	var clean
-	if (clean = nickname.match(/\/([\s\S]+)/)) {
+	if (clean = name.match(/\/([\s\S]+)/)) {
 		clean = Strophe.xmlescape(clean[1])
 	}
 	else {
@@ -707,7 +707,7 @@ function cleanNickname(nickname) {
 
 // Handle incoming messages from the XMPP server.
 function handleMessage(message) {
-	var nickname = cleanNickname($(message).attr('from'))
+	var name = cleanName($(message).attr('from'))
 	var body = $(message).find('body').text().replace(/\&quot;/g, '"')
 	var type = $(message).attr('type')
 	// If archived message, ignore.
@@ -715,58 +715,58 @@ function handleMessage(message) {
 		return true
 	}
 	// If message is from me, ignore.
-	if (nickname === myNickname) {
+	if (name === myName) {
 		return true
 	}
 	// If this is a group message...
 	if (type === 'groupchat') {
 		if (chat = body.match(/^chat/)) {
-			addToChat('lobbyChat', body.substring(5), nickname)
+			addToChat('lobbyChat', body.substring(5), name)
 		}
 		return true
 	}
-	// console.log(nickname + ': ' + body)
+	// console.log(name + ': ' + body)
 	// Detect incoming invitation
 	if (body.match(/^invite\s[0-9]+$/)) {
 		if (gameState === 'lobby') {
 			var theirDice = parseInt(body.match(/[0-9]+$/)[0])
-			getInvitation(nickname, theirDice)
+			getInvitation(name, theirDice)
 			gameState = 'invited'
-			inviter = nickname
+			inviter = name
 		}
 		else {
-			sendMessage(gameState, nickname)
+			sendMessage(gameState, name)
 		}
 	}
 	// Detect canceled invitations
 	if (body === 'cancel') {
-		if (inviter === nickname) {
-			showMessage(strong(nickname) + ' have canceled their invitation.')
+		if (inviter === name) {
+			showMessage(strong(name) + ' have canceled their invitation.')
 			inviter = null
 			gameState = 'lobby'
 		}
 	}
 	// Detect invitation response
-	else if (inviting === nickname) {
+	else if (inviting === name) {
 		if (body.match(/^accept\s[0-9]+$/)) {
 			var theirDice = parseInt(body.match(/[0-9]+$/)[0])
-			enterGame(nickname, myDice, theirDice)
+			enterGame(name, myDice, theirDice)
 			return true
 		}
 		else if (body === 'refuse') {
-			showMessage(strong(nickname) + ' has refused your invitation.')
+			showMessage(strong(name) + ' has refused your invitation.')
 		}
 		else if (body === 'inGame') {
-			showMessage(strong(nickname) + ' is currently playing a game.')
+			showMessage(strong(name) + ' is currently playing a game.')
 		}
 		else if ((body === 'invited') || (body === 'inviting')) {
-			showMessage(strong(nickname) + ' is already handling another invitation. Try again shortly.')
+			showMessage(strong(name) + ' is already handling another invitation. Try again shortly.')
 		}
 		gameState = 'lobby'
 		inviting = null
 	}
 	// Detect gameplay moves/chat
-	else if (opponent === nickname) {
+	else if (opponent === name) {
 		if (move = body.match(/^[a-h][1-8]$/)) {
 			var discs = getMoves(getOpposite(myColor))
 			if (!myTurn && discs[move[0]]) {
@@ -785,7 +785,7 @@ function handleMessage(message) {
 			if (!myTurn) {
 				myTurn = 1
 				if (highlightMoves(myColor)) {
-					showMessage(strong(nickname) + ' has no moves. It\'s your turn.')
+					showMessage(strong(name) + ' has no moves. It\'s your turn.')
 				}
 				else {
 					endGame()
@@ -797,7 +797,7 @@ function handleMessage(message) {
 			leaveGame()
 		}
 		else if (chat = body.match(/^chat/)) {
-			addToChat('chat', body.substring(5), nickname)
+			addToChat('chat', body.substring(5), name)
 		}
 	}
 	return true
@@ -806,60 +806,56 @@ function handleMessage(message) {
 // Handle incoming presence updates from the XMPP server.
 function handlePresence(presence) {
 	// console.log(presence)
-	var nickname = cleanNickname($(presence).attr('from'))
-	// If invalid nickname, do not process
+	var name = cleanName($(presence).attr('from'))
+	// If invalid name, do not process
 	if ($(presence).attr('type') === 'error') {
 		if ($(presence).find('error').attr('code') === '409') {
-			logout()
+			loginError = true
+			logout(false)
 			window.setTimeout(function() {
-				showMessage('Nickname in use. Please choose another nickname.')
-				loginError = 1
+				showMessage('Name in use. Please choose another name.')
 			}, 1000)
 			return false
 		}
 		return true
 	}
 	// Ignore if presence status is coming from myself
-	if (nickname === myNickname) {
+	if (name === myName) {
 		return true
 	}
 	// Detect player going offline
 	if ($(presence).attr('type') === 'unavailable') {
-		$('#player-' + nickname).slideUp().remove()
-		if (opponent === nickname) {
+		$('#player-' + name).slideUp().remove()
+		if (opponent === name) {
 			showMessage('Your opponent has logged out.')
 			leaveGame()
 		}
-		else if (inviting === nickname) {
-			showMessage(strong(nickname) + ' has logged out.')
+		else if (inviting === name) {
+			showMessage(strong(name) + ' has logged out.')
 			inviting = null
 			gameState = 'lobby'
 		}
-		else if (inviter === nickname) {
-			showMessage(strong(nickname) + ' has logged out.')
+		else if (inviter === name) {
+			showMessage(strong(name) + ' has logged out.')
 			inviter = null
 			gameState = 'lobby'
 		}
 	}
 	// Create player element if player is new
-	else if (!$('#player-' + nickname).length) {
-		addPlayer(nickname)
-	}
-	// Handle player status change to 'available'
-	if ($(presence).find('show').text() === '' || $(presence).find('show').text() === 'chat') {
-		
+	else if (!$('#player-' + name).length) {
+		addPlayer(name)
 	}
 	return true
 }
 
 // Add new player to player list
-function addPlayer(nickname) {
+function addPlayer(name) {
 	$('#playerList').queue(function() {
 		var buddyTemplate = '<div class="player" id="player-' 
-			+ nickname + '"><span>' + nickname + '</span></div>'
+			+ name + '"><span>' + name + '</span></div>'
 		$(buddyTemplate).appendTo('#playerList').slideDown(100, function() {
-			$('#player-' + nickname).unbind('click')
-			bindPlayerClick(nickname)
+			$('#player-' + name).unbind('click')
+			bindPlayerClick(name)
 		})
 	})
 	$('#playerList').dequeue()
@@ -879,7 +875,7 @@ function bindPlayerClick(player) {
 			)
 			$('.choice').click(function() {
 				sendMessage('cancel', player)
-				showMessage('Welcome, ' + strong(myNickname) + '. Click on a person to invite them to play.')
+				showMessage('Welcome, ' + strong(myName) + '. Click on a person to invite them to play.')
 				gameState = 'lobby'
 				inviting = null
 			})
@@ -894,20 +890,20 @@ $('#login').submit(function() {
 		return false
 	}
 	$('#play').mouseover().mouseout()
-	//Check validity of nickname and game ID
-	$('#nickname').val($.trim($('#nickname').val()).toLowerCase())
-	if (($('#nickname').val() === '')
-		|| ($('#nickname').val() === 'Your nickname')) {
-		showMessage('Please enter a nickname.')
-		$('#nickname').select()
+	//Check validity of name and game ID
+	$('#name').val($.trim($('#name').val()).toLowerCase())
+	if (($('#name').val() === '')
+		|| ($('#name').val() === 'Your name')) {
+		showMessage('Please enter a name.')
+		$('#name').select()
 	}
-	else if (!$('#nickname').val().match(/^\w{1,18}$/)) {
-		showMessage('Your nickname can only contain alphanumeric characters.')
-		$('#nickname').select()
+	else if (!$('#name').val().match(/^\w{1,18}$/)) {
+		showMessage('Your name can only contain alphanumeric characters.')
+		$('#name').select()
 	}
 	// If everything is okay, then register a randomly generated throwaway XMPP ID and log in.
 	else {
-		myNickname = Strophe.xmlescape($('#nickname').val())
+		myName = Strophe.xmlescape($('#name').val())
 		loginCredentials[0] = randomString(64, 1, 1, 1)
 		loginCredentials[1] = randomString(64, 1, 1, 1)
 		registerXMPPUser(loginCredentials[0], loginCredentials[1])
@@ -955,9 +951,9 @@ function login(username, password) {
 			showMessage('Connection error.')
 		}
 		else if (status === Strophe.Status.CONNECTED) {
-			showMessage('Welcome, ' + strong(myNickname) + '. Click on a person to invite them to play.')
+			showMessage('Welcome, ' + strong(myName) + '. Click on a person to invite them to play.')
 			conn.muc.join(
-				'lobby@' + conference, myNickname, 
+				'lobby@' + conference, myName, 
 				function(message) {
 					if (handleMessage(message)) {
 						return true
@@ -989,9 +985,9 @@ function login(username, password) {
 				$('#moveHistory ol').html('')
 				$('#chatInput,#lobbyChatInput').val('')
 				$('#login').fadeIn('fast')
-				$('#nickname').val('Your nickname').select()
+				$('#name').val('Your name').select()
 			})
-			myNickname = opponent = inviting = myTurn = null
+			myName = opponent = inviting = myTurn = null
 			inviter = conn = gameState = loginError = myColor = null
 			loginCredentials = []
 			$('#play').removeAttr('readonly')
@@ -1000,8 +996,10 @@ function login(username, password) {
 }
 
 // Logout function
-function logout() {
-	showMessage('Logging out...')
+function logout(message) {
+	if (message) {
+		showMessage('Logging out...')
+	}
 	conn.muc.leave('lobby@' + conference)
 	conn.disconnect()
 }
@@ -1015,7 +1013,7 @@ $(window).unload(function() {
 // END XMPP LOGIC
 // -----------------------------------------------
 
-$('#nickname').select()
+$('#name').select()
 neversi.newGame()
 
 })
