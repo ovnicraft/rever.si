@@ -322,7 +322,8 @@ function clearHighlights() {
 // 'move' is the move that was played
 // If 'highlight', highlights moves after flipping discs
 function flipDiscs(discs, move, highlight) {
-	var t = 225
+	var timer = 225
+	var counter = 0
 	var color = boardMatrix[discs[0][0]]
 	var opposite = getOpposite(color)
 	for (var i in discs) {
@@ -330,8 +331,9 @@ function flipDiscs(discs, move, highlight) {
 			window.setTimeout(function() {
 				takeSquare(val, opposite, null, 0)
 				incrementCounter(color, -1)
-			}, t)
-			t += 225
+			}, timer)
+			timer += 225
+			counter++
 		})
 	}
 	window.setTimeout(function() {
@@ -348,7 +350,7 @@ function flipDiscs(discs, move, highlight) {
 		graphData.black.push({x: graphData.black.length, y: parseInt($('#blackCounter').text())})
 		graphData.white.push({x: graphData.white.length, y: parseInt($('#whiteCounter').text())})
 		drawDiscGraph()
-	}, (t * (discs.length + 1)))
+	}, 225 * (counter + 2))
 }
 
 // Handle a square being clicked (play a move)
@@ -394,18 +396,6 @@ setBoardSize()
 // Form logic for fields and buttons
 $('input[type=text]').click(function() {
 	$(this).select()
-})
-$('#play').mouseover(function() {
-	$(this).animate({
-		'background-color': '#FFF',
-		'color': '#000'
-	}, 'fast')
-})
-$('#play').mouseout(function() {
-	$(this).animate({
-		'background-color': '#000',
-		'color': '#CCC'
-	}, 'fast')
 })
 
 // Display a message in the message area
@@ -774,7 +764,6 @@ function handleMessage(message) {
 		}
 		gameState = 'lobby'
 		inviting = null
-		$('.player').mouseout()
 	}
 	// Detect gameplay moves/chat
 	else if (opponent === nickname) {
@@ -878,22 +867,6 @@ function addPlayer(nickname) {
 
 // Bind properties to player entry in lobby
 function bindPlayerClick(player) {
-	$('#player-' + player).mouseover(function() {
-		if (gameState === 'lobby') {
-			$(this).animate({
-				'background-color': '#FFF',
-				'color': '#000'
-			}, 'fast')
-		}
-	})
-	$('#player-' + player).mouseout(function() {
-		if (gameState === 'lobby') {
-			$(this).animate({
-					'background-color': '#000',
-					'color': '#FFF'
-			}, 'fast')
-		}
-	})
 	$('#player-' + player).click(function() {
 		if (gameState === 'lobby') {
 			myDice = Math.floor(Math.random()*9999999999)

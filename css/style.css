@@ -84,11 +84,16 @@ input[type=text] {
 	border: none;
 	outline: none;
 	color: #CCC;
-	padding: 8px;
+	padding: 8px 7px 9px 7px;
 	font-size: 14px;
 	text-align: center;
 	display: block;
 	cursor: pointer;
+}
+
+#login input[type=submit]:hover {
+	background: rgba(255, 255, 255, 0.9);
+	color: #000;
 }
 
 #login #nickname {
@@ -114,7 +119,7 @@ input[type=text] {
 	overflow-y: auto;
 }
 
-#lobby #playerList .player {
+.player {
 	cursor: pointer;
 	display: none;
 	margin-bottom: 10px;
@@ -123,6 +128,11 @@ input[type=text] {
 	border-radius: 6px;
 	padding: 5px;
 	width: auto;
+}
+
+.player:hover {
+	background: #FFF;
+	color: #000;
 }
 
 #lobby #lobbyChat {
