@@ -572,6 +572,7 @@ function drawDiscGraph() {
 		width: 215,
 		height: 45,
 		renderer: 'line',
+		offset: 'stream',
 		series: [
 			{
 				name: 'Black',
