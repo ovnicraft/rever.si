@@ -113,7 +113,7 @@ input[type=text] {
 	border-radius: 6px;
 	background: rgba(0, 0, 0, 0.5);
 	width: 220px;
-	height: 150px;
+	height: 165px;
 	padding: 10px;
 	margin: 15px 0;
 	overflow-y: auto;
@@ -198,7 +198,7 @@ input[type=text] {
 	border-radius: 6px;
 	background: rgba(0, 0, 0, 0.5);
 	width: 220px;
-	height: 215px;
+	height: 220px;
 	padding: 10px;
 	text-align: left;
 	overflow-y: auto;
@@ -220,7 +220,7 @@ input[type=text] {
 	border-radius: 6px;
 	background: rgba(0, 0, 0, 0.5);
 	width: 220px;
-	height: 270px;
+	height: 272px;
 	padding: 10px;
 	text-align: left;
 	overflow-y: auto;
