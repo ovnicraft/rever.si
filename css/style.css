@@ -62,7 +62,7 @@ a:hover {
 h1 {
 	margin-top: 0;
 	font-weight: normal;
-	font-family: 'Futura', 'Menlo', 'Monaco', 'Helvetica', 'Arial';
+	font-family: 'Futura', 'Century Gothic', 'Menlo', 'Monaco', 'Helvetica', 'Arial';
 }
 
 input[type=text] {
@@ -167,7 +167,7 @@ input[type=text] {
 
 #inGame #discCount {
 	font-size: 58px;
-	font-family: 'Futura', 'Helvetica', 'Arial', 'Verdana';
+	font-family: 'Futura', 'Century Gothic', 'Helvetica', 'Arial', 'Verdana';
 	text-align: center;
 	text-shadow: 0 0 60px #AAA;
 	margin: 18px 0 25px 0;
