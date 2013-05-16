@@ -584,18 +584,12 @@ function drawDiscGraph() {
 function endGame() {
 	var blackCount = parseInt($('#blackCounter').text())
 	var whiteCount = parseInt($('#whiteCounter').text())
-	if (blackCount > whiteCount) {
-		var winner = 'black'
-	}
-	else if (whiteCount > blackCount) {
-		var winner = 'white'
-	}
-	else {
-		showMessage('It\'s a draw!')
-		return false
-	}
-	if (myColor === winner) {
+	if (((blackCount > whiteCount) && (myColor === 'black'))
+	||  ((blackCount < whiteCount) && (myColor === 'white'))) {
 		showMessage('You have won!')
+	}
+	else if (blackCount === whiteCount) {
+		showMessage('It\'s a draw!')
 	}
 	else {
 		showMessage('You have lost.')
@@ -608,16 +602,21 @@ function resetCounters() {
 	$('#whiteCounter').text('0')
 }
 
-// Bind logout button
-$('#logout').click(function() {
-	logout()
-})
-
 // Bind resign button
 $('#resign').click(function() {
 	sendMessage('resign', opponent)
 	showMessage('You have resigned.')
 	leaveGame()
+})
+
+// Bind chat display button
+$('#displayChat').click(function() {
+	$('#moveHistory').fadeOut(function() {
+		$('#chat,#chatInput').fadeIn()
+	})
+	$(this).fadeOut(function() {
+		$('#displayHistory').fadeIn()
+	})
 })
 
 // Bind move history display button
@@ -630,14 +629,9 @@ $('#displayHistory').click(function() {
 	})
 })
 
-// Bind chat display button
-$('#displayChat').click(function() {
-	$('#moveHistory').fadeOut(function() {
-		$('#chat,#chatInput').fadeIn()
-	})
-	$(this).fadeOut(function() {
-		$('#displayHistory').fadeIn()
-	})
+// Bind logout button
+$('#logout').click(function() {
+	logout()
 })
 
 // Prevent accidental window close
@@ -727,7 +721,6 @@ function handleMessage(message) {
 		}
 		return true
 	}
-	// console.log(name + ': ' + body)
 	// Detect incoming invitation
 	if (body.match(/^invite\s[0-9]+$/)) {
 		if (gameState === 'lobby') {
@@ -807,7 +800,6 @@ function handleMessage(message) {
 
 // Handle incoming presence updates from the XMPP server.
 function handlePresence(presence) {
-	// console.log(presence)
 	var name = cleanName($(presence).attr('from'))
 	// If invalid name, do not process
 	if ($(presence).attr('type') === 'error') {
@@ -906,7 +898,6 @@ $('#login').submit(function() {
 	if (($('#play').attr('readonly') === 'readonly')) {
 		return false
 	}
-	$('#play').mouseover().mouseout()
 	//Check validity of name and game ID
 	$('#name').val($.trim($('#name').val()).toLowerCase())
 	if (($('#name').val() === '')
