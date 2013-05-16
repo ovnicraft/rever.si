@@ -119,7 +119,7 @@ input[type=text] {
 	overflow-y: auto;
 }
 
-.player {
+.playerAvailable, .playerInGame {
 	cursor: pointer;
 	display: none;
 	margin-bottom: 10px;
@@ -128,11 +128,24 @@ input[type=text] {
 	border-radius: 6px;
 	padding: 5px;
 	width: auto;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	user-select: none;
 }
 
-.player:hover {
+.playerInGame {
+	cursor: default;
+}
+
+.playerAvailable:hover {
 	background: #FFF;
 	color: #000;
+}
+
+.playerStatus {
+	text-align: right;
+	float: right;
+	font-size: 9px;
 }
 
 #lobby #lobbyChat {

@@ -443,6 +443,7 @@ function enterGame(player, myDice, theirDice) {
 	inviter = null
 	if (myDice > theirDice) { myColor = 'black' }
 	else { myColor = 'white' }
+	conn.muc.setStatus('lobby@' + conference, myName, 'away', 'away')
 	$('#lobby').fadeOut(function() {
 		$('#moveHistory,#displayChat').fadeOut('fast')
 		$('#inGame').fadeIn()
@@ -471,6 +472,7 @@ function leaveGame() {
 	gameState = 'lobby'
 	opponent = null
 	myTurn = null
+	conn.muc.setStatus('lobby@' + conference, myName, '', '')
 	$('#inGame').fadeOut(function() {
 		scrollDown('lobbyChat', 600)
 		$('#chat').html('')
@@ -840,10 +842,23 @@ function handlePresence(presence) {
 			inviter = null
 			gameState = 'lobby'
 		}
+		return true
 	}
 	// Create player element if player is new
 	else if (!$('#player-' + name).length) {
 		addPlayer(name)
+	}
+	// Detect player setting status to 'available'
+	if ($(presence).find('show').text() === '' || $(presence).find('show').text() === 'chat') {
+		$('#player-' + name).attr('class', 'playerAvailable')
+		$('#player-' + name).find('.playerStatus').text('available')
+			
+	}
+	// Detect player setting status to 'away'
+	else if ($(presence).find('show').text() === 'away') {
+		$('#player-' + name).attr('class', 'playerInGame')
+		$('#player-' + name).find('.playerStatus').text('in game')
+			
 	}
 	return true
 }
@@ -851,9 +866,9 @@ function handlePresence(presence) {
 // Add new player to player list
 function addPlayer(name) {
 	$('#playerList').queue(function() {
-		var buddyTemplate = '<div class="player" id="player-' 
-			+ name + '"><span>' + name + '</span></div>'
-		$(buddyTemplate).appendTo('#playerList').slideDown(100, function() {
+		var buddyTemplate = '<div class="playerAvailable" id="player-' 
+			+ name + '"><span>' + name + '</span><span class="playerStatus"></span></div>'
+		$(buddyTemplate).appendTo('#playerList').slideDown(0, function() {
 			$('#player-' + name).unbind('click')
 			bindPlayerClick(name)
 		})
@@ -864,21 +879,23 @@ function addPlayer(name) {
 // Bind properties to player entry in lobby
 function bindPlayerClick(player) {
 	$('#player-' + player).click(function() {
-		if (gameState === 'lobby') {
-			myDice = Math.floor(Math.random()*9999999999)
-			gameState = 'inviting'	
-			inviting = player
-			sendMessage('invite ' + myDice, player)
-			showMessage(
-				'Waiting for ' + strong(player) + ' to respond...'
-				+ '<br /><span class="choice">cancel</span>'
-			)
-			$('.choice').click(function() {
-				sendMessage('cancel', player)
-				showMessage('Welcome, ' + strong(myName) + '. Click on a person to invite them to play.')
-				gameState = 'lobby'
-				inviting = null
-			})
+		if ($(this).css('cursor') === 'pointer') {
+			if (gameState === 'lobby') {
+				myDice = Math.floor(Math.random()*9999999999)
+				gameState = 'inviting'	
+				inviting = player
+				sendMessage('invite ' + myDice, player)
+				showMessage(
+					'Waiting for ' + strong(player) + ' to respond...'
+					+ '<br /><span class="choice">cancel</span>'
+				)
+				$('.choice').click(function() {
+					sendMessage('cancel', player)
+					showMessage('Welcome, ' + strong(myName) + '. Click on a person to invite them to play.')
+					gameState = 'lobby'
+					inviting = null
+				})
+			}
 		}
 	})
 }
