@@ -305,14 +305,14 @@ function highlightMoves(color) {
 		$('#' + i).html('<span class="highlight">&bull;</span>')
 		$('#' + i).css('cursor', 'pointer')
 	}
-	$('.highlight').css('color', color).fadeIn('slow')
+	$('.highlight').css('color', color).fadeIn(600)
 	return true
 }
 
 // Clear highlighted moves
 function clearHighlights() {
 	$('.square').css('cursor', 'auto')
-	$('.highlight').fadeOut('slow', function() {
+	$('.highlight').fadeOut(600, function() {
 		$('.highlight').remove()
 	})
 }
@@ -445,11 +445,11 @@ function enterGame(player, myDice, theirDice) {
 	else { myColor = 'white' }
 	conn.muc.setStatus('lobby@' + conference, myName, 'away', 'away')
 	$('#lobby').fadeOut(function() {
-		$('#moveHistory,#displayChat').fadeOut('fast')
+		$('#moveHistory,#displayChat').fadeOut(200)
 		$('#inGame').fadeIn()
-		$('#logout').fadeOut('fast', function() {
-			$('#resign,#displayHistory,#chat,#chatInput').fadeIn('fast')
-			$('#resign,#displayHistory').fadeIn('fast')
+		$('#logout').fadeOut(200, function() {
+			$('#resign,#displayHistory,#chat,#chatInput').fadeIn(200)
+			$('#resign,#displayHistory').fadeIn(200)
 			$('#chatInput').select()
 		})
 		neversi.newGame()
@@ -479,8 +479,8 @@ function leaveGame() {
 		$('#moveHistory ol').html('')
 		$('#chatInput').val('')
 		$('#lobby').fadeIn()
-		$('#resign,#displayHistory').fadeOut('fast', function() {
-			$('#logout').fadeIn('fast')
+		$('#resign,#displayHistory').fadeOut(200, function() {
+			$('#logout').fadeIn(200)
 			$('#lobbyChatInput').select()
 		})
 		neversi.newGame()
@@ -489,10 +489,10 @@ function leaveGame() {
 
 // Display chat message
 function addToChat(id, message, name) {
-	$('<div />',{
+	$('<div />', {
 		'class': 'chatLine',
-		'html': strong(name) + ': ' + addLinks(message),
-	}).appendTo('#' + id).fadeIn('fast')
+		'html': strong(name) + ': ' + addLinks(message)
+	}).appendTo('#' + id).fadeIn(200)
 	scrollDown(id, 600)
 }
 
@@ -973,9 +973,9 @@ function login(username, password) {
 					}
 				}
 			)
-			$('#login').fadeOut('fast', function() {
-				$('#logout').fadeIn('fast')
-				$('#lobby').fadeIn('fast', function() {
+			$('#login').fadeOut(200, function() {
+				$('#logout').fadeIn(200)
+				$('#lobby').fadeIn(200, function() {
 					$('#lobbyChatInput').select()
 				})
 				gameState = 'lobby'
@@ -986,13 +986,13 @@ function login(username, password) {
 				showMessage('Thank you for playing with Neversi.')
 			}
 			neversi.newGame()
-			$('#logout').fadeOut('fast')
-			$('#resign').fadeOut('fast')
-			$('#lobby,#inGame').fadeOut('fast', function() {
+			$('#logout').fadeOut(200)
+			$('#resign').fadeOut(200)
+			$('#lobby,#inGame').fadeOut(200, function() {
 				$('#chat,#lobbyChat').html('')
 				$('#moveHistory ol').html('')
 				$('#chatInput,#lobbyChatInput').val('')
-				$('#login').fadeIn('fast')
+				$('#login').fadeIn(200)
 				$('#name').val('Your name').select()
 			})
 			myName = opponent = inviting = myTurn = null
