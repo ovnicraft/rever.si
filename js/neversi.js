@@ -565,6 +565,7 @@ function drawDiscGraph() {
 		height: 45,
 		renderer: 'line',
 		offset: 'stream',
+		interpolation: 'step-after',
 		series: [
 			{
 				name: 'Black',
