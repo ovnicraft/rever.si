@@ -901,13 +901,12 @@ $('#login').submit(function() {
 	}
 	//Check validity of name and game ID
 	$('#name').val($.trim($('#name').val()).toLowerCase())
-	if (($('#name').val() === '')
-		|| ($('#name').val() === 'Your name')) {
+	if (!$('#name').val().length) {
 		showMessage('Please enter a name.')
 		$('#name').select()
 	}
 	else if (!$('#name').val().match(/^\w{1,18}$/)) {
-		showMessage('Your name can only contain alphanumeric characters.')
+		showMessage('Your name can only contain letters and numbers.')
 		$('#name').select()
 	}
 	// If everything is okay, then register a randomly generated throwaway XMPP ID and log in.
@@ -994,7 +993,7 @@ function login(username, password) {
 				$('#moveHistory ol').html('')
 				$('#chatInput,#lobbyChatInput').val('')
 				$('#login').fadeIn(200)
-				$('#name').val('Your name').select()
+				$('#name').select()
 			})
 			myName = opponent = inviting = myTurn = null
 			inviter = conn = gameState = loginError = myColor = null
