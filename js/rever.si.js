@@ -12,12 +12,12 @@ var bosh = 'http://rever.si/http-bind'
 
 var myName, gameState, inviting, myTurn
 var myDice, myColor, opponent, loginError, inviter
+var boardSlate
 var loginCredentials = []
 var webNotifications
 
 var abc = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 var boardMatrix = {}
-var boardSlate = $('#board').html()
 
 var graphData = {}
 
@@ -35,6 +35,7 @@ function initBoardSlate() {
 			$('#board td').last().addClass('square').attr('id', abc[c] + r)
 		}
 	}
+	boardSlate = $('#board').html()
 	bindSquareClick()
 }
 
@@ -467,7 +468,6 @@ function enterGame(player, myDice, theirDice) {
 			$('#resign,#displayHistory').fadeIn(200)
 			$('#chatInput').select()
 		})
-		reversi.newGame()
 		addToMoveHistory('start')
 		drawDiscGraph()
 		if (myColor === 'black') {
