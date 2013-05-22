@@ -25,8 +25,19 @@ var graphData = {}
 // BOARD LOGIC
 // -----------------------------------------------
 
-// Reinitialize board
-function resetBoard() {
+// Initialize board slate UI
+function initBoardSlate() {
+	for (var c in abc) {
+		$('#board').append('<tr></tr>')
+		for (var r = 1; r < 9; r++) {
+			$('#board tr').last().append('<td></td>')
+			$('#board td').last().addClass('square').attr('id', abc[c] + r)
+		}
+	}
+}
+
+// Initialize board matrix
+function initBoardMatrix() {
 	boardMatrix = {
 		'a1': 0, 'b1': 0, 'c1': 0, 'd1': 0,
 		'e1': 0, 'f1': 0, 'g1': 0, 'h1': 0,
@@ -53,7 +64,7 @@ function resetBoard() {
 reversi.newGame = function() {
 	resetCounters()
 	clearHighlights()
-	resetBoard()
+	initBoardMatrix()
 	takeSquare('d5', 'black', null, 0)
 	takeSquare('e4', 'black', null, 0)
 	takeSquare('e5', 'white', null, 0)
@@ -1021,7 +1032,9 @@ $(window).unload(function() {
 // END XMPP LOGIC
 // -----------------------------------------------
 
-$('#name').select()
+initBoardSlate()
 reversi.newGame()
+showMessage('rever.si is an open service that lets you play Reversi with your friends worldwide.')
+$('#name').select()
 
 })
