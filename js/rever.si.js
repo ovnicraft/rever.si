@@ -6,9 +6,9 @@ var reversi = function() {}
 $(window).load(function() {
 
 // Configuration
-var domain = 'never.si'
-var conference = 'conference.never.si'
-var bosh = 'http://never.si/http-bind'
+var domain = 'rever.si'
+var conference = 'conference.rever.si'
+var bosh = 'http://rever.si/http-bind'
 
 var myName, gameState, inviting, myTurn
 var myDice, myColor, opponent, loginError, inviter

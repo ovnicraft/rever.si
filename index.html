@@ -8,11 +8,6 @@
 	<link rel="stylesheet" href="css/rickshaw.css" type="text/css" />
 	<link rel="stylesheet" href="css/rever.si.css" type="text/css" />
 	<link rel="icon" type="image/png" href="img/favicon.png" />
-	<script type="application/javascript">
-		if (document.URL.match('never.si')) {
-			window.location = 'http://rever.si'
-		}
-	</script>
 	<script type="application/javascript" src="js/jquery.js"></script>
 	<script type="application/javascript" src="js/rickshaw.js"></script>
 	<script type="application/javascript" src="js/strophe.js"></script>
@@ -137,5 +132,13 @@
 			</div>
 		</div>
 	</div>
+	<script type="application/javascript">
+		if (document.URL.match('never.si')) {
+			$('body').html('Neversi is now rever.si (I got the cooler domain name.) The move should be complete by today. You are being redirected either way. If the move is not done yet just check tomorrow.')
+			window.setTimeout(function() {
+				window.location = 'http://rever.si'
+			}, 7000)
+		}
+	</script>
 </body>
 </html>
