@@ -632,7 +632,7 @@ $('#displayHistory').click(function() {
 
 // Bind logout button
 $('#logout').click(function() {
-	logout()
+	logout(true)
 })
 
 // Prevent accidental window close
@@ -806,7 +806,7 @@ function handlePresence(presence) {
 	if ($(presence).attr('type') === 'error') {
 		if ($(presence).find('error').attr('code') === '409') {
 			loginError = true
-			logout(false)
+			logout()
 			window.setTimeout(function() {
 				showMessage('Name in use. Please choose another name.')
 			}, 1000)

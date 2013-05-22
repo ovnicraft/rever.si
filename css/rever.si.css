@@ -249,14 +249,34 @@ input[type=text] {
 	margin-left: 20px;
 }
 
-#board {
-	border: 5px solid #111;
+table {
+	border: 2px solid #111;
 	border-radius: 10px;
-	box-shadow: 0 0 40px #000;
-	background-size: 80px 80px;
+	box-shadow: 0 0 10px #000;
+	background-size: 20px 20px;
 	border-spacing: 0;
 	background-image: url('../img/board.png');
 	display: inline-block;
+}
+
+.square {
+	width: 10px;
+	height: 10px;
+	min-width: 10px;
+	min-height: 10px;
+	text-align: center;
+	padding: 0;
+	color: #000;
+	border: 1px solid rgba(0, 0, 0, 0.4);
+	background-position: center;
+	background-size: 5px 5px;
+	background-repeat: no-repeat;
+}
+
+#board {
+	border: 5px solid #111;
+	box-shadow: 0 0 40px #000;
+	background-size: 80px 80px;
 }
 
 #board .square {
@@ -264,13 +284,7 @@ input[type=text] {
 	height: 66px;
 	min-width: 66px;
 	min-height: 66px;
-	text-align: center;
-	padding: 0;
-	color: #000;
-	border: 1px solid rgba(0, 0, 0, 0.4);
-	background-position: center;
 	background-size: 60px 60px;
-	background-repeat: no-repeat;
 }
 
 #a1 {
