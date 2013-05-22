@@ -27,6 +27,7 @@ var graphData = {}
 
 // Initialize board slate UI
 function initBoardSlate() {
+	$('#board').html('')
 	for (var c in abc) {
 		$('#board').append('<tr></tr>')
 		for (var r = 1; r < 9; r++) {
@@ -34,6 +35,7 @@ function initBoardSlate() {
 			$('#board td').last().addClass('square').attr('id', abc[c] + r)
 		}
 	}
+	bindSquareClick()
 }
 
 // Initialize board matrix
@@ -365,19 +367,21 @@ function flipDiscs(discs, move, highlight) {
 }
 
 // Handle a square being clicked (play a move)
-$('.square').click(function() {
-	if (!myTurn || ($(this).css('cursor') !== 'pointer')) {
-		return false
-	}
-	var square = $(this).attr('id')
-	var discs = getMoves(myColor)[square]
-	clearHighlights()
-	takeSquare(square, myColor, null, 1)
-	flipDiscs(discs, square, 0)
-	myTurn = 0
-	showMessage('Playing against ' + strong(opponent) + '. It\'s their turn.')
-	playSound('iPlay')
-})
+function bindSquareClick() {
+	$('.square').click(function() {
+		if (!myTurn || ($(this).css('cursor') !== 'pointer')) {
+			return false
+		}
+		var square = $(this).attr('id')
+		var discs = getMoves(myColor)[square]
+		clearHighlights()
+		takeSquare(square, myColor, null, 1)
+		flipDiscs(discs, square, 0)
+		myTurn = 0
+		showMessage('Playing against ' + strong(opponent) + '. It\'s their turn.')
+		playSound('iPlay')
+	})
+}
 
 // -----------------------------------------------
 // END BOARD LOGIC
