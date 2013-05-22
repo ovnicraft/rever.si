@@ -1,4 +1,4 @@
-// Reversi
+// rever.si
 // Copyright Nadim Kobeissi, all rights reserved
 
 var reversi = function() {}
