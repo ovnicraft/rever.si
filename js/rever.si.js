@@ -1,7 +1,7 @@
-// Neversi
+// Reversi
 // Copyright Nadim Kobeissi, all rights reserved
 
-var neversi = function() {}
+var reversi = function() {}
 
 $(window).load(function() {
 
@@ -50,7 +50,7 @@ function resetBoard() {
 }
 
 // Start a new game	
-neversi.newGame = function() {
+reversi.newGame = function() {
 	resetCounters()
 	clearHighlights()
 	resetBoard()
@@ -430,7 +430,7 @@ function getInvitation(player, theirDice) {
 	playSound('getInvitation')
 	webNotification(
 		'img/favicon.png',
-		'Neversi',
+		'Reversi',
 		'You have received an invitation from ' + player + '.'
 	)
 }
@@ -452,7 +452,7 @@ function enterGame(player, myDice, theirDice) {
 			$('#resign,#displayHistory').fadeIn(200)
 			$('#chatInput').select()
 		})
-		neversi.newGame()
+		reversi.newGame()
 		addToMoveHistory('start')
 		drawDiscGraph()
 		if (myColor === 'black') {
@@ -483,7 +483,7 @@ function leaveGame() {
 			$('#logout').fadeIn(200)
 			$('#lobbyChatInput').select()
 		})
-		neversi.newGame()
+		reversi.newGame()
 	})
 }
 
@@ -772,7 +772,7 @@ function handleMessage(message) {
 				playSound('theyPlay')
 				webNotification(
 					'img/favicon.png',
-					'Neversi',
+					'Reversi',
 					'Your opponent has played on square ' + move[0] + '.'
 				)
 			}
@@ -983,9 +983,9 @@ function login(username, password) {
 		}
 		else if ((status === Strophe.Status.DISCONNECTED) || (status === Strophe.Status.AUTHFAIL)) {
 			if (!loginError) {
-				showMessage('Thank you for playing with Neversi.')
+				showMessage('Thank you for playing with Reversi.')
 			}
-			neversi.newGame()
+			reversi.newGame()
 			$('#logout').fadeOut(200)
 			$('#resign').fadeOut(200)
 			$('#lobby,#inGame').fadeOut(200, function() {
@@ -1022,6 +1022,6 @@ $(window).unload(function() {
 // -----------------------------------------------
 
 $('#name').select()
-neversi.newGame()
+reversi.newGame()
 
 })
