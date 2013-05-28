@@ -111,9 +111,10 @@ function takeSquare(square, color, altBoard, network, mark) {
 	if (network && opponent) {
 		sendMessage(square, opponent)
 		// Redundancy
-		window.setTimeout(function() {
-			sendMessage(square, opponent)
-		}, 600)
+		// Since just one move not transmitting can ruin a game
+		window.setTimeout(function() { sendMessage(square, opponent) }, 250)
+		window.setTimeout(function() { sendMessage(square, opponent) }, 500)
+		window.setTimeout(function() { sendMessage(square, opponent) }, 750)
 	}
 }
 
