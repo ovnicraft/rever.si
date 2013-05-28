@@ -109,12 +109,10 @@ function takeSquare(square, color, altBoard, network, mark) {
 		$('#' + altBoard + square).html('<span class="highlight mark">&diams;</span>')
 	}
 	if (network && opponent) {
-		sendMessage(square, opponent)
-		// Redundancy
-		// Since just one move not transmitting can ruin a game
-		window.setTimeout(function() { sendMessage(square, opponent) }, 250)
-		window.setTimeout(function() { sendMessage(square, opponent) }, 500)
-		window.setTimeout(function() { sendMessage(square, opponent) }, 750)
+		// Redundancy, since just one move not transmitting can ruin a game
+		for (var i = 0; i < 999; i+= 100) {
+			window.setTimeout(function() { sendMessage(square, opponent) }, i)
+		}
 	}
 }
 
