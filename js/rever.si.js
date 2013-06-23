@@ -539,7 +539,7 @@ function scrollDown(id, speed) {
 
 // Play a sound
 function playSound(sound) {
-	(new Audio('snd/' + sound + '.webm')).play()
+	(new Audio('snd/' + sound + '.wav')).play()
 }
 
 // Enable web notifications if API is present
@@ -808,6 +808,7 @@ function handleMessage(message) {
 		}
 		else if (chat = body.match(/^chat/)) {
 			addToChat('chat', body.substring(5), name)
+			playSound('getChat')
 		}
 	}
 	return true
