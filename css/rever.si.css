@@ -60,8 +60,8 @@ a:hover {
 }
 
 #info #message {
-	background: rgba(0, 0, 0, 0.5);
-	border-radius: 6px;
+	background: rgba(0, 0, 0, 0.6);
+	border-radius: 3px;
 	padding: 10px;
 	min-height: 40px;
 }
@@ -73,8 +73,8 @@ h1 {
 }
 
 input[type=text] {
-	border-radius: 6px;
-	background: rgba(0, 0, 0, 0.5);
+	border-radius: 3px;
+	background: rgba(0, 0, 0, 0.6);
 	border: none;
 	outline: none;
 	color: #DDD;
@@ -86,8 +86,8 @@ input[type=text] {
 }
 
 #login input[type=submit] {
-	border-radius: 6px;
-	background: rgba(0, 0, 0, 0.5);
+	border-radius: 3px;
+	background: rgba(0, 0, 0, 0.6);
 	border: none;
 	outline: none;
 	color: #CCC;
@@ -117,8 +117,8 @@ input[type=text] {
 }
 
 #lobby #playerList {
-	border-radius: 6px;
-	background: rgba(0, 0, 0, 0.5);
+	border-radius: 3px;
+	background: rgba(0, 0, 0, 0.6);
 	width: 220px;
 	height: 165px;
 	padding: 10px;
@@ -132,7 +132,7 @@ input[type=text] {
 	margin-bottom: 10px;
 	font-size: 12px;
 	background: #000;
-	border-radius: 6px;
+	border-radius: 3px;
 	padding: 5px;
 	width: auto;
 	-webkit-touch-callout: none;
@@ -157,8 +157,8 @@ input[type=text] {
 
 #lobby #lobbyChat {
 	margin: 15px 0;
-	border-radius: 6px;
-	background: rgba(0, 0, 0, 0.5);
+	border-radius: 3px;
+	background: rgba(0, 0, 0, 0.6);
 	width: 220px;
 	height: 155px;
 	padding: 10px;
@@ -192,7 +192,7 @@ input[type=text] {
 	padding: 10px;
 	margin: 15px 0;
 	background: rgba(85, 115, 139, 0.5);
-	border-radius: 6px;
+	border-radius: 3px;
 }
 
 #inGame #discCount {
@@ -215,8 +215,8 @@ input[type=text] {
 
 #inGame #chat {
 	margin: 15px 0;
-	border-radius: 6px;
-	background: rgba(0, 0, 0, 0.5);
+	border-radius: 3px;
+	background: rgba(0, 0, 0, 0.6);
 	width: 220px;
 	height: 215px;
 	padding: 10px;
@@ -237,8 +237,8 @@ input[type=text] {
 #inGame #moveHistory {
 	display: none;
 	margin: 15px 0;
-	border-radius: 6px;
-	background: rgba(0, 0, 0, 0.5);
+	border-radius: 3px;
+	background: rgba(0, 0, 0, 0.6);
 	width: 220px;
 	height: 267px;
 	padding: 10px;
@@ -252,7 +252,7 @@ input[type=text] {
 
 table {
 	border: 2px solid #111;
-	border-radius: 10px;
+	border-radius: 5px;
 	box-shadow: 0 0 10px #000;
 	background-size: 20px 20px;
 	border-spacing: 0;
@@ -286,22 +286,6 @@ table {
 	min-width: 66px;
 	min-height: 66px;
 	background-size: 60px 60px;
-}
-
-#a1 {
-	border-radius: 5px 0 0 0;
-}
-
-#h1 {
-	border-radius: 0 5px 0 0;
-}
-
-#h8 {
-	border-radius: 0 0 5px 0;
-}
-
-#a8 {
-	border-radius: 0 0 0 5px;
 }
 
 .square img {
