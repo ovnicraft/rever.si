@@ -8,7 +8,7 @@ $(window).load(function() {
 // Configuration
 var domain = 'rever.si'
 var conference = 'conference.rever.si'
-var bosh = 'http://rever.si/http-bind'
+var bosh = 'https://rever.si/http-bind'
 
 var myName, gameState, inviting, myTurn
 var myDice, myColor, opponent, loginError, inviter
