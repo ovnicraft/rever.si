@@ -465,7 +465,6 @@ function enterGame(player, myDice, theirDice) {
 		$('#logout').fadeOut(200, function() {
 			$('#resign,#displayHistory,#chat,#chatInput').fadeIn(200)
 			$('#resign,#displayHistory').fadeIn(200)
-			$('#chatInput').select()
 		})
 		addToMoveHistory('start')
 		drawDiscGraph()
@@ -495,7 +494,6 @@ function leaveGame() {
 		$('#lobby').fadeIn()
 		$('#resign,#displayHistory').fadeOut(200, function() {
 			$('#logout').fadeIn(200)
-			$('#lobbyChatInput').select()
 		})
 		reversi.newGame()
 	})
@@ -994,15 +992,13 @@ function login(username, password) {
 			)
 			$('#login').fadeOut(200, function() {
 				$('#logout').fadeIn(200)
-				$('#lobby').fadeIn(200, function() {
-					$('#lobbyChatInput').select()
-				})
+				$('#lobby').fadeIn(200)
 				gameState = 'lobby'
 			})
 		}
 		else if ((status === Strophe.Status.DISCONNECTED) || (status === Strophe.Status.AUTHFAIL)) {
 			if (!loginError) {
-				showMessage('Thank you for playing with Reversi.')
+				showMessage('Thank you for playing at Reversi café.')
 			}
 			reversi.newGame()
 			$('#logout').fadeOut(200)
