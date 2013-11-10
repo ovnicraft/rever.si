@@ -503,8 +503,12 @@ function leaveGame() {
 
 // Display chat message
 function addToChat(id, message, name) {
+	var c = 'chatLine'
+	if (name === myName) {
+		c += ' sentChat'
+	}
 	$('<div />', {
-		'class': 'chatLine',
+		'class': c,
 		'html': strong(name) + ': ' + addLinks(message)
 	}).appendTo('#' + id).fadeIn(200)
 	scrollDown(id, 600)

@@ -158,9 +158,8 @@ input[type=text] {
 	margin: 15px 0;
 	border-radius: 3px;
 	background: rgba(0, 0, 0, 0.6);
-	width: 220px;
-	height: 155px;
-	padding: 10px;
+	width: 240px;
+	height: 175px;
 	text-align: left;
 	overflow-y: auto;
 	word-wrap: break-word;
@@ -216,9 +215,8 @@ input[type=text] {
 	margin: 15px 0;
 	border-radius: 3px;
 	background: rgba(0, 0, 0, 0.6);
-	width: 220px;
-	height: 215px;
-	padding: 10px;
+	width: 240px;
+	height: 235px;
 	text-align: left;
 	overflow-y: auto;
 	word-wrap: break-word;
@@ -226,6 +224,11 @@ input[type=text] {
 
 .chatLine {
 	display: none;
+	padding: 6px;
+}
+
+.sentChat {
+	background: rgba(85, 115, 139, 0.5);
 }
 
 #inGame #chatInput {
