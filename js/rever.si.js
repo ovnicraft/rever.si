@@ -1042,7 +1042,12 @@ $(window).unload(function() {
 
 initBoardSlate()
 reversi.newGame()
-showMessage('rever.si is an open service that lets you play Reversi with your friends worldwide.')
+showMessage(
+	'Welcome to the <strong>Reversi café</strong>, where you'
+	+ ' can play Reversi and chats with friends worldwide.'
+	+ '<br /><br />Enter your name, then find your'
+	+ ' friend\'s name in the lobby to start a game.'
+)
 $('#name').select()
 
 })
