@@ -4,8 +4,17 @@
 	<meta name="author" content="Nadim Kobeissi" />
 	<meta name="keywords" content="reversi, online reversi, othello, online othello, multiplayer reversi, multiplayer othello" />
 	<meta name="description" content="rever.si is an open service that lets you play Reversi online with your friends worldwide." />
+	<meta name="viewport" content="
+		user-scalable=no, initial-scale=1,
+		maximum-scale=1, minimum-scale=1,
+		width=device-width, height=device-height,
+		target-densitydpi=device-dpi"
+	/>
 	<title>rever.si</title>
-	<link rel="stylesheet" href="css/rever.si.css" type="text/css" />
+	<link rel="stylesheet" href="css/handheld.css" type="text/css"
+		media="only screen and (max-width: 700px), only screen and (max-device-width: 700px)" />
+	<link rel="stylesheet" href="css/screen.css" type="text/css"
+		media="only screen and (min-width: 701px), only screen and (min-device-width: 701px)" />
 	<link rel="icon" type="image/png" href="img/favicon.png" />
 	<script type="application/javascript" src="js/jquery.js"></script>
 	<script type="application/javascript" src="js/rickshaw.js"></script>
@@ -22,7 +31,7 @@
 		</div>
 		<table id="board"></table>
 		<div id="info">
-			<h1>rever.si <img src="img/coffee.png" alt="" class="coffee" /></h1>
+			<h1>rever.si</h1>
 			<p id="message"><span></span></p>
 			<form id="login">
 				<input type="text" id="name" placeholder="Enter your name" maxlength="18" autocomplete="off" />

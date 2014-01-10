@@ -25,12 +25,6 @@ a:hover {
 	text-decoration: underline;
 }
 
-img.coffee {
-	width: 28px;
-	height: auto;
-	vertical-align: -3px;
-}
-
 #main {
 	width: 850px;
 	padding: 20px;
