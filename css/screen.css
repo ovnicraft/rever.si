@@ -1,3 +1,9 @@
+/*
+-----------------------------------------------
+MISC. DEFINITIONS
+-----------------------------------------------
+*/
+
 @font-face {
 	font-family: 'Quantico';
 	src: url('quantico.woff') format('woff');
@@ -7,6 +13,12 @@
 body::selection {
 	background: #666;
 }
+
+/*
+-----------------------------------------------
+MAIN TAGS
+-----------------------------------------------
+*/
 
 body {
 	background-image: url('../img/bg.jpg');
@@ -23,46 +35,6 @@ a {
 
 a:hover {
 	text-decoration: underline;
-}
-
-#main {
-	width: 850px;
-	padding: 20px;
-	margin: 0 auto;
-	position: relative;
-}
-
-#options {
-	position: absolute;
-	right: 19px;
-	text-align: right;
-	top: 2px;
-	font-size: 10px;
-	font-variant: small-caps;
-	cursor: pointer;
-}
-
-#displayChat, #displayHistory, #resign, #logout {
-	display: none;
-	margin-right: 10px;
-}
-
-#info {
-	width: 240px;
-	height: 525px;
-	display: inline-block;
-	margin: 5px 0 0 50px;
-	position: absolute;
-	font-size: 11px;
-	line-height: 20px;
-	text-align: justify;
-}
-
-#info #message {
-	background: rgba(0, 0, 0, 0.6);
-	border-radius: 3px;
-	padding: 10px;
-	min-height: 40px;
 }
 
 h1 {
@@ -84,173 +56,57 @@ input[type=text] {
 	box-shadow: 1px 1px 1px #111;
 }
 
-#login input[type=submit] {
-	border-radius: 3px;
-	background: rgba(0, 0, 0, 0.6);
-	border: none;
-	outline: none;
-	color: #CCC;
-	padding: 8px 7px 9px 7px;
-	font-size: 14px;
-	text-align: center;
-	display: block;
-	cursor: pointer;
-}
+/*
+-----------------------------------------------
+MAIN USER INTERFACE
+-----------------------------------------------
+*/
 
-#login input[type=submit]:hover {
-	background: rgba(255, 255, 255, 0.9);
-	color: #000;
-}
-
-#login #name {
-	width: 188px;
-	display: inline;
-}
-
-#login #play {
-	display: inline;
-}
-
-#lobby {
-	display: none;
-}
-
-#lobby #playerList {
-	border-radius: 3px;
-	background: rgba(0, 0, 0, 0.6);
-	width: 220px;
-	height: 165px;
-	padding: 10px;
-	margin: 15px 0;
-	overflow-y: auto;
-}
-
-.playerAvailable, .playerInGame {
-	cursor: pointer;
-	display: none;
-	margin-bottom: 10px;
-	font-size: 12px;
-	background: #000;
-	border-radius: 3px;
-	padding: 5px;
-	width: auto;
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	user-select: none;
-}
-
-.playerInGame {
-	cursor: default;
-}
-
-.playerAvailable:hover {
-	background: #FFF;
-	color: #000;
-}
-
-.playerStatus {
-	text-align: right;
-	float: right;
-	font-size: 9px;
-}
-
-#lobby #lobbyChat {
-	margin: 15px 0;
-	border-radius: 3px;
-	background: rgba(0, 0, 0, 0.6);
-	width: 240px;
-	height: 175px;
-	text-align: left;
-	overflow-y: auto;
-	word-wrap: break-word;
-}
-
-#lobby #lobbyChatInput {
-	width: 220px;
-	padding: 10px;
-}
-
-.choice {
-	font-weight: bold;
-	cursor: pointer;
-	font-variant: small-caps;
-	font-size: 14px;
-}
-
-#choice:hover {
-	text-decoration: underline;
-}
-
-#inGame {
-	display: none;
-}
-
-#inGame #gameStatus {
-	width: 220px;
-	padding: 10px;
-	margin: 15px 0;
-	background: rgba(85, 115, 139, 0.5);
-	border-radius: 3px;
-}
-
-#inGame #discCount {
-	font-size: 58px;
-	font-family: 'Quantico', 'Futura', 'Century Gothic', 'Helvetica', 'Arial', 'Verdana';
-	text-align: center;
-	text-shadow: 0 0 60px #AAA;
-	margin: 18px 0 25px 0;
-}
-
-#inGame #blackCounter {
-	color: #000;
-}
-
-#inGame #graph {
-	width: 220px;
-	height: 45px;
+div#main {
+	width: 850px;
+	padding: 20px;
 	margin: 0 auto;
+	position: relative;
 }
 
-#inGame #chat {
-	margin: 15px 0;
-	border-radius: 3px;
-	background: rgba(0, 0, 0, 0.6);
+div#options {
+	position: absolute;
+	right: 19px;
+	text-align: right;
+	top: 2px;
+	font-size: 10px;
+	font-variant: small-caps;
+	cursor: pointer;
+}
+
+span#displayChat, span#displayHistory, span#resign, span#logout {
+	display: none;
+	margin-right: 10px;
+}
+
+div#info {
 	width: 240px;
-	height: 235px;
-	text-align: left;
-	overflow-y: auto;
-	word-wrap: break-word;
+	height: 525px;
+	display: inline-block;
+	margin: 5px 0 0 50px;
+	position: absolute;
+	font-size: 11px;
+	line-height: 20px;
+	text-align: justify;
 }
 
-.chatLine {
-	display: none;
-	padding: 6px;
-}
-
-.sentChat {
-	background: rgba(85, 115, 139, 0.5);
-}
-
-#inGame #chatInput {
-	width: 220px;
-	padding: 10px;
-}
-
-#inGame #moveHistory {
-	display: none;
-	margin: 15px 0;
-	border-radius: 3px;
+div#info p#message {
 	background: rgba(0, 0, 0, 0.6);
-	width: 220px;
-	height: 267px;
+	border-radius: 3px;
 	padding: 10px;
-	text-align: left;
-	overflow-y: auto;
+	min-height: 40px;
 }
 
-#inGame #moveHistory ol {
-	margin-left: 20px;
-}
+/*
+-----------------------------------------------
+BOARD
+-----------------------------------------------
+*/
 
 table {
 	border: 2px solid #111;
@@ -297,6 +153,205 @@ table {
 	display: none;
 	height: 60px;
 }
+
+
+/*
+-----------------------------------------------
+LOGIN FORM
+-----------------------------------------------
+*/
+
+form#login input[type=submit] {
+	border-radius: 3px;
+	background: rgba(0, 0, 0, 0.6);
+	border: none;
+	outline: none;
+	color: #CCC;
+	padding: 8px 7px 9px 7px;
+	font-size: 14px;
+	text-align: center;
+	display: block;
+	cursor: pointer;
+}
+
+form#login input[type=submit]:hover {
+	background: rgba(255, 255, 255, 0.9);
+	color: #000;
+}
+
+form#login input#name {
+	width: 188px;
+	display: inline;
+}
+
+form#login input#play {
+	display: inline;
+}
+
+/*
+-----------------------------------------------
+LOBBY USER DISPLAY AND CHAT
+-----------------------------------------------
+*/
+
+div#lobby {
+	display: none;
+}
+
+div#lobby div#playerList {
+	border-radius: 3px;
+	background: rgba(0, 0, 0, 0.6);
+	width: 220px;
+	height: 165px;
+	padding: 10px;
+	margin: 15px 0;
+	overflow-y: auto;
+}
+
+.playerAvailable, .playerInGame {
+	cursor: pointer;
+	display: none;
+	margin-bottom: 10px;
+	font-size: 12px;
+	background: #000;
+	border-radius: 3px;
+	padding: 5px;
+	width: auto;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+.playerInGame {
+	cursor: default;
+}
+
+.playerAvailable:hover {
+	background: #FFF;
+	color: #000;
+}
+
+.playerStatus {
+	text-align: right;
+	float: right;
+	font-size: 9px;
+}
+
+div#lobby div#lobbyChat {
+	margin: 15px 0;
+	border-radius: 3px;
+	background: rgba(0, 0, 0, 0.6);
+	width: 240px;
+	height: 175px;
+	text-align: left;
+	overflow-y: auto;
+	word-wrap: break-word;
+}
+
+div#lobby input#lobbyChatInput {
+	width: 220px;
+	padding: 10px;
+}
+
+.choice {
+	font-weight: bold;
+	cursor: pointer;
+	font-variant: small-caps;
+	font-size: 14px;
+}
+
+#choice:hover {
+	text-decoration: underline;
+}
+
+/*
+-----------------------------------------------
+IN-GAME DISPLAY AND CHAT
+-----------------------------------------------
+*/
+
+div#inGame {
+	display: none;
+}
+
+div#inGame #gameStatus {
+	width: 220px;
+	padding: 10px;
+	margin: 15px 0;
+	background: rgba(85, 115, 139, 0.5);
+	border-radius: 3px;
+}
+
+div#inGame #discCount {
+	font-size: 58px;
+	font-family: 'Quantico', 'Futura', 'Century Gothic', 'Helvetica', 'Arial', 'Verdana';
+	text-align: center;
+	text-shadow: 0 0 60px #AAA;
+	margin: 18px 0 25px 0;
+}
+
+div#inGame #blackCounter {
+	color: #000;
+}
+
+div#inGame #graph {
+	width: 220px;
+	height: 45px;
+	margin: 0 auto;
+}
+
+div#inGame #chat {
+	margin: 15px 0;
+	border-radius: 3px;
+	background: rgba(0, 0, 0, 0.6);
+	width: 240px;
+	height: 235px;
+	text-align: left;
+	overflow-y: auto;
+	word-wrap: break-word;
+}
+
+.chatLine {
+	display: none;
+	padding: 6px;
+}
+
+.sentChat {
+	background: rgba(85, 115, 139, 0.5);
+}
+
+div#inGame #chatInput {
+	width: 220px;
+	padding: 10px;
+}
+
+/*
+-----------------------------------------------
+MOVE HISTORY
+-----------------------------------------------
+*/
+
+div#inGame #moveHistory {
+	display: none;
+	margin: 15px 0;
+	border-radius: 3px;
+	background: rgba(0, 0, 0, 0.6);
+	width: 220px;
+	height: 267px;
+	padding: 10px;
+	text-align: left;
+	overflow-y: auto;
+}
+
+div#inGame #moveHistory ol {
+	margin-left: 20px;
+}
+
+/*
+-----------------------------------------------
+MISC.
+-----------------------------------------------
+*/
 
 .highlight {
 	display: none;

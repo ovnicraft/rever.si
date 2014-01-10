@@ -1,5 +1,10 @@
-// rever.si
-// Copyright Nadim Kobeissi, all rights reserved
+/*
+-----------------------------------------------
+Rever.si
+Online multiplayer Reversi game with chat.
+Programmed by Nadim Kobeissi, all rights reserved.
+-----------------------------------------------
+*/
 
 var reversi = function() {}
 
@@ -24,9 +29,11 @@ var boardMatrix = {}
 
 var graphData = {}
 
-// -----------------------------------------------
-// BOARD LOGIC
-// -----------------------------------------------
+/*
+-----------------------------------------------
+BOARD LOGIC
+-----------------------------------------------
+*/
 
 // Reset game state parameters
 var resetGameState = function() {
@@ -129,7 +136,9 @@ var takeSquare = function(square, color, altBoard, network, mark) {
 	if (network && gameState.opponentName) {
 		// Redundancy, since just one move not transmitting can ruin a game
 		for (var i = 0; i < 999; i+= 100) {
-			window.setTimeout(function() { sendMessage(square, gameState.opponentName) }, i)
+			window.setTimeout(function() {
+				sendMessage(square, gameState.opponentName)
+			}, i)
 		}
 	}
 }
@@ -371,7 +380,8 @@ var flipDiscs = function(discs, move, highlight) {
 	window.setTimeout(function() {
 		if (highlight) {
 			if (highlightMoves(gameState.myColor)) {
-				showMessage('Playing against ' + strong(gameState.opponentName) + '. It\'s your turn.')
+				showMessage('Playing against '
+					+ strong(gameState.opponentName) + '. It\'s your turn.')
 			}
 			else {
 				sendMessage('pass', gameState.opponentName)
@@ -379,8 +389,14 @@ var flipDiscs = function(discs, move, highlight) {
 			}
 		}
 		addToMoveHistory(move)
-		graphData.black.push({x: graphData.black.length, y: parseInt($('#blackCounter').text())})
-		graphData.white.push({x: graphData.white.length, y: parseInt($('#whiteCounter').text())})
+		graphData.black.push({
+			x: graphData.black.length,
+			y: parseInt($('#blackCounter').text())
+		})
+		graphData.white.push({
+			x: graphData.white.length,
+			y: parseInt($('#whiteCounter').text())
+		})
 		drawDiscGraph()
 	}, 225 * (counter + 2))
 }
@@ -402,13 +418,17 @@ var bindSquareClick = function() {
 	})
 }
 
-// -----------------------------------------------
-// END BOARD LOGIC
-// -----------------------------------------------
+/*
+-----------------------------------------------
+END BOARD LOGIC
+-----------------------------------------------
+*/
 
-// -----------------------------------------------
-// PLAYER UI LOGIC
-// -----------------------------------------------
+/*
+-----------------------------------------------
+PLAYER UI LOGIC
+-----------------------------------------------
+*/
 
 // Set board (and entire page) size in accordance with window size
 var setBoardSize = function() {
@@ -490,11 +510,13 @@ var enterGame = function(player, myDice, theirDice) {
 		if (gameState.myColor === 'black') {
 			highlightMoves(gameState.myColor)
 			gameState.myTurn = true
-			showMessage('Playing against ' + strong(gameState.opponentName) + '. It\'s your turn.')
+			showMessage('Playing against '
+				+ strong(gameState.opponentName) + '. It\'s your turn.')
 		}
 		else {
 			gameState.myTurn = false
-			showMessage('Playing against ' + strong(gameState.opponentName) + '. It\'s their turn.')
+			showMessage('Playing against '
+				+ strong(gameState.opponentName) + '. It\'s their turn.')
 		}
 	})
 }
@@ -543,7 +565,10 @@ var addLinks = function(message) {
 			}
 			sanitize = sanitize.join('')
 			var processed = sanitize.replace(':','&colon;')
-			message = message.replace(sanitize, '<a target="_blank" href="' + processed + '">' + processed + '</a>')
+			message = message.replace(
+				sanitize,
+				'<a target="_blank" href="' + processed + '">' + processed + '</a>'
+			)
 		}
 	}
 	return message
@@ -677,13 +702,17 @@ $(window).bind('beforeunload', function() {
 	}
 })
 
-// -----------------------------------------------
-// END PLAYER UI LOGIC
-// -----------------------------------------------
+/*
+-----------------------------------------------
+END PLAYER UI LOGIC
+-----------------------------------------------
+*/
 
-// -----------------------------------------------
-// XMPP LOGIC
-// -----------------------------------------------
+/*
+-----------------------------------------------
+XMPP LOGIC
+-----------------------------------------------
+*/
 
 // Generates a random string of length `size` characters.
 // If `alpha = 1`, random string will contain alpha characters, and so on.
@@ -920,7 +949,8 @@ var bindPlayerClick = function(player) {
 				)
 				$('.choice').click(function() {
 					sendMessage('cancel', player)
-					showMessage('Welcome, ' + strong(gameState.myName) + '. Click on a person to invite them to play.')
+					showMessage('Welcome, ' + strong(gameState.myName)
+						+ '. Click on a person to invite them to play.')
 					gameState.myState = 'lobby'
 					gameState.inviting = null
 				})
@@ -995,7 +1025,8 @@ var loginXMPPUser = function(username, password) {
 			showMessage('Connection error.')
 		}
 		else if (status === Strophe.Status.CONNECTED) {
-			showMessage('Welcome, ' + strong(gameState.myName) + '. Click on a person to invite them to play.')
+			showMessage('Welcome, ' + strong(gameState.myName)
+				+ '. Click on a person to invite them to play.')
 			XMPP.connection.muc.join(
 				'lobby@' + XMPP.conference, gameState.myName,
 				function(message) {
@@ -1051,9 +1082,17 @@ $(window).unload(function() {
 	logout()
 })
 
-// -----------------------------------------------
-// END XMPP LOGIC
-// -----------------------------------------------
+/*
+-----------------------------------------------
+END XMPP LOGIC
+-----------------------------------------------
+*/
+
+/*
+-----------------------------------------------
+LOAD AND EXECUTE
+-----------------------------------------------
+*/
 
 resetGameState()
 initBoardSlate()
