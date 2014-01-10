@@ -426,6 +426,7 @@ var bindSquareClick = function() {
 		if (!gameState.myTurn || ($(this).css('cursor') !== 'pointer')) {
 			return false
 		}
+		sounds.iPlay.play()
 		var square = $(this).attr('id')
 		var discs = getMoves(gameState.myColor)[square]
 		clearHighlights()
@@ -433,7 +434,6 @@ var bindSquareClick = function() {
 		flipDiscs(discs, square, 0)
 		gameState.myTurn = false
 		showMessage('Playing against ' + strong(gameState.opponentName) + '. It\'s their turn.')
-		sounds.iPlay.play()
 	})
 }
 
@@ -487,6 +487,7 @@ var getInvitation = function(player, theirDice) {
 		+ ' challenges you. Accept?<br />'
 		+ '<span class="choice">yes</span> &nbsp; &nbsp; '
 		+ '<span class="choice">no</span>'
+	sounds.getInvitation.play()
 	showMessage(invitation)
 	$('.choice').click(function() {
 		if ($(this).html() == 'yes') {
@@ -500,7 +501,6 @@ var getInvitation = function(player, theirDice) {
 			gameState.myState = 'lobby'
 		}
 	})
-	sounds.getInvitation.play()
 	webNotification(
 		'img/favicon.png',
 		'Reversi',
@@ -844,11 +844,11 @@ var handleMessage = function(message) {
 		if (move = body.match(/^[a-h][1-8]$/)) {
 			var discs = getMoves(getOpposite(gameState.myColor))
 			if (!gameState.myTurn && discs[move[0]]) {
+				sounds.theyPlay.play()
 				window.clearInterval(gameState.broadcastMove)
 				gameState.myTurn = true
 				takeSquare(move[0], getOpposite(gameState.myColor), null, false, gameState.myColor)
 				flipDiscs(discs[move[0]], move[0], 1)
-				sounds.theyPlay.play()
 				webNotification(
 					'img/favicon.png',
 					'Reversi',
@@ -872,8 +872,8 @@ var handleMessage = function(message) {
 			leaveGame()
 		}
 		else if (chat = body.match(/^chat/)) {
-			addToChat('chat', body.substring(5), name)
 			sounds.getChat.play()
+			addToChat('chat', body.substring(5), name)
 		}
 	}
 	return true
