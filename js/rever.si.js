@@ -57,7 +57,8 @@ var resetGameState = function() {
 		myTurn: false,
 		myDice: 0,
 		myColor: null,
-		opponentName: null
+		opponentName: null,
+		broadcastMove: null
 	}
 	XMPP.loginCredentials = []
 }
@@ -146,12 +147,11 @@ var takeSquare = function(square, color, altBoard, network, mark) {
 		$('#' + altBoard + square).html('<span class="highlight mark">&diams;</span>')
 	}
 	if (network && gameState.opponentName) {
-		// Redundancy, since just one move not transmitting can ruin a game
-		for (var i = 0; i < 9999; i+= 1000) {
-			window.setTimeout(function() {
-				sendMessage(square, gameState.opponentName)
-			}, i)
-		}
+		// Keep broadcasting the move until the opponent plays a follow-up move,
+		// so that we avoid cases where a network error fucks up the entire game.
+		gameState.broadcastMove = window.setInterval(function(move) {
+			sendMessage(move, gameState.opponentName)
+		}, 1000, move)
 	}
 }
 
@@ -842,6 +842,7 @@ var handleMessage = function(message) {
 		if (move = body.match(/^[a-h][1-8]$/)) {
 			var discs = getMoves(getOpposite(gameState.myColor))
 			if (!gameState.myTurn && discs[move[0]]) {
+				window.clearInterval(gameState.broadcastMove)
 				gameState.myTurn = true
 				takeSquare(move[0], getOpposite(gameState.myColor), null, false, gameState.myColor)
 				flipDiscs(discs[move[0]], move[0], 1)
