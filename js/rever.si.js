@@ -105,10 +105,10 @@ reversi.newGame = function() {
 	resetCounters()
 	clearHighlights()
 	initBoardMatrix()
-	takeSquare('d5', 'black', null, 0)
-	takeSquare('e4', 'black', null, 0)
-	takeSquare('e5', 'white', null, 0)
-	takeSquare('d4', 'white', null, 0)
+	takeSquare('d5', 'black', null, false)
+	takeSquare('e4', 'black', null, false)
+	takeSquare('e5', 'white', null, false)
+	takeSquare('d4', 'white', null, false)
 }
 
 // Add current board to move history with 'move' as the last move
@@ -120,14 +120,14 @@ var addToMoveHistory = function(move) {
 		$(this).attr('id', move + '_' + $(this).attr('id'))
 	})
 	for (var i in boardMatrix) {
-		takeSquare(i, boardMatrix[i], move, 0, 0)
+		takeSquare(i, boardMatrix[i], move, false, null)
 	}
 	scrollDown('moveHistory', 600)
 }
 
 // Take square with color
 // If altBoard, draws on an alternate board table
-// If network = 1, broadcasts move to opponent
+// If network, broadcasts move to opponent
 // If mark = 'color', marks square with 'color'.
 var takeSquare = function(square, color, altBoard, network, mark) {
 	boardMatrix[square] = color
@@ -147,7 +147,7 @@ var takeSquare = function(square, color, altBoard, network, mark) {
 	}
 	if (network && gameState.opponentName) {
 		// Redundancy, since just one move not transmitting can ruin a game
-		for (var i = 0; i < 999; i+= 100) {
+		for (var i = 0; i < 9999; i+= 1000) {
 			window.setTimeout(function() {
 				sendMessage(square, gameState.opponentName)
 			}, i)
@@ -382,7 +382,7 @@ var flipDiscs = function(discs, move, highlight) {
 	for (var i in discs) {
 		$.each(discs[i], function(o, val) {
 			window.setTimeout(function() {
-				takeSquare(val, opposite, null, 0)
+				takeSquare(val, opposite, null, false)
 				incrementCounter(color, -1)
 			}, timer)
 			timer += 225
@@ -422,7 +422,7 @@ var bindSquareClick = function() {
 		var square = $(this).attr('id')
 		var discs = getMoves(gameState.myColor)[square]
 		clearHighlights()
-		takeSquare(square, gameState.myColor, null, 1)
+		takeSquare(square, gameState.myColor, null, true)
 		flipDiscs(discs, square, 0)
 		gameState.myTurn = false
 		showMessage('Playing against ' + strong(gameState.opponentName) + '. It\'s their turn.')
@@ -843,7 +843,7 @@ var handleMessage = function(message) {
 			var discs = getMoves(getOpposite(gameState.myColor))
 			if (!gameState.myTurn && discs[move[0]]) {
 				gameState.myTurn = true
-				takeSquare(move[0], getOpposite(gameState.myColor), null, 0, gameState.myColor)
+				takeSquare(move[0], getOpposite(gameState.myColor), null, false, gameState.myColor)
 				flipDiscs(discs[move[0]], move[0], 1)
 				playSound('theyPlay')
 				webNotification(
