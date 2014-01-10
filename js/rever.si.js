@@ -6,16 +6,19 @@ var reversi = function() {}
 $(window).load(function() {
 
 // Configuration
-var domain = 'rever.si'
-var conference = 'conference.rever.si'
-var bosh = 'https://rever.si/http-bind'
+var XMPP = {
+	connection: null,
+	domain: 'rever.si',
+	conference: 'conference.rever.si',
+	bosh: 'https://rever.si/http-bind',
+	loginCredentials: []
+}
 
-var myName, gameState, inviting, myTurn
-var myDice, myColor, opponent, loginError, inviter
-var boardSlate
-var loginCredentials = []
+var gameState = {}
+
 var webNotifications
 
+var boardSlate
 var abc = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 var boardMatrix = {}
 
@@ -25,8 +28,23 @@ var graphData = {}
 // BOARD LOGIC
 // -----------------------------------------------
 
+// Reset game state parameters
+var resetGameState = function() {
+	var gameState = {
+		myName: null,
+		myState: null,
+		inviting: null,
+		inviter: null,
+		myTurn: false,
+		myDice: 0,
+		myColor: null,
+		opponentName: null
+	}
+	XMPP.loginCredentials = []
+}
+
 // Initialize board slate UI
-function initBoardSlate() {
+var initBoardSlate = function() {
 	$('#board').html('')
 	for (var c in abc) {
 		$('#board').append('<tr></tr>')
@@ -40,7 +58,7 @@ function initBoardSlate() {
 }
 
 // Initialize board matrix
-function initBoardMatrix() {
+var initBoardMatrix = function() {
 	boardMatrix = {
 		'a1': 0, 'b1': 0, 'c1': 0, 'd1': 0,
 		'e1': 0, 'f1': 0, 'g1': 0, 'h1': 0,
@@ -75,7 +93,7 @@ reversi.newGame = function() {
 }
 
 // Add current board to move history with 'move' as the last move
-function addToMoveHistory(move) {
+var addToMoveHistory = function(move) {
 	$('#moveHistory ol').append(
 		'<li><table id="table_' + move + '">' + boardSlate + '</table></li>'
 	)
@@ -92,7 +110,7 @@ function addToMoveHistory(move) {
 // If altBoard, draws on an alternate board table
 // If network = 1, broadcasts move to opponent
 // If mark = 'color', marks square with 'color'.
-function takeSquare(square, color, altBoard, network, mark) {
+var takeSquare = function(square, color, altBoard, network, mark) {
 	boardMatrix[square] = color
 	if (!altBoard) {
 		altBoard = ''
@@ -108,22 +126,22 @@ function takeSquare(square, color, altBoard, network, mark) {
 		$('#' + altBoard + square).css('color', mark)
 		$('#' + altBoard + square).html('<span class="highlight mark">&diams;</span>')
 	}
-	if (network && opponent) {
+	if (network && gameState.opponentName) {
 		// Redundancy, since just one move not transmitting can ruin a game
 		for (var i = 0; i < 999; i+= 100) {
-			window.setTimeout(function() { sendMessage(square, opponent) }, i)
+			window.setTimeout(function() { sendMessage(square, gameState.opponentName) }, i)
 		}
 	}
 }
 
 // Get the opposite of color
-function getOpposite(color) {
+var getOpposite = function(color) {
 	if (color === 'black') { return 'white' }
 	return 'black'
 }
 
 // Get possible moves
-function getMoves(color) {
+var getMoves = function(color) {
 	var moves = {}
 	var opponent = getOpposite(color)
 	for (var c = 0; c < abc.length; c++) {
@@ -299,6 +317,7 @@ function getMoves(color) {
 			delete moves[i]
 		}
 	}
+	// Return
 	if (Object.keys(moves).length === 0) {
 		return false
 	}
@@ -306,7 +325,7 @@ function getMoves(color) {
 }
 
 // Highlight possible moves
-function highlightMoves(color) {
+var highlightMoves = function(color) {
 	var moves = getMoves(color)
 	if (!moves) {
 		if (getDiscCount() === 64) {
@@ -323,7 +342,7 @@ function highlightMoves(color) {
 }
 
 // Clear highlighted moves
-function clearHighlights() {
+var clearHighlights = function() {
 	$('.square').css('cursor', 'auto')
 	$('.highlight').fadeOut(600, function() {
 		$('.highlight').remove()
@@ -334,7 +353,7 @@ function clearHighlights() {
 // 'discs' must be getMoves(color)[square]
 // 'move' is the move that was played
 // If 'highlight', highlights moves after flipping discs
-function flipDiscs(discs, move, highlight) {
+var flipDiscs = function(discs, move, highlight) {
 	var timer = 225
 	var counter = 0
 	var color = boardMatrix[discs[0][0]]
@@ -351,12 +370,12 @@ function flipDiscs(discs, move, highlight) {
 	}
 	window.setTimeout(function() {
 		if (highlight) {
-			if (highlightMoves(myColor)) {
-				showMessage('Playing against ' + strong(opponent) + '. It\'s your turn.')
+			if (highlightMoves(gameState.myColor)) {
+				showMessage('Playing against ' + strong(gameState.opponentName) + '. It\'s your turn.')
 			}
 			else {
-				sendMessage('pass', opponent)
-				myTurn = 0
+				sendMessage('pass', gameState.opponentName)
+				gameState.myTurn = false
 			}
 		}
 		addToMoveHistory(move)
@@ -367,18 +386,18 @@ function flipDiscs(discs, move, highlight) {
 }
 
 // Handle a square being clicked (play a move)
-function bindSquareClick() {
+var bindSquareClick = function() {
 	$('.square').click(function() {
-		if (!myTurn || ($(this).css('cursor') !== 'pointer')) {
+		if (!gameState.myTurn || ($(this).css('cursor') !== 'pointer')) {
 			return false
 		}
 		var square = $(this).attr('id')
-		var discs = getMoves(myColor)[square]
+		var discs = getMoves(gameState.myColor)[square]
 		clearHighlights()
-		takeSquare(square, myColor, null, 1)
+		takeSquare(square, gameState.myColor, null, 1)
 		flipDiscs(discs, square, 0)
-		myTurn = 0
-		showMessage('Playing against ' + strong(opponent) + '. It\'s their turn.')
+		gameState.myTurn = false
+		showMessage('Playing against ' + strong(gameState.opponentName) + '. It\'s their turn.')
 		playSound('iPlay')
 	})
 }
@@ -392,11 +411,11 @@ function bindSquareClick() {
 // -----------------------------------------------
 
 // Set board (and entire page) size in accordance with window size
-function setBoardSize() {
+var setBoardSize = function() {
 	if ($(window).width() >= 1920 && $(window).height() >= 1080) {
 		window.parent.document.body.style.zoom = 1.5
 	}
-	if ($(window).width() >= 1170 && $(window).height() >= 650) {
+	if ($(window).width() >= 1170 && $(window).height() >= 701) {
 		window.parent.document.body.style.zoom = 1.15
 	}
 	else {
@@ -414,17 +433,17 @@ $('input[type=text]').click(function() {
 })
 
 // Display a message in the message area
-function showMessage(message, callback) {
+var showMessage = function(message, callback) {
 	$('#message').find('span').html(message)
 }
 
 // Make input HTML bold
-function strong(text) {
+var strong = function(text) {
 	return '<strong>' + text + '</strong>'
 }
 
 // Handle getting an invitation
-function getInvitation(player, theirDice) {
+var getInvitation = function(player, theirDice) {
 	var invitation = strong(player)
 		+ ' challenges you. Accept?<br />'
 		+ '<span class="choice">yes</span> &nbsp; &nbsp; '
@@ -432,14 +451,14 @@ function getInvitation(player, theirDice) {
 	showMessage(invitation)
 	$('.choice').click(function() {
 		if ($(this).html() == 'yes') {
-			myDice = Math.floor(Math.random()*9999999999)
-			sendMessage('accept ' + myDice, player)
-			enterGame(player, myDice, theirDice)
+			gameState.myDice = Math.floor(Math.random()*9999999999)
+			sendMessage('accept ' + gameState.myDice, player)
+			enterGame(player, gameState.myDice, theirDice)
 		}
 		else {
 			sendMessage('refuse', player)
 			showMessage('You have refused the invitation.')
-			gameState = 'lobby'
+			gameState.myState = 'lobby'
 		}
 	})
 	playSound('getInvitation')
@@ -451,14 +470,14 @@ function getInvitation(player, theirDice) {
 }
 
 // Enter a game after successful invitation
-function enterGame(player, myDice, theirDice) {
-	gameState = 'inGame'
-	opponent = player
-	inviting = null
-	inviter = null
-	if (myDice > theirDice) { myColor = 'black' }
-	else { myColor = 'white' }
-	conn.muc.setStatus('lobby@' + conference, myName, 'away', 'away')
+var enterGame = function(player, myDice, theirDice) {
+	gameState.myState = 'inGame'
+	gameState.opponentName = player
+	gameState.inviting = null
+	gameState.inviter = null
+	if (myDice > theirDice) { gameState.myColor = 'black' }
+	else { gameState.myColor = 'white' }
+	XMPP.connection.muc.setStatus('lobby@' + XMPP.conference, gameState.myName, 'away', 'away')
 	$('#lobby').fadeOut(function() {
 		$('#moveHistory,#displayChat').fadeOut(200)
 		$('#inGame').fadeIn()
@@ -468,24 +487,24 @@ function enterGame(player, myDice, theirDice) {
 		})
 		addToMoveHistory('start')
 		drawDiscGraph()
-		if (myColor === 'black') {
-			highlightMoves(myColor)
-			myTurn = 1
-			showMessage('Playing against ' + strong(opponent) + '. It\'s your turn.')
+		if (gameState.myColor === 'black') {
+			highlightMoves(gameState.myColor)
+			gameState.myTurn = true
+			showMessage('Playing against ' + strong(gameState.opponentName) + '. It\'s your turn.')
 		}
 		else {
-			myTurn = 0
-			showMessage('Playing against ' + strong(opponent) + '. It\'s their turn.')
+			gameState.myTurn = false
+			showMessage('Playing against ' + strong(gameState.opponentName) + '. It\'s their turn.')
 		}
 	})
 }
 
 // Leave game
-function leaveGame() {
-	gameState = 'lobby'
-	opponent = null
-	myTurn = null
-	conn.muc.setStatus('lobby@' + conference, myName, '', '')
+var leaveGame = function() {
+	gameState.myState = 'lobby'
+	gameState.opponentName = null
+	gameState.myTurn = false
+	XMPP.connection.muc.setStatus('lobby@' + XMPP.conference, gameState.myName, '', '')
 	$('#inGame').fadeOut(function() {
 		scrollDown('lobbyChat', 600)
 		$('#chat').html('')
@@ -500,9 +519,9 @@ function leaveGame() {
 }
 
 // Display chat message
-function addToChat(id, message, name) {
+var addToChat = function(id, message, name) {
 	var c = 'chatLine'
-	if (name === myName) {
+	if (name === gameState.myName) {
 		c += ' sentChat'
 	}
 	$('<div />', {
@@ -513,7 +532,7 @@ function addToChat(id, message, name) {
 }
 
 // Convert message URLs to links.
-function addLinks(message) {
+var addLinks = function(message) {
 	if ((URLs = message.match(/((mailto\:|(news|(ht|f)tp(s?))\:\/\/){1}\S+)/gi))) {
 		for (var i in URLs) {
 			var sanitize = URLs[i].split('')
@@ -533,14 +552,14 @@ function addLinks(message) {
 // Scrolls down the chat window to the bottom in a smooth animation.
 // 'id' is element ID
 // 'speed' is animation speed in milliseconds.
-function scrollDown(id, speed) {
+var scrollDown = function(id, speed) {
 	$('#' + id).animate({
 		scrollTop: $('#' + id)[0].scrollHeight + 20
 	}, speed)
 }
 
 // Play a sound
-function playSound(sound) {
+var playSound = function(sound) {
 	(new Audio('snd/' + sound + '.wav')).play()
 }
 
@@ -550,7 +569,7 @@ if (window.webkitNotifications) {
 }
 
 // Show a web notification
-function webNotification(image, title, body) {
+var webNotification = function(image, title, body) {
 	if (webNotifications && !document.hasFocus()) {
 		var notice = window.webkitNotifications.createNotification(image, title, body)
 		notice.show()
@@ -561,19 +580,19 @@ function webNotification(image, title, body) {
 }
 
 // Increment disc counter for color by amount (negative amounts allowed)
-function incrementCounter(color, amount) {
+var incrementCounter = function(color, amount) {
 	var counter = parseInt($('#' + color + 'Counter').text())
 	counter += amount
 	$('#' + color + 'Counter').text(counter)
 }
 
 // Get total disc count
-function getDiscCount() {
+var getDiscCount = function() {
 	return parseInt($('#blackCounter').text()) + parseInt($('#whiteCounter').text())
 }
 
 // Draw disc count graph
-function drawDiscGraph() {
+var drawDiscGraph = function() {
 	$('#graph').html('')
 	var graph = new Rickshaw.Graph({
 		element: document.querySelector('#graph'),
@@ -598,11 +617,11 @@ function drawDiscGraph() {
 }
 
 // End game
-function endGame() {
+var endGame = function() {
 	var blackCount = parseInt($('#blackCounter').text())
 	var whiteCount = parseInt($('#whiteCounter').text())
-	if (((blackCount > whiteCount) && (myColor === 'black'))
-	||  ((blackCount < whiteCount) && (myColor === 'white'))) {
+	if (((blackCount > whiteCount) && (gameState.myColor === 'black'))
+	||  ((blackCount < whiteCount) && (gameState.myColor === 'white'))) {
 		showMessage('You have won!')
 	}
 	else if (blackCount === whiteCount) {
@@ -614,14 +633,14 @@ function endGame() {
 }
 
 // Reset disc counters
-function resetCounters() {
+var resetCounters = function() {
 	$('#blackCounter').text('0')
 	$('#whiteCounter').text('0')
 }
 
 // Bind resign button
 $('#resign').click(function() {
-	sendMessage('resign', opponent)
+	sendMessage('resign', gameState.opponentName)
 	showMessage('You have resigned.')
 	leaveGame()
 })
@@ -653,7 +672,7 @@ $('#logout').click(function() {
 
 // Prevent accidental window close
 $(window).bind('beforeunload', function() {
-	if (gameState === 'inGame') {
+	if (gameState.myState === 'inGame') {
 		return 'You are playing a game. Are you sure you wish to quit?'
 	}
 })
@@ -668,7 +687,7 @@ $(window).bind('beforeunload', function() {
 
 // Generates a random string of length `size` characters.
 // If `alpha = 1`, random string will contain alpha characters, and so on.
-function randomString(size, alpha, uppercase, numeric) {
+var randomString = function(size, alpha, uppercase, numeric) {
 	var keyspace = result = ''
 	if (alpha) { keyspace += 'abcdefghijklmnopqrstuvwxyz' }
 	if (uppercase) { keyspace += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' }
@@ -681,12 +700,12 @@ function randomString(size, alpha, uppercase, numeric) {
 
 // Send XMPP message
 // If 'player === null', send message to lobby
-function sendMessage(message, player) {
+var sendMessage = function(message, player) {
 	if (player) {
-		conn.muc.message('lobby@' + conference, player, message, null)
+		XMPP.connection.muc.message('lobby@' + XMPP.conference, player, message, null)
 	}
 	else {
-		conn.muc.message('lobby@' + conference, null, message, null)
+		XMPP.connection.muc.message('lobby@' + XMPP.conference, null, message, null)
 	}
 }
 
@@ -696,15 +715,15 @@ $('#chatInput,#lobbyChatInput').keyup(function(e) {
 		var chat = $.trim($(this).val().replace(/</g, '&lt;').replace(/>/g, '&gt;'))
 		if (chat !== '') {
 			var chatID = $(this).attr('id').substring(0, $(this).attr('id').length - 5)
-			addToChat(chatID, chat, myName)
-			sendMessage('chat ' + $(this).val(), opponent)
+			addToChat(chatID, chat, gameState.myName)
+			sendMessage('chat ' + $(this).val(), gameState.opponentName)
 			$(this).val('')
 		}
 	}
 })
 
 // Clean name so that it's safe to use.
-function cleanName(name) {
+var cleanName = function(name) {
 	var clean
 	if (clean = name.match(/\/([\s\S]+)/)) {
 		clean = Strophe.xmlescape(clean[1])
@@ -719,7 +738,7 @@ function cleanName(name) {
 }
 
 // Handle incoming messages from the XMPP server.
-function handleMessage(message) {
+var handleMessage = function(message) {
 	var name = cleanName($(message).attr('from'))
 	var body = $(message).find('body').text().replace(/\&quot;/g, '"')
 	var type = $(message).attr('type')
@@ -728,7 +747,7 @@ function handleMessage(message) {
 		return true
 	}
 	// If message is from me, ignore.
-	if (name === myName) {
+	if (name === gameState.myName) {
 		return true
 	}
 	// If this is a group message...
@@ -740,29 +759,29 @@ function handleMessage(message) {
 	}
 	// Detect incoming invitation
 	if (body.match(/^invite\s[0-9]+$/)) {
-		if (gameState === 'lobby') {
+		if (gameState.myState === 'lobby') {
 			var theirDice = parseInt(body.match(/[0-9]+$/)[0])
 			getInvitation(name, theirDice)
-			gameState = 'invited'
-			inviter = name
+			gameState.myState = 'invited'
+			gameState.inviter = name
 		}
 		else {
-			sendMessage(gameState, name)
+			sendMessage(gameState.myState, name)
 		}
 	}
 	// Detect canceled invitations
 	if (body === 'cancel') {
-		if (inviter === name) {
+		if (gameState.inviter === name) {
 			showMessage(strong(name) + ' have canceled their invitation.')
-			inviter = null
-			gameState = 'lobby'
+			gameState.inviter = null
+			gameState.myState = 'lobby'
 		}
 	}
 	// Detect invitation response
-	else if (inviting === name) {
+	else if (gameState.inviting === name) {
 		if (body.match(/^accept\s[0-9]+$/)) {
 			var theirDice = parseInt(body.match(/[0-9]+$/)[0])
-			enterGame(name, myDice, theirDice)
+			enterGame(name, gameState.myDice, theirDice)
 			return true
 		}
 		else if (body === 'refuse') {
@@ -774,16 +793,16 @@ function handleMessage(message) {
 		else if ((body === 'invited') || (body === 'inviting')) {
 			showMessage(strong(name) + ' is already handling another invitation. Try again shortly.')
 		}
-		gameState = 'lobby'
-		inviting = null
+		gameState.myState = 'lobby'
+		gameState.inviting = null
 	}
 	// Detect gameplay moves/chat
-	else if (opponent === name) {
+	else if (gameState.opponentName === name) {
 		if (move = body.match(/^[a-h][1-8]$/)) {
-			var discs = getMoves(getOpposite(myColor))
-			if (!myTurn && discs[move[0]]) {
-				myTurn = 1
-				takeSquare(move[0], getOpposite(myColor), null, 0, myColor)
+			var discs = getMoves(getOpposite(gameState.myColor))
+			if (!gameState.myTurn && discs[move[0]]) {
+				gameState.myTurn = true
+				takeSquare(move[0], getOpposite(gameState.myColor), null, 0, gameState.myColor)
 				flipDiscs(discs[move[0]], move[0], 1)
 				playSound('theyPlay')
 				webNotification(
@@ -794,9 +813,9 @@ function handleMessage(message) {
 			}
 		}
 		else if (body === 'pass') {
-			if (!myTurn) {
-				myTurn = 1
-				if (highlightMoves(myColor)) {
+			if (!gameState.myTurn) {
+				gameState.myTurn = true
+				if (highlightMoves(gameState.myColor)) {
 					showMessage(strong(name) + ' has no moves. It\'s your turn.')
 				}
 				else {
@@ -817,12 +836,12 @@ function handleMessage(message) {
 }
 
 // Handle incoming presence updates from the XMPP server.
-function handlePresence(presence) {
+var handlePresence = function(presence) {
 	var name = cleanName($(presence).attr('from'))
 	// If invalid name, do not process
 	if ($(presence).attr('type') === 'error') {
 		if ($(presence).find('error').attr('code') === '409') {
-			loginError = true
+			gameState.myState = 'error'
 			logout()
 			window.setTimeout(function() {
 				showMessage('Name in use. Please choose another name.')
@@ -832,25 +851,25 @@ function handlePresence(presence) {
 		return true
 	}
 	// Ignore if presence status is coming from myself
-	if (name === myName) {
+	if (name === gameState.myName) {
 		return true
 	}
 	// Detect player going offline
 	if ($(presence).attr('type') === 'unavailable') {
 		$('#player-' + name).slideUp().remove()
-		if (opponent === name) {
+		if (gameState.opponentName === name) {
 			showMessage('Your opponent has logged out.')
 			leaveGame()
 		}
-		else if (inviting === name) {
+		else if (gameState.inviting === name) {
 			showMessage(strong(name) + ' has logged out.')
-			inviting = null
-			gameState = 'lobby'
+			gameState.inviting = null
+			gameState.myState = 'lobby'
 		}
-		else if (inviter === name) {
+		else if (gameState.inviter === name) {
 			showMessage(strong(name) + ' has logged out.')
-			inviter = null
-			gameState = 'lobby'
+			gameState.inviter = null
+			gameState.myState = 'lobby'
 		}
 		return true
 	}
@@ -874,7 +893,7 @@ function handlePresence(presence) {
 }
 
 // Add new player to player list
-function addPlayer(name) {
+var addPlayer = function(name) {
 	$('#playerList').queue(function() {
 		var buddyTemplate = '<div class="playerAvailable" id="player-'
 			+ name + '"><span>' + name + '</span><span class="playerStatus"></span></div>'
@@ -887,23 +906,23 @@ function addPlayer(name) {
 }
 
 // Bind properties to player entry in lobby
-function bindPlayerClick(player) {
+var bindPlayerClick = function(player) {
 	$('#player-' + player).click(function() {
 		if ($(this).css('cursor') === 'pointer') {
-			if (gameState === 'lobby') {
-				myDice = Math.floor(Math.random()*9999999999)
-				gameState = 'inviting'
-				inviting = player
-				sendMessage('invite ' + myDice, player)
+			if (gameState.myState === 'lobby') {
+				gameState.myDice = Math.floor(Math.random()*9999999999)
+				gameState.myState = 'inviting'
+				gameState.inviting = player
+				sendMessage('invite ' + gameState.myDice, player)
 				showMessage(
 					'Waiting for ' + strong(player) + ' to respond...'
 					+ '<br /><span class="choice">cancel</span>'
 				)
 				$('.choice').click(function() {
 					sendMessage('cancel', player)
-					showMessage('Welcome, ' + strong(myName) + '. Click on a person to invite them to play.')
-					gameState = 'lobby'
-					inviting = null
+					showMessage('Welcome, ' + strong(gameState.myName) + '. Click on a person to invite them to play.')
+					gameState.myState = 'lobby'
+					gameState.inviting = null
 				})
 			}
 		}
@@ -928,10 +947,10 @@ $('#login').submit(function() {
 	}
 	// If everything is okay, then register a randomly generated throwaway XMPP ID and log in.
 	else {
-		myName = Strophe.xmlescape($('#name').val())
-		loginCredentials[0] = randomString(64, 1, 1, 1)
-		loginCredentials[1] = randomString(64, 1, 1, 1)
-		registerXMPPUser(loginCredentials[0], loginCredentials[1])
+		gameState.myName = Strophe.xmlescape($('#name').val())
+		XMPP.loginCredentials[0] = randomString(64, 1, 1, 1)
+		XMPP.loginCredentials[1] = randomString(64, 1, 1, 1)
+		registerXMPPUser(XMPP.loginCredentials[0], XMPP.loginCredentials[1])
 		$('#play').attr('readonly', 'readonly')
 		showMessage('Connecting...')
 	}
@@ -943,9 +962,9 @@ $('#login').submit(function() {
 })
 
 // Registers a new user on the XMPP server.
-function registerXMPPUser(username, password) {
-	var registrationConnection = new Strophe.Connection(bosh)
-	registrationConnection.register.connect(domain, function(status) {
+var registerXMPPUser = function(username, password) {
+	var registrationConnection = new Strophe.Connection(XMPP.bosh)
+	registrationConnection.register.connect(XMPP.domain, function(status) {
 		if (status === Strophe.Status.REGISTER) {
 			registrationConnection.register.fields.username = username
 			registrationConnection.register.fields.password = password
@@ -954,7 +973,7 @@ function registerXMPPUser(username, password) {
 		else if (status === Strophe.Status.REGISTERED) {
 			registrationConnection.disconnect()
 			delete registrationConnection
-			login(loginCredentials[0], loginCredentials[1])
+			loginXMPPUser(XMPP.loginCredentials[0], XMPP.loginCredentials[1])
 			return true
 		}
 		else if (status === Strophe.Status.SBMTFAIL) {
@@ -966,9 +985,9 @@ function registerXMPPUser(username, password) {
 }
 
 // Logs into the XMPP server, creating main connection/disconnection handlers.
-function login(username, password) {
-	conn = new Strophe.Connection(bosh)
-	conn.connect(username + '@' + domain, password, function(status) {
+var loginXMPPUser = function(username, password) {
+	XMPP.connection = new Strophe.Connection(XMPP.bosh)
+	XMPP.connection.connect(username + '@' + XMPP.domain, password, function(status) {
 		if (status === Strophe.Status.CONNECTING) {
 
 		}
@@ -976,9 +995,9 @@ function login(username, password) {
 			showMessage('Connection error.')
 		}
 		else if (status === Strophe.Status.CONNECTED) {
-			showMessage('Welcome, ' + strong(myName) + '. Click on a person to invite them to play.')
-			conn.muc.join(
-				'lobby@' + conference, myName,
+			showMessage('Welcome, ' + strong(gameState.myName) + '. Click on a person to invite them to play.')
+			XMPP.connection.muc.join(
+				'lobby@' + XMPP.conference, gameState.myName,
 				function(message) {
 					if (handleMessage(message)) {
 						return true
@@ -993,11 +1012,11 @@ function login(username, password) {
 			$('#login').fadeOut(200, function() {
 				$('#logout').fadeIn(200)
 				$('#lobby').fadeIn(200)
-				gameState = 'lobby'
+				gameState.myState = 'lobby'
 			})
 		}
 		else if ((status === Strophe.Status.DISCONNECTED) || (status === Strophe.Status.AUTHFAIL)) {
-			if (!loginError) {
+			if (gameState.myState !== 'error') {
 				showMessage('Thank you for playing at Reversi café.')
 			}
 			reversi.newGame()
@@ -1010,21 +1029,21 @@ function login(username, password) {
 				$('#login').fadeIn(200)
 				$('#name').select()
 			})
-			myName = opponent = inviting = myTurn = null
-			inviter = conn = gameState = loginError = myColor = null
-			loginCredentials = []
+			resetGameState()
 			$('#play').removeAttr('readonly')
 		}
 	})
 }
 
 // Logout function
-function logout(message) {
+var logout = function(message) {
 	if (message) {
 		showMessage('Logging out...')
 	}
-	conn.muc.leave('lobby@' + conference)
-	conn.disconnect()
+	if (XMPP.connection) {
+		XMPP.connection.muc.leave('lobby@' + XMPP.conference)
+		XMPP.connection.disconnect()
+	}
 }
 
 // Logout on browser close
@@ -1036,6 +1055,7 @@ $(window).unload(function() {
 // END XMPP LOGIC
 // -----------------------------------------------
 
+resetGameState()
 initBoardSlate()
 reversi.newGame()
 showMessage(
