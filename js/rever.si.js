@@ -63,7 +63,7 @@ function initBoardMatrix() {
 	$('.square').css('background-image', 'none')
 }
 
-// Start a new game	
+// Start a new game
 reversi.newGame = function() {
 	resetCounters()
 	clearHighlights()
@@ -94,7 +94,7 @@ function addToMoveHistory(move) {
 // If mark = 'color', marks square with 'color'.
 function takeSquare(square, color, altBoard, network, mark) {
 	boardMatrix[square] = color
-	if (!altBoard) { 
+	if (!altBoard) {
 		altBoard = ''
 		incrementCounter(color, 1)
 	}
@@ -524,7 +524,7 @@ function addLinks(message) {
 			}
 			sanitize = sanitize.join('')
 			var processed = sanitize.replace(':','&colon;')
-			message = message.replace(sanitize, '<a target="_blank" href="' + processed + '">' + processed + '</a>')		
+			message = message.replace(sanitize, '<a target="_blank" href="' + processed + '">' + processed + '</a>')
 		}
 	}
 	return message
@@ -576,7 +576,7 @@ function getDiscCount() {
 function drawDiscGraph() {
 	$('#graph').html('')
 	var graph = new Rickshaw.Graph({
-		element: document.querySelector('#graph'), 
+		element: document.querySelector('#graph'),
 		width: 215,
 		height: 45,
 		renderer: 'line',
@@ -687,7 +687,7 @@ function sendMessage(message, player) {
 	}
 	else {
 		conn.muc.message('lobby@' + conference, null, message, null)
-	}	
+	}
 }
 
 // Handle chat form submission
@@ -862,13 +862,13 @@ function handlePresence(presence) {
 	if ($(presence).find('show').text() === '' || $(presence).find('show').text() === 'chat') {
 		$('#player-' + name).attr('class', 'playerAvailable')
 		$('#player-' + name).find('.playerStatus').text('available')
-			
+
 	}
 	// Detect player setting status to 'away'
 	else if ($(presence).find('show').text() === 'away') {
 		$('#player-' + name).attr('class', 'playerInGame')
 		$('#player-' + name).find('.playerStatus').text('in game')
-			
+
 	}
 	return true
 }
@@ -876,7 +876,7 @@ function handlePresence(presence) {
 // Add new player to player list
 function addPlayer(name) {
 	$('#playerList').queue(function() {
-		var buddyTemplate = '<div class="playerAvailable" id="player-' 
+		var buddyTemplate = '<div class="playerAvailable" id="player-'
 			+ name + '"><span>' + name + '</span><span class="playerStatus"></span></div>'
 		$(buddyTemplate).appendTo('#playerList').slideDown(0, function() {
 			$('#player-' + name).unbind('click')
@@ -892,7 +892,7 @@ function bindPlayerClick(player) {
 		if ($(this).css('cursor') === 'pointer') {
 			if (gameState === 'lobby') {
 				myDice = Math.floor(Math.random()*9999999999)
-				gameState = 'inviting'	
+				gameState = 'inviting'
 				inviting = player
 				sendMessage('invite ' + myDice, player)
 				showMessage(
@@ -970,7 +970,7 @@ function login(username, password) {
 	conn = new Strophe.Connection(bosh)
 	conn.connect(username + '@' + domain, password, function(status) {
 		if (status === Strophe.Status.CONNECTING) {
-			
+
 		}
 		else if (status === Strophe.Status.CONNFAIL) {
 			showMessage('Connection error.')
@@ -978,7 +978,7 @@ function login(username, password) {
 		else if (status === Strophe.Status.CONNECTED) {
 			showMessage('Welcome, ' + strong(myName) + '. Click on a person to invite them to play.')
 			conn.muc.join(
-				'lobby@' + conference, myName, 
+				'lobby@' + conference, myName,
 				function(message) {
 					if (handleMessage(message)) {
 						return true
@@ -1040,9 +1040,7 @@ initBoardSlate()
 reversi.newGame()
 showMessage(
 	'Welcome to the <strong>Reversi café</strong>, where you'
-	+ ' can play Reversi and chats with friends worldwide.'
-	+ '<br /><br />Enter your name, then find your'
-	+ ' friend\'s name in the lobby to start a game.'
+	+ ' can play Reversi with friends worldwide.'
 )
 $('#name').select()
 
