@@ -164,11 +164,12 @@ var takeSquare = function(square, color, altBoard, network, mark) {
 		$('#' + altBoard + square).html('<span class="highlight mark">&diams;</span>')
 	}
 	if (network && gameState.opponentName) {
+		sendMessage(square, gameState.opponentName)
 		// Keep broadcasting the move until the opponent plays a follow-up move,
 		// so that we avoid cases where a network error fucks up the entire game.
 		gameState.broadcastMove = window.setInterval(function(move) {
 			sendMessage(move, gameState.opponentName)
-		}, 5000, square)
+		}, 10000, square)
 	}
 }
 
