@@ -24,10 +24,10 @@ var gameState = {}
 var webNotifications
 
 var sounds = {
-	'iPlay': (new Audio('snd/iPlay.wav')),
-	'theyPlay': (new Audio('snd/theyPlay.wav')),
-	'getInvitation': (new Audio('snd/getInvitation.wav')),
-	'getChat': (new Audio('snd/getChat.wav'))
+	'iPlay': (new Audio('snd/iPlay.mp3')),
+	'theyPlay': (new Audio('snd/theyPlay.mp3')),
+	'getInvitation': (new Audio('snd/getInvitation.mp3')),
+	'getChat': (new Audio('snd/getChat.mp3'))
 }
 
 var boardSlate
