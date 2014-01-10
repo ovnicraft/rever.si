@@ -602,7 +602,7 @@ var playSound = function(sound) {
 
 // Enable web notifications if API is present
 if (window.webkitNotifications) {
-	webNotifications = 1
+	webNotifications = true
 }
 
 // Show a web notification
