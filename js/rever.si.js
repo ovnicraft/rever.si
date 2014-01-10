@@ -23,6 +23,13 @@ var gameState = {}
 
 var webNotifications
 
+var sounds = {
+	'iPlay': (new Audio('snd/iPlay.wav')),
+	'theyPlay': (new Audio('snd/theyPlay.wav')),
+	'getInvitation': (new Audio('snd/getInvitation.wav')),
+	'getChat': (new Audio('snd/getChat.wav'))
+}
+
 var boardSlate
 var abc = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 var boardMatrix = {}
@@ -426,7 +433,7 @@ var bindSquareClick = function() {
 		flipDiscs(discs, square, 0)
 		gameState.myTurn = false
 		showMessage('Playing against ' + strong(gameState.opponentName) + '. It\'s their turn.')
-		playSound('iPlay')
+		sounds.iPlay.play()
 	})
 }
 
@@ -493,7 +500,7 @@ var getInvitation = function(player, theirDice) {
 			gameState.myState = 'lobby'
 		}
 	})
-	playSound('getInvitation')
+	sounds.getInvitation.play()
 	webNotification(
 		'img/favicon.png',
 		'Reversi',
@@ -593,11 +600,6 @@ var scrollDown = function(id, speed) {
 	$('#' + id).animate({
 		scrollTop: $('#' + id)[0].scrollHeight + 20
 	}, speed)
-}
-
-// Play a sound
-var playSound = function(sound) {
-	(new Audio('snd/' + sound + '.wav')).play()
 }
 
 // Enable web notifications if API is present
@@ -846,7 +848,7 @@ var handleMessage = function(message) {
 				gameState.myTurn = true
 				takeSquare(move[0], getOpposite(gameState.myColor), null, false, gameState.myColor)
 				flipDiscs(discs[move[0]], move[0], 1)
-				playSound('theyPlay')
+				sounds.theyPlay.play()
 				webNotification(
 					'img/favicon.png',
 					'Reversi',
@@ -871,7 +873,7 @@ var handleMessage = function(message) {
 		}
 		else if (chat = body.match(/^chat/)) {
 			addToChat('chat', body.substring(5), name)
-			playSound('getChat')
+			sounds.getChat.play()
 		}
 	}
 	return true
