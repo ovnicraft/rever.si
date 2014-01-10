@@ -35,6 +35,18 @@ BOARD LOGIC
 -----------------------------------------------
 */
 
+// Initialize program.
+reversi.init = function() {
+	resetGameState()
+	initBoardSlate()
+	reversi.newGame()
+	showMessage(
+		'Welcome to the <strong>Reversi café</strong>, where you'
+		+ ' can play Reversi with friends worldwide.'
+	)
+	$('#name').select()
+}
+
 // Reset game state parameters
 var resetGameState = function() {
 	var gameState = {
@@ -1094,13 +1106,6 @@ LOAD AND EXECUTE
 -----------------------------------------------
 */
 
-resetGameState()
-initBoardSlate()
-reversi.newGame()
-showMessage(
-	'Welcome to the <strong>Reversi café</strong>, where you'
-	+ ' can play Reversi with friends worldwide.'
-)
-$('#name').select()
+reversi.init()
 
 })
