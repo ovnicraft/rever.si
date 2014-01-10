@@ -21,24 +21,22 @@ var XMPP = {
 
 var gameState = {}
 
-var webNotifications
-
-var sounds = {
-	'iPlay': (new Audio('snd/iPlay.mp3')),
-	'theyPlay': (new Audio('snd/theyPlay.mp3')),
-	'getInvitation': (new Audio('snd/getInvitation.mp3')),
-	'getChat': (new Audio('snd/getChat.mp3'))
-}
-
 var boardSlate
 var abc = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 var boardMatrix = {}
 
 var graphData = {}
 
+var sounds = {
+	iPlay: (new Audio('snd/iPlay.mp3')),
+	theyPlay: (new Audio('snd/theyPlay.mp3')),
+	getInvitation: (new Audio('snd/getInvitation.mp3')),
+	getChat: (new Audio('snd/getChat.mp3'))
+}
+
 /*
 -----------------------------------------------
-BOARD LOGIC
+INITIALIZATION FUNCTIONS
 -----------------------------------------------
 */
 
@@ -118,6 +116,18 @@ reversi.newGame = function() {
 	takeSquare('e5', 'white', null, false)
 	takeSquare('d4', 'white', null, false)
 }
+
+/*
+-----------------------------------------------
+END INITIALIZATION FUNCTIONS
+-----------------------------------------------
+*/
+
+/*
+-----------------------------------------------
+BOARD LOGIC
+-----------------------------------------------
+*/
 
 // Add current board to move history with 'move' as the last move
 var addToMoveHistory = function(move) {
@@ -602,14 +612,9 @@ var scrollDown = function(id, speed) {
 	}, speed)
 }
 
-// Enable web notifications if API is present
-if (window.webkitNotifications) {
-	webNotifications = true
-}
-
 // Show a web notification
 var webNotification = function(image, title, body) {
-	if (webNotifications && !document.hasFocus()) {
+	if (window.webkitNotifications && !document.hasFocus()) {
 		var notice = window.webkitNotifications.createNotification(image, title, body)
 		notice.show()
 		window.setTimeout(function() {
@@ -645,12 +650,12 @@ var drawDiscGraph = function() {
 				name: 'Black',
 				color: 'black',
 				data: graphData.black
-	    	},
+			},
 			{
 				name: 'White',
 				color: 'white',
 				data: graphData.white
-	    	}
+			}
 		]
 	}).render()
 }
@@ -1000,7 +1005,7 @@ $('#login').submit(function() {
 		showMessage('Connecting...')
 	}
 	// Get notification permissions
-	if (webNotifications && window.webkitNotifications.checkPermission()) {
+	if (window.webkitNotifications && window.webkitNotifications.checkPermission()) {
 		window.webkitNotifications.requestPermission(function() {})
 	}
 	return false
