@@ -151,7 +151,7 @@ var takeSquare = function(square, color, altBoard, network, mark) {
 		// so that we avoid cases where a network error fucks up the entire game.
 		gameState.broadcastMove = window.setInterval(function(move) {
 			sendMessage(move, gameState.opponentName)
-		}, 1000, move)
+		}, 1000, square)
 	}
 }
 
