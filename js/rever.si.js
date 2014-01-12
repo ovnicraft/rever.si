@@ -1072,8 +1072,7 @@ var loginXMPPUser = function(username, password) {
 				showMessage('Thank you for playing at Reversi café.')
 			}
 			reversi.newGame()
-			$('#logout').fadeOut(200)
-			$('#resign').fadeOut(200)
+			$('#logout,#resign,#displayHistory,#displayChat').fadeOut(200)
 			$('#lobby,#inGame').fadeOut(200, function() {
 				$('#chat,#lobbyChat').html('')
 				$('#moveHistory ol').html('')
