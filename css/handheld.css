@@ -4,6 +4,14 @@ MISC. DEFINITIONS
 -----------------------------------------------
 */
 
+* {
+	-webkit-font-smoothing: antialiased;
+	-webkit-touch-callout: none;
+	-webkit-overflow-scrolling: touch;
+	-webkit-box-sizing: border-box;
+	-webkit-text-size-adjust: none;
+}
+
 @font-face {
 	font-family: 'Quantico';
 	src: url('quantico.woff') format('woff');
@@ -22,7 +30,7 @@ MAIN TAGS
 
 body {
 	background-image: url('../img/bg.jpg');
-	background-size: cover;
+	background-size: auto 600px;
 	font-family: 'Helvetica', 'Arial', 'Verdana';
 	margin: 1.4% auto 0 auto;
 	color: #FFF;
@@ -41,6 +49,7 @@ h1 {
 	margin: 25px 0 0 0;
 	font-weight: normal;
 	font-family: 'Quantico', 'Futura', 'Century Gothic', 'Menlo', 'Monaco', 'Helvetica', 'Arial';
+	display: none;
 }
 
 input[type=text] {
@@ -63,8 +72,8 @@ MAIN USER INTERFACE
 */
 
 div#main {
-	width: 850px;
-	padding: 20px;
+	width: 300px;
+	padding: 10px;
 	margin: 0 auto;
 	position: relative;
 }
@@ -88,10 +97,10 @@ div#options span {
 }
 
 div#info {
-	width: 240px;
+	width: 280px;
 	height: 525px;
 	display: inline-block;
-	margin: -20px 0 0 50px;
+	margin: 0;
 	position: absolute;
 	font-size: 11px;
 	line-height: 20px;
@@ -119,6 +128,8 @@ table {
 	border-spacing: 0;
 	background-image: url('../img/board.png');
 	display: inline-block;
+	-webkit-user-select: none;
+	user-select: none;
 }
 
 .square {
@@ -142,11 +153,11 @@ table {
 }
 
 #board .square {
-	width: 66px;
-	height: 66px;
-	min-width: 66px;
-	min-height: 66px;
-	background-size: 60px 60px;
+	width: 34px;
+	height: 34px;
+	min-width: 34px;
+	min-height: 34px;
+	background-size: 30px 30px;
 }
 
 .square img {
@@ -165,8 +176,8 @@ LOGIN FORM
 */
 
 form#login input[type=submit] {
-	border-radius: 3px;
-	background: rgba(0, 0, 0, 0.6);
+	border-radius: 1px;
+	background: rgba(0, 0, 0, 0.8);
 	border: none;
 	outline: none;
 	color: #CCC;
@@ -183,7 +194,7 @@ form#login input[type=submit]:hover {
 }
 
 form#login input#name {
-	width: 188px;
+	width: 230px;
 	display: inline;
 }
 
@@ -204,7 +215,7 @@ div#lobby {
 div#lobby div#playerList {
 	border-radius: 3px;
 	background: rgba(0, 0, 0, 0.6);
-	width: 220px;
+	width: 280px;
 	height: 165px;
 	padding: 10px;
 	margin: 15px 0;
@@ -220,7 +231,6 @@ div#lobby div#playerList {
 	border-radius: 3px;
 	padding: 5px;
 	width: auto;
-	-webkit-touch-callout: none;
 	-webkit-user-select: none;
 	user-select: none;
 }
@@ -244,7 +254,7 @@ div#lobby div#lobbyChat {
 	margin: 15px 0;
 	border-radius: 3px;
 	background: rgba(0, 0, 0, 0.6);
-	width: 240px;
+	width: 280px;
 	height: 185px;
 	text-align: left;
 	overflow-y: auto;
@@ -252,7 +262,7 @@ div#lobby div#lobbyChat {
 }
 
 div#lobby input#lobbyChatInput {
-	width: 220px;
+	width: 280px;
 	padding: 10px;
 }
 
@@ -278,7 +288,7 @@ div#inGame {
 }
 
 div#inGame #gameStatus {
-	width: 220px;
+	width: 280px;
 	padding: 10px;
 	margin: 15px 0;
 	background: rgba(85, 115, 139, 0.5);
@@ -298,7 +308,7 @@ div#inGame #blackCounter {
 }
 
 div#inGame #graph {
-	width: 220px;
+	width: 280px;
 	height: 45px;
 	margin: 0 auto;
 }
@@ -307,7 +317,7 @@ div#inGame #chat {
 	margin: 15px 0;
 	border-radius: 3px;
 	background: rgba(0, 0, 0, 0.6);
-	width: 240px;
+	width: 280px;
 	height: 243px;
 	text-align: left;
 	overflow-y: auto;
@@ -324,7 +334,7 @@ div#inGame #chat {
 }
 
 div#inGame #chatInput {
-	width: 220px;
+	width: 280px;
 	padding: 10px;
 }
 
@@ -339,7 +349,7 @@ div#inGame #moveHistory {
 	margin: 15px 0;
 	border-radius: 3px;
 	background: rgba(0, 0, 0, 0.6);
-	width: 220px;
+	width: 280px;
 	height: 267px;
 	padding: 10px;
 	text-align: left;

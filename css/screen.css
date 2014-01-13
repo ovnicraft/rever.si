@@ -4,10 +4,17 @@ MISC. DEFINITIONS
 -----------------------------------------------
 */
 
+* {
+	-webkit-font-smoothing: antialiased;
+	-webkit-touch-callout: none;
+	-webkit-overflow-scrolling: touch;
+	-webkit-box-sizing: border-box;
+	-webkit-text-size-adjust: none;
+}
+
 @font-face {
 	font-family: 'Quantico';
 	src: url('quantico.woff') format('woff');
-	-webkit-font-smoothing: antialiased;
 }
 
 body::selection {
@@ -119,6 +126,8 @@ table {
 	border-spacing: 0;
 	background-image: url('../img/board.png');
 	display: inline-block;
+	-webkit-user-select: none;
+	user-select: none;
 }
 
 .square {
@@ -183,7 +192,7 @@ form#login input[type=submit]:hover {
 }
 
 form#login input#name {
-	width: 188px;
+	width: 205px;
 	display: inline;
 }
 
@@ -204,7 +213,7 @@ div#lobby {
 div#lobby div#playerList {
 	border-radius: 3px;
 	background: rgba(0, 0, 0, 0.6);
-	width: 220px;
+	width: 240px;
 	height: 165px;
 	padding: 10px;
 	margin: 15px 0;
@@ -220,7 +229,6 @@ div#lobby div#playerList {
 	border-radius: 3px;
 	padding: 5px;
 	width: auto;
-	-webkit-touch-callout: none;
 	-webkit-user-select: none;
 	user-select: none;
 }
@@ -252,7 +260,7 @@ div#lobby div#lobbyChat {
 }
 
 div#lobby input#lobbyChatInput {
-	width: 220px;
+	width: 240px;
 	padding: 10px;
 }
 
@@ -278,7 +286,7 @@ div#inGame {
 }
 
 div#inGame #gameStatus {
-	width: 220px;
+	width: 240px;
 	padding: 10px;
 	margin: 15px 0;
 	background: rgba(85, 115, 139, 0.5);
@@ -298,7 +306,7 @@ div#inGame #blackCounter {
 }
 
 div#inGame #graph {
-	width: 220px;
+	width: 240px;
 	height: 45px;
 	margin: 0 auto;
 }
@@ -324,7 +332,7 @@ div#inGame #chat {
 }
 
 div#inGame #chatInput {
-	width: 220px;
+	width: 240px;
 	padding: 10px;
 }
 
@@ -339,7 +347,7 @@ div#inGame #moveHistory {
 	margin: 15px 0;
 	border-radius: 3px;
 	background: rgba(0, 0, 0, 0.6);
-	width: 220px;
+	width: 240px;
 	height: 267px;
 	padding: 10px;
 	text-align: left;
