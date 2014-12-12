@@ -30,7 +30,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "js", "js", "{98CF33B2-7900-
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "css", "css", "{0DE8ED6E-E470-4C8F-8493-412D407C4067}"
 	ProjectSection(SolutionItems) = preProject
-		css\handheld.css = css\handheld.css
 		css\quantico.woff = css\quantico.woff
 		css\screen.css = css\screen.css
 	EndProjectSection

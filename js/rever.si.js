@@ -46,8 +46,7 @@ reversi.init = function() {
 	initBoardSlate()
 	reversi.newGame()
 	showMessage(
-		'Welcome to the <strong>Reversi café</strong>, where you'
-		+ ' can play Reversi with friends worldwide.'
+		'Welcome to the <strong>Reversi café</strong>.'
 	)
 	$('#name').select()
 }
