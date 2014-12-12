@@ -17,7 +17,7 @@ var XMPP = {
 	domain: 'rever.si',
 	conference: 'conference.rever.si',
 	bosh: 'https://rever.si/http-bind',
-	MUC: 'nsCjuccS3tarRnLB9bCj',
+	MUC: 'lobby',
 	loginCredentials: []
 }
 
