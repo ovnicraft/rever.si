@@ -9,6 +9,7 @@ Programmed by Nadim Kobeissi, all rights reserved.
 var reversi = function() {}
 
 $(window).load(function() {
+'use strict';
 
 // Configuration
 var XMPP = {
@@ -1023,7 +1024,7 @@ var registerXMPPUser = function(username, password) {
 		}
 		else if (status === Strophe.Status.REGISTERED) {
 			registrationConnection.disconnect()
-			delete registrationConnection
+			registrationConnection = null
 			loginXMPPUser(XMPP.loginCredentials[0], XMPP.loginCredentials[1])
 			return true
 		}
