@@ -28,13 +28,6 @@ var boardMatrix = {}
 
 var graphData = {}
 
-var sounds = {
-	iPlay: (new Audio('snd/iPlay.mp3')),
-	theyPlay: (new Audio('snd/theyPlay.mp3')),
-	getInvitation: (new Audio('snd/getInvitation.mp3')),
-	getChat: (new Audio('snd/getChat.mp3'))
-}
-
 /*
 -----------------------------------------------
 INITIALIZATION FUNCTIONS
@@ -436,7 +429,7 @@ var bindSquareClick = function() {
 		if (!gameState.myTurn || ($(this).css('cursor') !== 'pointer')) {
 			return false
 		}
-		sounds.iPlay.play()
+		sounds.play('iPlay')
 		var square = $(this).attr('id')
 		var discs = getMoves(gameState.myColor)[square]
 		clearHighlights()
@@ -497,7 +490,7 @@ var getInvitation = function(player, theirDice) {
 		+ ' challenges you. Accept?<br />'
 		+ '<span class="choice">yes</span> &nbsp; &nbsp; '
 		+ '<span class="choice">no</span>'
-	sounds.getInvitation.play()
+	sounds.play('getInvitation')
 	showMessage(invitation)
 	$('.choice').click(function() {
 		if ($(this).html() == 'yes') {
@@ -611,6 +604,20 @@ var scrollDown = function(id, speed) {
 	$('#' + id).animate({
 		scrollTop: $('#' + id)[0].scrollHeight + 20
 	}, speed)
+}
+
+// Play sounds
+var sounds = {
+	iPlay: new Audio('snd/iPlay.mp3'),
+	theyPlay: new Audio('snd/theyPlay.mp3'),
+	getInvitation: new Audio('snd/getInvitation.mp3'),
+	getChat: new Audio('snd/getChat.mp3'),
+	play: function(sound) {
+		sounds[sound].src = 'snd/' + sound + '.mp3'
+		sounds[sound].load()
+		sounds[sound].volume = 1
+		sounds[sound].play()
+	}
 }
 
 // Show a web notification
@@ -839,7 +846,7 @@ var handleMessage = function(message) {
 		if (move = body.match(/^[a-h][1-8]$/)) {
 			var discs = getMoves(getOpposite(gameState.myColor))
 			if (!gameState.myTurn && discs[move[0]]) {
-				sounds.theyPlay.play()
+				sounds.play('theyPlay')
 				window.clearInterval(gameState.broadcastMove)
 				gameState.myTurn = true
 				takeSquare(move[0], getOpposite(gameState.myColor), null, false, gameState.myColor)
@@ -867,7 +874,7 @@ var handleMessage = function(message) {
 			leaveGame()
 		}
 		else if (chat = body.match(/^chat/)) {
-			sounds.getChat.play()
+			sounds.play('getChat')
 			addToChat('chat', body.substring(5), name)
 		}
 	}
@@ -1003,13 +1010,7 @@ $('#login').submit(function() {
 var connectToXMPP = function() {
 	XMPP.connection = new Strophe.Connection(XMPP.bosh)
 	XMPP.connection.connect(XMPP.domain, null, function(status) {
-		if (status === Strophe.Status.CONNECTING) {
-
-		}
-		else if (status === Strophe.Status.CONNFAIL) {
-			showMessage('Connection error.')
-		}
-		else if (status === Strophe.Status.CONNECTED) {
+		if (status === Strophe.Status.CONNECTED) {
 			showMessage('Welcome, ' + strong(gameState.myName)
 				+ '. Click on a person to invite them to play.')
 			XMPP.connection.muc.join(
