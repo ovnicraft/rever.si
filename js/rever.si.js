@@ -14,9 +14,9 @@ $(window).load(function() {
 // Configuration
 var XMPP = {
 	connection: null,
-	domain: 'crypto.cat',
-	conference: 'conference.crypto.cat',
-	bosh: 'https://crypto.cat/http-bind',
+	domain: 'rever.si',
+	conference: 'conference.rever.si',
+	bosh: 'https://rever.si/http-bind',
 	MUC: 'nsCjuccS3tarRnLB9bCj',
 	loginCredentials: []
 }
