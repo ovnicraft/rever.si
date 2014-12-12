@@ -738,7 +738,8 @@ XMPP LOGIC
 // Generates a random string of length `size` characters.
 // If `alpha = 1`, random string will contain alpha characters, and so on.
 var randomString = function(size, alpha, uppercase, numeric) {
-	var keyspace = result = ''
+	var keyspace = ''
+	var result = ''
 	if (alpha) { keyspace += 'abcdefghijklmnopqrstuvwxyz' }
 	if (uppercase) { keyspace += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' }
 	if (numeric) { keyspace += '0123456789' }
