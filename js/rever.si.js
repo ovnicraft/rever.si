@@ -586,6 +586,7 @@ var addToChat = function(id, message, name) {
 
 // Convert message URLs to links.
 var addLinks = function(message) {
+	var URLs
 	if ((URLs = message.match(/((mailto\:|(news|(ht|f)tp(s?))\:\/\/){1}\S+)/gi))) {
 		for (var i in URLs) {
 			var sanitize = URLs[i].split('')
