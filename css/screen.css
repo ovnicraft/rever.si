@@ -16,7 +16,7 @@ body::selection {
 
 *::-webkit-scrollbar {
 	width: 6px;
-	background-color: #444;
+	background-color: #494949;
 }
 
 *::-webkit-scrollbar-thumb {
@@ -253,7 +253,7 @@ div#lobby div#lobbyChat {
 	border-radius: 3px;
 	background: rgba(0, 0, 0, 0.6);
 	width: 240px;
-	height: 220px;
+	height: 210px;
 	text-align: left;
 	overflow-y: auto;
 	word-wrap: break-word;
@@ -316,7 +316,7 @@ div#inGame #chat {
 	border-radius: 3px;
 	background: rgba(0, 0, 0, 0.6);
 	width: 240px;
-	height: 277px;
+	height: 268px;
 	text-align: left;
 	overflow-y: auto;
 	word-wrap: break-word;
@@ -348,7 +348,7 @@ div#inGame #moveHistory {
 	border-radius: 3px;
 	background: rgba(0, 0, 0, 0.6);
 	width: 220px;
-	height: 309px;
+	height: 300px;
 	padding: 10px;
 	text-align: left;
 	overflow-y: auto;
