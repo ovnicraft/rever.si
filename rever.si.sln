@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "snd", "snd", "{ADF71CC1-884E-496A-AF63-606E2CC5FD20}"
+	ProjectSection(SolutionItems) = preProject
+		snd\getChat.mp3 = snd\getChat.mp3
+		snd\getInvitation.mp3 = snd\getInvitation.mp3
+		snd\iPlay.mp3 = snd\iPlay.mp3
+		snd\theyPlay.mp3 = snd\theyPlay.mp3
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "img", "img", "{2E8A5DCF-75EC-4C99-8EA0-39B1B73D0424}"
+	ProjectSection(SolutionItems) = preProject
+		img\bg.jpg = img\bg.jpg
+		img\black.png = img\black.png
+		img\board.png = img\board.png
+		img\favicon.png = img\favicon.png
+		img\white.png = img\white.png
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "js", "js", "{98CF33B2-7900-4CE1-8616-8FF093E7E01D}"
+	ProjectSection(SolutionItems) = preProject
+		js\jquery.js = js\jquery.js
+		js\rever.si.js = js\rever.si.js
+		js\rickshaw.js = js\rickshaw.js
+		js\strophe.js = js\strophe.js
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "css", "css", "{0DE8ED6E-E470-4C8F-8493-412D407C4067}"
+	ProjectSection(SolutionItems) = preProject
+		css\handheld.css = css\handheld.css
+		css\quantico.woff = css\quantico.woff
+		css\screen.css = css\screen.css
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
