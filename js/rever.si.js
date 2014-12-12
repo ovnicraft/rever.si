@@ -8,24 +8,6 @@ Programmed by Nadim Kobeissi, all rights reserved.
 
 var reversi = function() {}
 
-// Load CSS file for handheld or desktop
-reversi.loadCSS = function(source) {
-	var link = document.createElement('link')
-	link.rel = 'stylesheet'
-	link.type = 'text/css'
-	link.media = 'all'
-	link.href = source
-	document.getElementsByTagName('head')[0]
-		.appendChild(link)
-}
-
-if (navigator.userAgent.match(/(iPhone)|(iPod)/)) {
-	reversi.loadCSS('css/handheld.css')
-}
-else {
-	reversi.loadCSS('css/screen.css')
-}
-
 $(window).load(function() {
 
 // Configuration
@@ -451,7 +433,7 @@ var flipDiscs = function(discs, move, highlight) {
 
 // Handle a square being clicked (play a move)
 var bindSquareClick = function() {
-	$('.square').bind('touchstart click', function() {
+	$('.square').click(function() {
 		if (!gameState.myTurn || ($(this).css('cursor') !== 'pointer')) {
 			return false
 		}
@@ -478,8 +460,25 @@ PLAYER UI LOGIC
 -----------------------------------------------
 */
 
+// Set board (and entire page) size in accordance with window size
+var setBoardSize = function() {
+	if ($(window).width() >= 1920 && $(window).height() >= 1080) {
+		window.parent.document.body.style.zoom = 1.5
+	}
+	if ($(window).width() >= 1170 && $(window).height() >= 701) {
+		window.parent.document.body.style.zoom = 1.15
+	}
+	else {
+		window.parent.document.body.style.zoom = 1
+	}
+}
+$(window).resize(function() {
+	setBoardSize()
+})
+setBoardSize()
+
 // Form logic for fields and buttons
-$('input[type=text]').bind('touchstart click', function() {
+$('input[type=text]').click(function() {
 	$(this).select()
 })
 
@@ -501,7 +500,7 @@ var getInvitation = function(player, theirDice) {
 		+ '<span class="choice">no</span>'
 	sounds.getInvitation.play()
 	showMessage(invitation)
-	$('.choice').bind('touchstart click', function() {
+	$('.choice').click(function() {
 		if ($(this).html() == 'yes') {
 			gameState.myDice = Math.floor(Math.random()*9999999999)
 			sendMessage('accept ' + gameState.myDice, player)
@@ -685,14 +684,14 @@ var resetCounters = function() {
 }
 
 // Bind resign button
-$('#resign').bind('touchstart click', function() {
+$('#resign').click(function() {
 	sendMessage('resign', gameState.opponentName)
 	showMessage('You have resigned.')
 	leaveGame()
 })
 
 // Bind chat display button
-$('#displayChat').bind('touchstart click', function() {
+$('#displayChat').click(function() {
 	$('#moveHistory').fadeOut(function() {
 		$('#chat,#chatInput').fadeIn()
 	})
@@ -702,7 +701,7 @@ $('#displayChat').bind('touchstart click', function() {
 })
 
 // Bind move history display button
-$('#displayHistory').bind('touchstart click', function() {
+$('#displayHistory').click(function() {
 	$('#chat,#chatInput').fadeOut(function() {
 		$('#moveHistory').fadeIn()
 	})
@@ -712,7 +711,7 @@ $('#displayHistory').bind('touchstart click', function() {
 })
 
 // Bind logout button
-$('#logout').bind('touchstart click', function() {
+$('#logout').click(function() {
 	logout(true)
 })
 
@@ -949,7 +948,7 @@ var addPlayer = function(name) {
 		var buddyTemplate = '<div class="playerAvailable" id="player-'
 			+ name + '"><span>' + name + '</span><span class="playerStatus"></span></div>'
 		$(buddyTemplate).appendTo('#playerList').slideDown(0, function() {
-			$('#player-' + name).unbind()
+			$('#player-' + name).unbind('click')
 			bindPlayerClick(name)
 		})
 	})
@@ -958,7 +957,7 @@ var addPlayer = function(name) {
 
 // Bind properties to player entry in lobby
 var bindPlayerClick = function(player) {
-	$('#player-' + player).bind('touchstart click', function() {
+	$('#player-' + player).click(function() {
 		if ($(this).css('cursor') === 'pointer') {
 			if (gameState.myState === 'lobby') {
 				gameState.myDice = Math.floor(Math.random()*9999999999)
@@ -969,7 +968,7 @@ var bindPlayerClick = function(player) {
 					'Waiting for ' + strong(player) + ' to respond...'
 					+ '<br /><span class="choice">cancel</span>'
 				)
-				$('.choice').bind('touchstart click', function() {
+				$('.choice').click(function() {
 					sendMessage('cancel', player)
 					showMessage('Welcome, ' + strong(gameState.myName)
 						+ '. Click on a person to invite them to play.')
@@ -1115,25 +1114,6 @@ LOAD AND EXECUTE
 -----------------------------------------------
 */
 
-// Set board (and entire page) size in accordance with window size
-var setBoardSize = function() {
-	if ($(window).width() >= 1920 && $(window).height() >= 1080) {
-		window.parent.document.body.style.zoom = 1.5
-	}
-	if ($(window).width() >= 1170 && $(window).height() >= 701) {
-		window.parent.document.body.style.zoom = 1.15
-	}
-	else {
-		window.parent.document.body.style.zoom = 1
-	}
-}
-
-$(window).resize(function() {
-	setBoardSize()
-})
-setBoardSize()
-
-// Initialize Reversi
 reversi.init()
 
 })
