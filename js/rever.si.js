@@ -17,8 +17,7 @@ var XMPP = {
 	domain: 'rever.si',
 	conference: 'conference.rever.si',
 	bosh: 'https://rever.si/http-bind',
-	MUC: 'lobby',
-	loginCredentials: []
+	MUC: 'lobby'
 }
 
 var gameState = {}
@@ -66,7 +65,6 @@ var resetGameState = function() {
 		opponentName: null,
 		broadcastMove: null
 	}
-	XMPP.loginCredentials = []
 }
 
 // Initialize board slate UI
@@ -587,7 +585,7 @@ var addToChat = function(id, message, name) {
 // Convert message URLs to links.
 var addLinks = function(message) {
 	var URLs
-	if ((URLs = message.match(/((mailto\:|(news|(ht|f)tp(s?))\:\/\/){1}\S+)/gi))) {
+	if (URLs = message.match(/((mailto\:|(news|(ht|f)tp(s?))\:\/\/){1}\S+)/gi)) {
 		for (var i in URLs) {
 			var sanitize = URLs[i].split('')
 			for (var l in sanitize) {
@@ -736,20 +734,6 @@ XMPP LOGIC
 -----------------------------------------------
 */
 
-// Generates a random string of length `size` characters.
-// If `alpha = 1`, random string will contain alpha characters, and so on.
-var randomString = function(size, alpha, uppercase, numeric) {
-	var keyspace = ''
-	var result = ''
-	if (alpha) { keyspace += 'abcdefghijklmnopqrstuvwxyz' }
-	if (uppercase) { keyspace += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' }
-	if (numeric) { keyspace += '0123456789' }
-	for (var i = 0; i !== size; i++) {
-		result += keyspace[Math.floor(Math.random()*keyspace.length)]
-	}
-	return result
-}
-
 // Send XMPP message
 // If 'player === null', send message to lobby
 var sendMessage = function(message, player) {
@@ -850,6 +834,8 @@ var handleMessage = function(message) {
 	}
 	// Detect gameplay moves/chat
 	else if (gameState.opponentName === name) {
+		var move
+		var chat
 		if (move = body.match(/^[a-h][1-8]$/)) {
 			var discs = getMoves(getOpposite(gameState.myColor))
 			if (!gameState.myTurn && discs[move[0]]) {
@@ -999,12 +985,10 @@ $('#login').submit(function() {
 		showMessage('Your name can only contain letters and numbers.')
 		$('#name').select()
 	}
-	// If everything is okay, then register a randomly generated throwaway XMPP ID and log in.
+	// If everything is okay, then log in.
 	else {
 		gameState.myName = Strophe.xmlescape($('#name').val())
-		XMPP.loginCredentials[0] = randomString(64, 1, 1, 1)
-		XMPP.loginCredentials[1] = randomString(64, 1, 1, 1)
-		registerXMPPUser(XMPP.loginCredentials[0], XMPP.loginCredentials[1])
+		connectToXMPP()
 		$('#play').attr('readonly', 'readonly')
 		showMessage('Connecting...')
 	}
@@ -1015,33 +999,10 @@ $('#login').submit(function() {
 	return false
 })
 
-// Registers a new user on the XMPP server.
-var registerXMPPUser = function(username, password) {
-	var registrationConnection = new Strophe.Connection(XMPP.bosh)
-	registrationConnection.register.connect(XMPP.domain, function(status) {
-		if (status === Strophe.Status.REGISTER) {
-			registrationConnection.register.fields.username = username
-			registrationConnection.register.fields.password = password
-			registrationConnection.register.submit()
-		}
-		else if (status === Strophe.Status.REGISTERED) {
-			registrationConnection.disconnect()
-			registrationConnection = null
-			loginXMPPUser(XMPP.loginCredentials[0], XMPP.loginCredentials[1])
-			return true
-		}
-		else if (status === Strophe.Status.SBMTFAIL) {
-			showMessage('Connection error.')
-			$('#play').removeAttr('readonly')
-			return false
-		}
-	})
-}
-
 // Logs into the XMPP server, creating main connection/disconnection handlers.
-var loginXMPPUser = function(username, password) {
+var connectToXMPP = function() {
 	XMPP.connection = new Strophe.Connection(XMPP.bosh)
-	XMPP.connection.connect(username + '@' + XMPP.domain, password, function(status) {
+	XMPP.connection.connect(XMPP.domain, null, function(status) {
 		if (status === Strophe.Status.CONNECTING) {
 
 		}
