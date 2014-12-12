@@ -13,9 +13,10 @@ $(window).load(function() {
 // Configuration
 var XMPP = {
 	connection: null,
-	domain: 'rever.si',
-	conference: 'conference.rever.si',
-	bosh: 'https://rever.si/http-bind',
+	domain: 'crypto.cat',
+	conference: 'conference.crypto.cat',
+	bosh: 'https://crypto.cat/http-bind',
+	MUC: 'nsCjuccS3tarRnLB9bCj',
 	loginCredentials: []
 }
 
@@ -526,7 +527,7 @@ var enterGame = function(player, myDice, theirDice) {
 	gameState.inviter = null
 	if (myDice > theirDice) { gameState.myColor = 'black' }
 	else { gameState.myColor = 'white' }
-	XMPP.connection.muc.setStatus('lobby@' + XMPP.conference, gameState.myName, 'away', 'away')
+	XMPP.connection.muc.setStatus(XMPP.MUC + '@' + XMPP.conference, gameState.myName, 'away', 'away')
 	$('#lobby').fadeOut(function() {
 		$('#moveHistory,#displayChat').fadeOut(200)
 		$('#inGame').fadeIn()
@@ -555,7 +556,7 @@ var leaveGame = function() {
 	gameState.myState = 'lobby'
 	gameState.opponentName = null
 	gameState.myTurn = false
-	XMPP.connection.muc.setStatus('lobby@' + XMPP.conference, gameState.myName, '', '')
+	XMPP.connection.muc.setStatus(XMPP.MUC + '@' + XMPP.conference, gameState.myName, '', '')
 	$('#inGame').fadeOut(function() {
 		scrollDown('lobbyChat', 600)
 		$('#chat').html('')
@@ -750,10 +751,10 @@ var randomString = function(size, alpha, uppercase, numeric) {
 // If 'player === null', send message to lobby
 var sendMessage = function(message, player) {
 	if (player) {
-		XMPP.connection.muc.message('lobby@' + XMPP.conference, player, message, null)
+		XMPP.connection.muc.message(XMPP.MUC + '@' + XMPP.conference, player, message, null)
 	}
 	else {
-		XMPP.connection.muc.message('lobby@' + XMPP.conference, null, message, null)
+		XMPP.connection.muc.message(XMPP.MUC + '@' + XMPP.conference, null, message, null)
 	}
 }
 
@@ -1048,7 +1049,7 @@ var loginXMPPUser = function(username, password) {
 			showMessage('Welcome, ' + strong(gameState.myName)
 				+ '. Click on a person to invite them to play.')
 			XMPP.connection.muc.join(
-				'lobby@' + XMPP.conference, gameState.myName,
+				XMPP.MUC + '@' + XMPP.conference, gameState.myName,
 				function(message) {
 					if (handleMessage(message)) {
 						return true
@@ -1091,7 +1092,7 @@ var logout = function(message) {
 		showMessage('Logging out...')
 	}
 	if (XMPP.connection) {
-		XMPP.connection.muc.leave('lobby@' + XMPP.conference)
+		XMPP.connection.muc.leave(XMPP.MUC + '@' + XMPP.conference)
 		XMPP.connection.disconnect()
 	}
 }
