@@ -506,8 +506,8 @@ var getInvitation = function(player, theirDice) {
 	})
 	webNotification(
 		'img/favicon.png',
-		'Reversi',
-		'You have received an invitation from ' + player + '.'
+		'New Invitation',
+		player + ' would like to play a game.'
 	)
 }
 
@@ -856,8 +856,8 @@ var handleMessage = function(message) {
 				flipDiscs(discs[move[0]], move[0], 1)
 				webNotification(
 					'img/favicon.png',
-					'Reversi',
-					'Your opponent has played on square ' + move[0] + '.'
+					'Your Turn',
+					'Your opponent has played on square ' + move[0].toUpperCase() + '.'
 				)
 			}
 		}
@@ -879,6 +879,11 @@ var handleMessage = function(message) {
 		else if (chat = body.match(/^chat/)) {
 			sounds.play('getChat')
 			addToChat('chat', body.substring(5), name)
+			webNotification(
+				'img/favicon.png',
+				'New Message',
+				name + ': ' + body.substring(5)
+			)
 		}
 	}
 	return true
