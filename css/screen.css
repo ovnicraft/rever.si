@@ -121,7 +121,7 @@ BOARD
 
 table {
 	border: 2px solid #111;
-	border-radius: 5px;
+	border-radius: 8px;
 	box-shadow: 0 0 10px #000;
 	background-size: 20px 20px;
 	border-spacing: 0;
@@ -137,7 +137,7 @@ table {
 	text-align: center;
 	padding: 0;
 	color: #000;
-	border: 1px solid rgba(0, 0, 0, 0.4);
+	border: 1px solid rgba(0, 0, 0, 0.15);
 	background-position: center;
 	background-size: 5px 5px;
 	background-repeat: no-repeat;
