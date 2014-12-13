@@ -159,7 +159,7 @@ var takeSquare = function(square, color, altBoard, network, mark) {
 		sendMessage(square, gameState.opponentName)
 		// Keep broadcasting the move until the opponent plays a follow-up move,
 		// so that we avoid cases where a network error fucks up the entire game.
-		gameState.broadcastMove = window.setInterval(function(move) {
+		gameState.broadcastMove = setInterval(function(move) {
 			sendMessage(move, gameState.opponentName)
 		}, 10000, square)
 	}
@@ -391,7 +391,7 @@ var flipDiscs = function(discs, move, highlight) {
 	var opposite = getOpposite(color)
 	for (var i in discs) {
 		$.each(discs[i], function(o, val) {
-			window.setTimeout(function() {
+			setTimeout(function() {
 				takeSquare(val, opposite, null, false)
 				incrementCounter(color, -1)
 			}, timer)
@@ -399,7 +399,7 @@ var flipDiscs = function(discs, move, highlight) {
 			counter++
 		})
 	}
-	window.setTimeout(function() {
+	setTimeout(function() {
 		if (highlight) {
 			if (highlightMoves(gameState.myColor)) {
 				showMessage('Playing against '
@@ -621,13 +621,16 @@ var sounds = {
 }
 
 // Show a web notification
-var webNotification = function(image, title, body) {
-	if (window.webkitNotifications && !document.hasFocus()) {
-		var notice = window.webkitNotifications.createNotification(image, title, body)
-		notice.show()
-		window.setTimeout(function() {
-			notice.cancel()
-		}, 5000)
+var webNotification = function(icon, title, body) {
+	if ((typeof(Notification) !== 'undefined') && !document.hasFocus()) {
+		var notice = new Notification(title, {
+			body: body,
+			icon: icon
+		})
+		setTimeout(function() {
+			notice.close()
+			notice = null
+		}, 0x1337)
 	}
 }
 
@@ -847,7 +850,7 @@ var handleMessage = function(message) {
 			var discs = getMoves(getOpposite(gameState.myColor))
 			if (!gameState.myTurn && discs[move[0]]) {
 				sounds.play('theyPlay')
-				window.clearInterval(gameState.broadcastMove)
+				clearInterval(gameState.broadcastMove)
 				gameState.myTurn = true
 				takeSquare(move[0], getOpposite(gameState.myColor), null, false, gameState.myColor)
 				flipDiscs(discs[move[0]], move[0], 1)
@@ -889,7 +892,7 @@ var handlePresence = function(presence) {
 		if ($(presence).find('error').attr('code') === '409') {
 			gameState.myState = 'error'
 			logout()
-			window.setTimeout(function() {
+			setTimeout(function() {
 				showMessage('Name in use. Please choose another name.')
 			}, 1000)
 			return false
@@ -1000,8 +1003,8 @@ $('#login').submit(function() {
 		showMessage('Connecting...')
 	}
 	// Get notification permissions
-	if (window.webkitNotifications && window.webkitNotifications.checkPermission()) {
-		window.webkitNotifications.requestPermission(function() {})
+	if (typeof(Notification) !== 'undefined') {
+		Notification.requestPermission(function() {})
 	}
 	return false
 })
