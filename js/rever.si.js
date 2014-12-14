@@ -694,6 +694,8 @@ var endGame = function() {
 
 // Reset disc counters
 var resetCounters = function() {
+	gameState.blackCount = 0
+	gameState.whiteCount = 0
 	$('#blackCounter').text(0)
 	$('#whiteCounter').text(0)
 }
