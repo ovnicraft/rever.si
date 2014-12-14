@@ -47,7 +47,7 @@ reversi.init = function() {
 
 // Reset game state parameters
 var resetGameState = function() {
-	var gameState = {
+	gameState = {
 		myName: null,
 		myState: null,
 		inviting: null,
@@ -56,7 +56,9 @@ var resetGameState = function() {
 		myDice: 0,
 		myColor: null,
 		opponentName: null,
-		broadcastMove: null
+		broadcastMove: null,
+		blackCount: 0,
+		whiteCount: 0
 	}
 }
 
@@ -94,7 +96,7 @@ var initBoardMatrix = function() {
 		'a8': 0, 'b8': 0, 'c8': 0, 'd8': 0,
 		'e8': 0, 'f8': 0, 'g8': 0, 'h8': 0
 	}
-	graphData = { black: [{x: 0, y: 2}], white: [{x: 0, y: 2}] }
+	graphData = { black: [{x: 0, y: 2*100/4}], white: [{x: 0, y: 2*100/4}] }
 	$('.square').css('background-image', 'none')
 }
 
@@ -413,11 +415,11 @@ var flipDiscs = function(discs, move, highlight) {
 		addToMoveHistory(move)
 		graphData.black.push({
 			x: graphData.black.length,
-			y: parseInt($('#blackCounter').text())
+			y: gameState.blackCount*100/getDiscCount()
 		})
 		graphData.white.push({
 			x: graphData.white.length,
-			y: parseInt($('#whiteCounter').text())
+			y: gameState.whiteCount*100/getDiscCount()
 		})
 		drawDiscGraph()
 	}, 225 * (counter + 2))
@@ -636,14 +638,19 @@ var webNotification = function(icon, title, body) {
 
 // Increment disc counter for color by amount (negative amounts allowed)
 var incrementCounter = function(color, amount) {
-	var counter = parseInt($('#' + color + 'Counter').text())
-	counter += amount
-	$('#' + color + 'Counter').text(counter)
+	if (color === 'black') {
+		gameState.blackCount += amount
+		$('#blackCounter').text(gameState.blackCount)
+	}
+	if (color === 'white') {
+		gameState.whiteCount += amount
+		$('#whiteCounter').text(gameState.whiteCount)
+	}
 }
 
 // Get total disc count
 var getDiscCount = function() {
-	return parseInt($('#blackCounter').text()) + parseInt($('#whiteCounter').text())
+	return gameState.blackCount + gameState.whiteCount
 }
 
 // Draw disc count graph
@@ -673,13 +680,11 @@ var drawDiscGraph = function() {
 
 // End game
 var endGame = function() {
-	var blackCount = parseInt($('#blackCounter').text())
-	var whiteCount = parseInt($('#whiteCounter').text())
-	if (((blackCount > whiteCount) && (gameState.myColor === 'black'))
-	||  ((blackCount < whiteCount) && (gameState.myColor === 'white'))) {
+	if (((gameState.blackCount > gameState.whiteCount) && (gameState.myColor === 'black'))
+	||  ((gameState.blackCount < gameState.whiteCount) && (gameState.myColor === 'white'))) {
 		showMessage('You have won!')
 	}
-	else if (blackCount === whiteCount) {
+	else if (gameState.blackCount === gameState.whiteCount) {
 		showMessage('It\'s a draw!')
 	}
 	else {
@@ -689,8 +694,8 @@ var endGame = function() {
 
 // Reset disc counters
 var resetCounters = function() {
-	$('#blackCounter').text('0')
-	$('#whiteCounter').text('0')
+	$('#blackCounter').text(0)
+	$('#whiteCounter').text(0)
 }
 
 // Bind resign button
